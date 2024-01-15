@@ -7,6 +7,7 @@ package frc.robot;
 //import frc.robot.commands.Autos;
 import frc.robot.commands.SwerveC;
 import frc.robot.commands.autoCommands.SpinMotor;
+import frc.robot.subsystems.IntakeS;
 import frc.robot.subsystems.SwerveS;
 
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -19,6 +20,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 /**
@@ -27,12 +29,16 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final SwerveS swerveS = new SwerveS();
+  private final IntakeS intakeS = new IntakeS();
 
   private CANSparkMax randomMotor = new CANSparkMax(Constants.DriveConstants.kTestMotorPort, MotorType.kBrushless);
 
   private final SendableChooser<Command> autoChooser;
 
   public static XboxController driveController = new XboxController(0);
+
+  JoystickButton aButton = new JoystickButton(driveController, 1);
+  JoystickButton bButton = new JoystickButton(driveController, 2);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -55,7 +61,8 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-
+    aButton.onTrue(swerveS.toggleAutoLockCommand());
+    bButton.onTrue(intakeS.toggleIntakeDirectionCommand());
   }
 
   /**

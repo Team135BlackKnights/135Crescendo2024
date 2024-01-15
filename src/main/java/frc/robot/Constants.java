@@ -24,6 +24,16 @@ public final class Constants {
     public static HashMap<String, Command> eventMap = new HashMap<>();
   }
 
+  public static class IntakeConstants {
+    public static int
+      primaryIntakeID = 20,
+      feederIntakeID = 21;
+
+    public static boolean
+      primaryIntakeReversed = false,
+      feederIntakeReversed = false;
+  }
+
   public static class SwerveConstants {
     public static double
       kWheelDiameter = Units.inchesToMeters(4), 

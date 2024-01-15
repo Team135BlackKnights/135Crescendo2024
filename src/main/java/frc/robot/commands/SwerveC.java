@@ -14,7 +14,7 @@ import frc.robot.subsystems.SwerveS;
 public class SwerveC extends Command {
   public ChassisSpeeds chassisSpeeds;
   private final SwerveS swerveS;
-  private final boolean fieldOriented = true, autoLock = true;
+  private final boolean fieldOriented = true;
   private final PIDController autoLockController = new PIDController(0.0048, 0, 0);
   private final SlewRateLimiter xLimiter, yLimiter, turningLimiter;
   
@@ -40,7 +40,7 @@ public class SwerveC extends Command {
     double ySpeed = -RobotContainer.driveController.getLeftY();
     double turningSpeed = RobotContainer.driveController.getRightX();
 
-    if (autoLock == true) {
+    if (swerveS.autoLock == true) {
       turningSpeed = autoLockController.calculate(swerveS.getXError(), 0.0)*-1;
       SmartDashboard.putNumber("Spin", turningSpeed);
     }
@@ -48,7 +48,7 @@ public class SwerveC extends Command {
     // If the desired ChassisSpeeds are really small (ie from controller drift) make them even smaller so that the robot doesn't move
     xSpeed = Math.abs(xSpeed) > Constants.SwerveConstants.kDeadband ? xSpeed : 0.0001;
     ySpeed = Math.abs(ySpeed) > Constants.SwerveConstants.kDeadband ? ySpeed : 0.0001;
-    if (autoLock == true) {
+    if (swerveS.autoLock == true) {
       turningSpeed = Math.abs(turningSpeed) > Constants.SwerveConstants.kAutoDeadband ? turningSpeed : 0.0001;
     } else {
       turningSpeed = Math.abs(turningSpeed) > Constants.SwerveConstants.kDeadband ? turningSpeed : 0.0001;
