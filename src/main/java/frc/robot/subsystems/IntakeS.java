@@ -19,11 +19,13 @@ public class IntakeS extends SubsystemBase {
     }
 
     public void setPrimaryIntake(double power) {
+        power = power <= 0.1 ? 0.1 : power;
         power = intakeReversed ? -1 * power : power;
         primaryIntake.set(power);
     }
 
     public void setFeederIntake(double power) {
+        power = power <= 0.1 ? 0.1 : power;
         power = intakeReversed ? -1 * power : power;
         feederIntake.set(power);
     }
