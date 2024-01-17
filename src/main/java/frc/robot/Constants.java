@@ -34,6 +34,16 @@ public final class Constants {
       feederIntakeReversed = false;
   }
 
+  public static class OutakeConstants {
+    public static int
+      leftFlywheel = 30,
+      rightFlywheel = 31;
+
+    public static boolean
+      leftFlywheelReversed = false,
+      rightFlywheelReversed = true;
+  }
+
   public static class SwerveConstants {
     public static double
       kWheelDiameter = Units.inchesToMeters(4), 

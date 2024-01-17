@@ -4,10 +4,13 @@
 
 package frc.robot;
 
+import frc.robot.commands.IntakeC;
+import frc.robot.commands.OutakeC;
 //import frc.robot.commands.Autos;
 import frc.robot.commands.SwerveC;
 import frc.robot.commands.autoCommands.SpinMotor;
 import frc.robot.subsystems.IntakeS;
+import frc.robot.subsystems.OutakeS;
 import frc.robot.subsystems.SwerveS;
 
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -30,6 +33,7 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final SwerveS swerveS = new SwerveS();
   private final IntakeS intakeS = new IntakeS();
+  private final OutakeS outakeS = new OutakeS();
 
   private CANSparkMax randomMotor = new CANSparkMax(Constants.DriveConstants.kTestMotorPort, MotorType.kBrushless);
 
@@ -43,6 +47,9 @@ public class RobotContainer {
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     swerveS.setDefaultCommand(new SwerveC(swerveS));
+    intakeS.setDefaultCommand(new IntakeC(intakeS));
+    outakeS.setDefaultCommand(new OutakeC(outakeS));
+    
     NamedCommands.registerCommand("SpinMotor", new SpinMotor(randomMotor, 2));
 
     autoChooser = AutoBuilder.buildAutoChooser();
