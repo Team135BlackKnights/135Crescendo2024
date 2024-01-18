@@ -61,14 +61,14 @@ public final class Constants {
 
   public static class DriveConstants {
     public static double
-      kChassisWidth = Units.inchesToMeters(23), // Distance between Left and Right wheels
-      kChassisLength = Units.inchesToMeters(23), // Distance betwwen Front and Back wheels
+      kChassisWidth = Units.inchesToMeters(24.25), // Distance between Left and Right wheels
+      kChassisLength = Units.inchesToMeters(24.25), // Distance betwwen Front and Back wheels
 
       kDriveBaseRadius = Units.inchesToMeters(Math.sqrt(kChassisLength*kChassisLength + kChassisWidth*kChassisWidth)/2),
       // Distance from center of robot to the fartshest module
 
       kMaxSpeedMetersPerSecond = Units.feetToMeters(12.0),
-      kMaxTurningSpeedRadPerSec = 4.414667 * 2 * Math.PI, //Units.feetToMeters(12) / 360 *2 *Math.PI
+      kMaxTurningSpeedRadPerSec = 4.414667 * 2 * Math.PI, // 1.33655 *2 *Math.PI
       kTeleDriveMaxAcceleration = Units.feetToMeters(5.66), //guess
       kTeleTurningMaxAcceleration = 1, //guess
       
