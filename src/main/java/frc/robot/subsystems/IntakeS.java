@@ -10,22 +10,24 @@ import frc.robot.Constants;
 public class IntakeS extends SubsystemBase {
     boolean intakeReversed = false;
 
-    public CANSparkMax primaryIntake = new CANSparkMax(Constants.IntakeConstants.primaryIntakeID, MotorType.kBrushless);
+    public CANSparkMax upperPrimaryIntake = new CANSparkMax(Constants.IntakeConstants.upperPrimaryIntakeID, MotorType.kBrushless);
+    public CANSparkMax lowerPrimaryIntake = new CANSparkMax(Constants.IntakeConstants.lowerPrimaryIntakeID, MotorType.kBrushless);
     public CANSparkMax feederIntake = new CANSparkMax(Constants.IntakeConstants.feederIntakeID, MotorType.kBrushless);
 
     public IntakeS() {
-        primaryIntake.setInverted(Constants.IntakeConstants.primaryIntakeReversed);
+        upperPrimaryIntake.setInverted(Constants.IntakeConstants.upperPrimaryIntakeReversed);
+        lowerPrimaryIntake.setInverted(Constants.IntakeConstants.lowerPrimaryIntakeReversed);
         feederIntake.setInverted(Constants.IntakeConstants.feederIntakeReversed);
     }
 
     public void setPrimaryIntake(double power) {
         power = power <= 0.1 ? 0.1 : power;
         power = intakeReversed ? -1 * power : power;
-        primaryIntake.set(power);
+        upperPrimaryIntake.set(power);
+        lowerPrimaryIntake.set(power);
     }
 
     public void setFeederIntake(double power) {
-        power = power <= 0.1 ? 0.1 : power;
         power = intakeReversed ? -1 * power : power;
         feederIntake.set(power);
     }

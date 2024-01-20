@@ -35,8 +35,6 @@ public class RobotContainer {
   private final IntakeS intakeS = new IntakeS();
   private final OutakeS outakeS = new OutakeS();
 
-  private CANSparkMax randomMotor = new CANSparkMax(Constants.DriveConstants.kTestMotorPort, MotorType.kBrushless);
-
   private final SendableChooser<Command> autoChooser;
 
   public static XboxController driveController = new XboxController(0);
@@ -49,8 +47,8 @@ public class RobotContainer {
     swerveS.setDefaultCommand(new SwerveC(swerveS));
     intakeS.setDefaultCommand(new IntakeC(intakeS));
     outakeS.setDefaultCommand(new OutakeC(outakeS));
-    
-    NamedCommands.registerCommand("SpinMotor", new SpinMotor(randomMotor, 2));
+
+    //NamedCommands.registerCommand("SpinMotor", new SpinMotor(randomMotor, 2));
 
     autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auto Chooser",autoChooser);

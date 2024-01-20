@@ -176,8 +176,6 @@ public class SwerveS extends SubsystemBase {
         return m_ChassisSpeeds;
     }
 
-    Supplier<Pose2d> getPose = () -> robotPosition;
-    Supplier<ChassisSpeeds> getChassisSpeeds = () -> m_ChassisSpeeds;
 
     public void resetPose(Pose2d pose) {
         // LIST MODULES IN THE SAME EXACT ORDER USED WHEN DECLARING SwerveDriveKinematics

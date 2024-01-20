@@ -7,16 +7,16 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class OutakeS extends SubsystemBase {
-    public CANSparkMax leftFlywheel = new CANSparkMax(Constants.OutakeConstants.leftFlywheel, MotorType.kBrushless);
-    public CANSparkMax rightFlywheel = new CANSparkMax(Constants.OutakeConstants.rightFlywheel, MotorType.kBrushless);
+    public CANSparkMax topFlywheel = new CANSparkMax(Constants.OutakeConstants.topFlywheel, MotorType.kBrushless);
+    public CANSparkMax bottomFlywheel = new CANSparkMax(Constants.OutakeConstants.bottomFlywheel, MotorType.kBrushless);
 
     public OutakeS() {
-        leftFlywheel.setInverted(Constants.OutakeConstants.leftFlywheelReversed);
-        rightFlywheel.setInverted(Constants.OutakeConstants.rightFlywheelReversed);
+        topFlywheel.setInverted(Constants.OutakeConstants.topFlywheelReversed);
+        bottomFlywheel.setInverted(Constants.OutakeConstants.bottomFlywheelReversed);
     }
 
     public void setFiringSpeed(double power) {
-        leftFlywheel.set(power);
-        rightFlywheel.set(power);
+        topFlywheel.set(power/2);
+        bottomFlywheel.set(power);
     }
 }

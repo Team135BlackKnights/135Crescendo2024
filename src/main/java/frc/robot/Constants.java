@@ -26,22 +26,24 @@ public final class Constants {
 
   public static class IntakeConstants {
     public static int
-      primaryIntakeID = 20,
-      feederIntakeID = 21;
+      upperPrimaryIntakeID = 20,
+      lowerPrimaryIntakeID = 21,
+      feederIntakeID = 22;
 
     public static boolean
-      primaryIntakeReversed = false,
+      upperPrimaryIntakeReversed = false,
+      lowerPrimaryIntakeReversed = true,
       feederIntakeReversed = false;
   }
 
   public static class OutakeConstants {
     public static int
-      leftFlywheel = 30,
-      rightFlywheel = 31;
+      topFlywheel = 30,
+      bottomFlywheel = 31;
 
     public static boolean
-      leftFlywheelReversed = false,
-      rightFlywheelReversed = true;
+      topFlywheelReversed = true,
+      bottomFlywheelReversed = false;
   }
 
   public static class SwerveConstants {
@@ -74,10 +76,10 @@ public final class Constants {
       
       // To find these set them to zero, then turn the robot on and manually set the wheels straight.
       // The encoder values being read are then your new Offset values
-      kFrontLeftAbsEncoderOffsetRad = 3.053225,
-      kFrontRightAbsEncoderOffsetRad = 1.51979,
-      kBackLeftAbsEncoderOffsetRad = (2*Math.PI) - 0.336506,
-      kBackRightAbsEncoderOffsetRad = 1.094702; 
+      kFrontLeftAbsEncoderOffsetRad = 0,
+      kFrontRightAbsEncoderOffsetRad = 0,
+      kBackLeftAbsEncoderOffsetRad = 0,
+      kBackRightAbsEncoderOffsetRad = 0; 
     
     // Declare the position of each module
     public static final SwerveDriveKinematics kDriveKinematics = new SwerveDriveKinematics(
@@ -101,9 +103,7 @@ public final class Constants {
 
       kBackRightDrivePort = 14, //14
       kBackRightTurningPort = 15, //24
-      kBackRightAbsEncoderPort = 3, //4
-
-      kTestMotorPort = 30; //test!
+      kBackRightAbsEncoderPort = 3; //4
 
     public static boolean
       kFrontLeftDriveReversed = false,

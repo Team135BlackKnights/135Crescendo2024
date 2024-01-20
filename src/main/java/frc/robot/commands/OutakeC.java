@@ -20,7 +20,7 @@ public class OutakeC extends Command {
 
     @Override
     public void execute() {
-        double outakeSpeed = RobotContainer.driveController.getRightTriggerAxis();
+        double outakeSpeed = Math.pow(RobotContainer.driveController.getRightTriggerAxis(),2);
 
         outakeS.setFiringSpeed(outakeSpeed);
     }
