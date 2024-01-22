@@ -140,6 +140,6 @@ public final class Constants {
     blueH = 246, //blue HSV values
     blueS = 85,
     blueV = 100;
-    
+    public static double sinePeriod = 16; //Basically controls how different the waves are from one another when the setColorWave function is called. Due to how it is calculated , this value CANNOT be zero (divide by zero error). 
   }
 }
