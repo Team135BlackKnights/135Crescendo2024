@@ -1,7 +1,5 @@
 package frc.robot.subsystems;
 
-import java.util.function.Supplier;
-
 import com.kauailabs.navx.frc.AHRS;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
@@ -76,7 +74,7 @@ public class SwerveS extends SubsystemBase {
     SwerveModulePosition[] m_modulePositions = new SwerveModulePosition[]{frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()};
 
     public boolean autoLock = true;
-
+    public static boolean redIsAlliance = true; //used to determine the alliance for LED systems
     public SwerveS() {
         // Waits for the RIO to finishing booting
         new Thread(() -> {
@@ -102,18 +100,8 @@ public class SwerveS extends SubsystemBase {
             Constants.DriveConstants.kMaxSpeedMetersPerSecond, // Max module speed, in m/s
             Constants.DriveConstants.kDriveBaseRadius, // Drive base radius in meters. Distance from robot center to furthest module.
             new ReplanningConfig() // Default path replanning config. See the API for the options here
-        ),
-        () -> {
-            // Boolean supplier that controls when the path will be mirrored for the red alliance
-            // This will flip the path being followed to the red side of the field.
-            // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
-
-            var alliance = DriverStation.getAlliance();
-            if (alliance.isPresent()) {
-                return alliance.get() == DriverStation.Alliance.Red;
-            }
-            return false;
-        },
+        ), this::getAlliance
+       ,
         this // Reference to this subsystem to set requirements
         );
     }
@@ -132,6 +120,7 @@ public class SwerveS extends SubsystemBase {
     
     @Override
     public void periodic() {
+        redIsAlliance = getAlliance();
         SmartDashboard.putNumber("Robot Heading", getRotation2d().getDegrees());
         SmartDashboard.putNumber("FrontLeft Abs Encoder", frontLeft.getAbsoluteEncoderRad());
         SmartDashboard.putNumber("FrontRight Abs Encoder", frontRight.getAbsoluteEncoderRad());
@@ -139,6 +128,7 @@ public class SwerveS extends SubsystemBase {
         SmartDashboard.putNumber("BackRight Abs Encoder", backRight.getAbsoluteEncoderRad());
         SmartDashboard.putNumber("xError", xError);
         SmartDashboard.putBoolean("Auto Lock", autoLock);
+        SmartDashboard.putBoolean("Red is Alliance", redIsAlliance);
         // SmartDashboard.putNumber("BackRight Position (SwerveModulePosition)", backRight.getPosition().distanceMeters);
         // SmartDashboard.putNumber("FrontRight Position (SwerveModulePosition)", frontRight.getPosition().distanceMeters);
         // SmartDashboard.putNumber("BackLeft Position (SwerveModulePosition)", backLeft.getPosition().distanceMeters);
@@ -174,6 +164,16 @@ public class SwerveS extends SubsystemBase {
 
     public ChassisSpeeds getChassisSpeeds() {
         return m_ChassisSpeeds;
+    }
+    public boolean getAlliance(){
+        // Boolean supplier that controls when the path will be mirrored for the red alliance
+            // This will flip the path being followed to the red side of the field.
+            // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
+        var alliance = DriverStation.getAlliance();
+            if (alliance.isPresent()) {
+                return alliance.get() == DriverStation.Alliance.Red;
+            }
+            return false;
     }
 
 

@@ -28,12 +28,14 @@ public final class Constants {
     public static int
       upperPrimaryIntakeID = 20,
       lowerPrimaryIntakeID = 21,
-      feederIntakeID = 22;
+      feederIntakeID = 22,
+      intakeLimitSwitchID = 6; //arbitrarily set, set it to proper value when it's wired up
 
     public static boolean
       upperPrimaryIntakeReversed = false,
       lowerPrimaryIntakeReversed = true,
       feederIntakeReversed = false;
+  
   }
 
   public static class OutakeConstants {
@@ -122,5 +124,22 @@ public final class Constants {
       kBackRightTurningReversed = true,
       kBackRigthAbsEncoderReversed = false;
 
+  }
+
+  public static class LEDConstants{
+    //basically anything pertaining to the LEDs go in here
+    public static int 
+    ledPort = 0, 
+    ledBufferLength = 60, // amount of LEDs in the light strip
+    noteH = 26, //note HSV value
+    noteS = 85,
+    noteV = 100,
+    redH = 0, //red HSV values
+    redS = 85,
+    redV = 100,
+    blueH = 246, //blue HSV values
+    blueS = 85,
+    blueV = 100;
+    
   }
 }
