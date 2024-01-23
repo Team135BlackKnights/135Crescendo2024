@@ -140,6 +140,8 @@ public final class Constants {
     blueH = 246, //blue HSV values
     blueS = 85,
     blueV = 100;
-    public static double sinePeriod = 16; //Basically controls how different the waves are from one another when the setColorWave function is called. Due to how it is calculated , this value CANNOT be zero (divide by zero error). 
+    public static double sinePeriod = 16; 
+    //Basically controls how different the waves are from one another when the setColorWave function is called. Due to how it is calculated , this value CANNOT be zero (divide by zero error). 
+    //Try to set this value to a multiple of however many LEDs we have (so like if we have 63 LEDs on the robot set the sine to 9)
   }
 }
