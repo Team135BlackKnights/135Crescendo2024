@@ -78,10 +78,10 @@ public final class Constants {
       
       // To find these set them to zero, then turn the robot on and manually set the wheels straight.
       // The encoder values being read are then your new Offset values
-      kFrontLeftAbsEncoderOffsetRad = 0,
-      kFrontRightAbsEncoderOffsetRad = 0,
-      kBackLeftAbsEncoderOffsetRad = 0,
-      kBackRightAbsEncoderOffsetRad = 0; 
+      kFrontLeftAbsEncoderOffsetRad = 1.092054,
+      kFrontRightAbsEncoderOffsetRad = 2*Math.PI - 0.351707,
+      kBackLeftAbsEncoderOffsetRad = 2.050827,
+      kBackRightAbsEncoderOffsetRad = 1.706821; 
     
     // Declare the position of each module
     public static final SwerveDriveKinematics kDriveKinematics = new SwerveDriveKinematics(
