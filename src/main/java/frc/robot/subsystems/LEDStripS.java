@@ -1,23 +1,39 @@
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.LEDConstants;
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
+import edu.wpi.first.wpilibj.DigitalInput;
 
 public class LEDStripS extends SubsystemBase{
-    public InstantCommand setConstantColorCommand;
     int InitialLoopValue = 0;
     AddressableLEDBuffer ledBuffer;
     AddressableLED leds;
+    private final DigitalInput intakeLimitSwitch = new DigitalInput(IntakeConstants.intakeLimitSwitchID); //the intake limit switch
+
 
     public LEDStripS(){
         leds = new AddressableLED(LEDConstants.ledPort);
         ledBuffer = new AddressableLEDBuffer(LEDConstants.ledBufferLength);
         leds.setLength(ledBuffer.getLength());
-        leds.start();
+        leds.start(); //FOR THE LOVE OF GOD PLEASE REMEMBER THIS IF YOU'RE GONNA CODE YOUR OWN SUBSYSTEM I SPENT LIKE 6 HOURS TROUBLESHOOTING AND IT DIDNT WORK BECAUSE OF THIS
     }
+
+    @Override
+    public void periodic() {
+        if (intakeLimitSwitch.get()) {
+            setConstantColors(LEDConstants.noteH, LEDConstants.noteS, LEDConstants.noteV);
+        } else {
+            if (SwerveS.redIsAlliance) {
+                setColorWave(LEDConstants.redH, LEDConstants.redS, LEDConstants.sinePeriod);
+            } else {
+                setColorWave(LEDConstants.blueH, LEDConstants.blueS, LEDConstants.sinePeriod);
+            }
+        }
+    }
+
     public void setConstantColors(int h, int s, int v){//Essentially designed to make all the LEDs a constant color 
         for (var i = 0; i < ledBuffer.getLength(); i++) {
             // Sets the specified LED to the RGB values for red
@@ -45,18 +61,6 @@ public class LEDStripS extends SubsystemBase{
         leds.setData(ledBuffer);
     }
 
-    public InstantCommand allianceWave(){
-        if (SwerveS.redIsAlliance){
-            return new InstantCommand(() -> setColorWave(LEDConstants.redH,LEDConstants.redS,LEDConstants.sinePeriod), this);   
-        }
-        else{
-            return new InstantCommand(() -> setColorWave(LEDConstants.blueH,LEDConstants.blueS, LEDConstants.sinePeriod), this);   
-        }
-        
-    }
-    public InstantCommand noteColor(){
-        return new InstantCommand(() -> setConstantColors(LEDConstants.noteH, LEDConstants.noteS, LEDConstants.noteV),this);
-    }
 }
 
 

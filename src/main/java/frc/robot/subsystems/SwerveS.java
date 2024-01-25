@@ -81,6 +81,7 @@ public class SwerveS extends SubsystemBase {
             try {
                 Thread.sleep(1000);
                 zeroHeading();
+                redIsAlliance = getAlliance();
                 frontLeft.resetEncoders();
                 frontRight.resetEncoders();
                 backLeft.resetEncoders();
@@ -120,7 +121,6 @@ public class SwerveS extends SubsystemBase {
     
     @Override
     public void periodic() {
-        redIsAlliance = getAlliance();
         SmartDashboard.putNumber("Robot Heading", getRotation2d().getDegrees());
         SmartDashboard.putNumber("FrontLeft Abs Encoder", frontLeft.getAbsoluteEncoderRad());
         SmartDashboard.putNumber("FrontRight Abs Encoder", frontRight.getAbsoluteEncoderRad());
