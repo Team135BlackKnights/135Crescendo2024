@@ -22,9 +22,9 @@ public class LEDStripS extends SubsystemBase{
         for (var i = 0; i < ledBuffer.getLength(); i++) {
             // Sets the specified LED to the RGB values for red
             ledBuffer.setHSV(i, h, s, v);
-         }
+        }
          
-         leds.setData(ledBuffer);
+        leds.setData(ledBuffer);
     }
     public void setColorWave(int h, int s, double sinePeriod){//value is basically how dark it is, is controlled by the wave function
         for (var i = 0; i < ledBuffer.getLength(); i++) {
@@ -42,6 +42,7 @@ public class LEDStripS extends SubsystemBase{
           if (InitialLoopValue >= 2*Math.PI){
             InitialLoopValue = 0;
           }
+          leds.setData(ledBuffer);
         }
 
     public InstantCommand allianceWave(){
