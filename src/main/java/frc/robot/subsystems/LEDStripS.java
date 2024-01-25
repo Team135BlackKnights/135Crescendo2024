@@ -8,7 +8,7 @@ import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 
 public class LEDStripS extends SubsystemBase{
     public InstantCommand setConstantColorCommand;
-     int InitialLoopValue;
+    int InitialLoopValue = 0;
     AddressableLEDBuffer ledBuffer;
     AddressableLED leds;
 
@@ -16,7 +16,7 @@ public class LEDStripS extends SubsystemBase{
         leds = new AddressableLED(LEDConstants.ledPort);
         ledBuffer = new AddressableLEDBuffer(LEDConstants.ledBufferLength);
         leds.setLength(ledBuffer.getLength());
-        InitialLoopValue = 0;
+        leds.start();
     }
     public void setConstantColors(int h, int s, int v){//Essentially designed to make all the LEDs a constant color 
         for (var i = 0; i < ledBuffer.getLength(); i++) {
@@ -47,15 +47,15 @@ public class LEDStripS extends SubsystemBase{
 
     public InstantCommand allianceWave(){
         if (SwerveS.redIsAlliance){
-            return new InstantCommand(() -> {setColorWave(LEDConstants.redH,LEDConstants.redS,LEDConstants.sinePeriod);}, this);   
+            return new InstantCommand(() -> setColorWave(LEDConstants.redH,LEDConstants.redS,LEDConstants.sinePeriod), this);   
         }
         else{
-            return new InstantCommand(() -> {setColorWave(LEDConstants.blueH,LEDConstants.blueS, LEDConstants.sinePeriod);}, this);   
+            return new InstantCommand(() -> setColorWave(LEDConstants.blueH,LEDConstants.blueS, LEDConstants.sinePeriod), this);   
         }
         
     }
     public InstantCommand noteColor(){
-        return new InstantCommand(() -> {setConstantColors(LEDConstants.noteH, LEDConstants.noteS, LEDConstants.noteV);},this);
+        return new InstantCommand(() -> setConstantColors(LEDConstants.noteH, LEDConstants.noteS, LEDConstants.noteV),this);
     }
 }
 
