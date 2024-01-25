@@ -2,7 +2,7 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.1,
+      "x": 1.5,
       "y": 7.0
     },
     "rotation": 0
@@ -14,7 +14,7 @@
         {
           "type": "named",
           "data": {
-            "name": "SpinMotor"
+            "name": "ShootNote"
           }
         },
         {
@@ -30,7 +30,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "SpinMotor"
+                  "name": "IntakeNote"
                 }
               }
             ]
@@ -39,7 +39,7 @@
         {
           "type": "named",
           "data": {
-            "name": "SpinMotor"
+            "name": "ShootNote"
           }
         },
         {
@@ -55,7 +55,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "SpinMotor"
+                  "name": "IntakeNote"
                 }
               }
             ]

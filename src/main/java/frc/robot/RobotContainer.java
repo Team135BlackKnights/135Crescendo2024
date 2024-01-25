@@ -6,13 +6,16 @@ package frc.robot;
 
 import frc.robot.commands.IntakeC;
 import frc.robot.commands.OutakeC;
-//import frc.robot.commands.Autos;
 import frc.robot.commands.SwerveC;
+import frc.robot.commands.autoCommands.AutonIntake;
+import frc.robot.commands.autoCommands.FireShooter;
 import frc.robot.subsystems.IntakeS;
 import frc.robot.subsystems.OutakeS;
 import frc.robot.subsystems.SwerveS;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
+
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -41,13 +44,13 @@ public class RobotContainer {
     swerveS.setDefaultCommand(new SwerveC(swerveS));
     intakeS.setDefaultCommand(new IntakeC(intakeS));
     outakeS.setDefaultCommand(new OutakeC(outakeS));
-    //NamedCommands.registerCommand("SpinMotor", new SpinMotor(randomMotor, 2));
+    NamedCommands.registerCommand("IntakeNote", new AutonIntake(intakeS));
+    NamedCommands.registerCommand("ShootNote", new FireShooter(outakeS, intakeS, 2));
 
     autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auto Chooser",autoChooser);
     // Configure the trigger bindings
     configureBindings();
-    //ringInIntake.onTrue(ledStripS.setConstantColors(0, 0, 0));
   }
 
   private void configureBindings() {
