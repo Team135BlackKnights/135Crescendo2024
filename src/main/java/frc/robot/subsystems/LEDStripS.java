@@ -34,29 +34,29 @@ public class LEDStripS extends SubsystemBase{
             final int value = (int)Math.floor(Math.abs(Math.sin(((i*Math.PI/sinePeriod)+InitialLoopValue)))*255); //Tweak sine period to make the gradient more gentle or sharp (more is more gentle)
             // Set the value
             ledBuffer.setHSV(i, h, s, value);
-          }
-
-          // Increase the value computed in the sine function by pi/(the changable period) to make the gradient "move"
-          InitialLoopValue += Math.PI/LEDConstants.sinePeriod; //offset by one "notch" each time
-          // Check bounds
-          if (InitialLoopValue >= 2*Math.PI){
-            InitialLoopValue = 0;
-          }
-          leds.setData(ledBuffer);
         }
+
+        // Increase the value computed in the sine function by pi/(the changable period) to make the gradient "move"
+        InitialLoopValue += Math.PI/LEDConstants.sinePeriod; //offset by one "notch" each time
+        // Check bounds
+        if (InitialLoopValue >= 2*Math.PI){
+            InitialLoopValue = 0;
+        }
+        leds.setData(ledBuffer);
+    }
 
     public InstantCommand allianceWave(){
         if (SwerveS.redIsAlliance){
-        return new InstantCommand(() -> {setColorWave(LEDConstants.redH,LEDConstants.redS,LEDConstants.sinePeriod);}, this);   
+            return new InstantCommand(() -> {setColorWave(LEDConstants.redH,LEDConstants.redS,LEDConstants.sinePeriod);}, this);   
         }
         else{
-        return new InstantCommand(() -> {setColorWave(LEDConstants.blueH,LEDConstants.blueS, LEDConstants.sinePeriod);}, this);   
+            return new InstantCommand(() -> {setColorWave(LEDConstants.blueH,LEDConstants.blueS, LEDConstants.sinePeriod);}, this);   
         }
         
     }
     public InstantCommand noteColor(){
         return new InstantCommand(() -> {setConstantColors(LEDConstants.noteH, LEDConstants.noteS, LEDConstants.noteV);},this);
     }
-    }
+}
 
 
