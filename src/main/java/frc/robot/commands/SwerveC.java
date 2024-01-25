@@ -38,7 +38,11 @@ public class SwerveC extends Command {
     // Get desired ChassisSpeeds from controller
     double xSpeed = RobotContainer.driveController.getLeftX();
     double ySpeed = -RobotContainer.driveController.getLeftY();
-    double turningSpeed = RobotContainer.driveController.getRightX();
+    double turningSpeed = -RobotContainer.driveController.getRightX();
+
+    xSpeed = Math.pow(xSpeed, 2) * (xSpeed < 0 ? -1 : 1);
+    ySpeed = Math.pow(ySpeed, 2) * (ySpeed < 0 ? -1 : 1);
+    turningSpeed = Math.pow(turningSpeed, 2) * (turningSpeed < 0 ? -1 : 1);
 
     if (swerveS.autoLock == true) {
       turningSpeed = autoLockController.calculate(swerveS.getXError(), 0.0)*-1;
@@ -59,7 +63,6 @@ public class SwerveC extends Command {
     ySpeed = yLimiter.calculate(ySpeed) * Constants.DriveConstants.kMaxSpeedMetersPerSecond;
     turningSpeed = turningLimiter.calculate(turningSpeed) * Constants.DriveConstants.kMaxTurningSpeedRadPerSec;
     
-    turningSpeed = turningSpeed/2;
 
     // Convert ChassisSpeeds into the ChassisSpeeds type
     if (fieldOriented) {

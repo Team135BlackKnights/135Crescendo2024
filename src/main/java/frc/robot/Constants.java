@@ -26,9 +26,8 @@ public final class Constants {
 
   public static class IntakeConstants {
     public static int
-      upperPrimaryIntakeID = 20,
-      lowerPrimaryIntakeID = 21,
-      feederIntakeID = 22,
+      primaryIntakeID = 20,
+      deployIntakeID = 21,
       intakeLimitSwitchID = 6; //arbitrarily set, set it to proper value when it's wired up
 
     public static boolean
@@ -129,7 +128,7 @@ public final class Constants {
   public static class LEDConstants{
     //basically anything pertaining to the LEDs go in here
     public static int 
-    ledPort = 0, 
+    ledPort = 9, 
     ledBufferLength = 60, // amount of LEDs in the light strip
     noteH = 26, //note HSV value
     noteS = 85,

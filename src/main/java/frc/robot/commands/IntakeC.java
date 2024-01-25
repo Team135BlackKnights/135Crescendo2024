@@ -21,10 +21,16 @@ public class IntakeC extends Command {
     @Override
     public void execute() {
         double intakeSpeed = RobotContainer.driveController.getLeftTriggerAxis();
-        double feederSpeed = RobotContainer.driveController.getRightTriggerAxis();
+        double deployIntakeSpeed = 0;
+
+        if (RobotContainer.manipController.getAButtonPressed() == true) {
+            deployIntakeSpeed = 0.5;
+        } else if (RobotContainer.manipController.getBButtonPressed() == true) {
+            deployIntakeSpeed = -0.5;
+        }
 
         intakeS.setPrimaryIntake(intakeSpeed * 1);
-        intakeS.setFeederIntake(feederSpeed * 1);
+        intakeS.deployIntake(deployIntakeSpeed * 1);
     }
 
     @Override

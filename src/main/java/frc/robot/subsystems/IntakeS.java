@@ -10,26 +10,22 @@ import frc.robot.Constants;
 public class IntakeS extends SubsystemBase {
     boolean intakeReversed = false;
 
-    public CANSparkMax upperPrimaryIntake = new CANSparkMax(Constants.IntakeConstants.upperPrimaryIntakeID, MotorType.kBrushless);
-    public CANSparkMax lowerPrimaryIntake = new CANSparkMax(Constants.IntakeConstants.lowerPrimaryIntakeID, MotorType.kBrushless);
-    public CANSparkMax feederIntake = new CANSparkMax(Constants.IntakeConstants.feederIntakeID, MotorType.kBrushless);
+    public CANSparkMax primaryIntake = new CANSparkMax(Constants.IntakeConstants.primaryIntakeID, MotorType.kBrushless);
+    public CANSparkMax deployIntake = new CANSparkMax(Constants.IntakeConstants.deployIntakeID, MotorType.kBrushless);
 
     public IntakeS() {
-        upperPrimaryIntake.setInverted(Constants.IntakeConstants.upperPrimaryIntakeReversed);
-        lowerPrimaryIntake.setInverted(Constants.IntakeConstants.lowerPrimaryIntakeReversed);
-        feederIntake.setInverted(Constants.IntakeConstants.feederIntakeReversed);
+        primaryIntake.setInverted(Constants.IntakeConstants.lowerPrimaryIntakeReversed);
+        deployIntake.setInverted(Constants.IntakeConstants.feederIntakeReversed);
     }
 
     public void setPrimaryIntake(double power) {
         power = power <= 0.1 ? 0.1 : power;
         power = intakeReversed ? -1 * power : power;
-        upperPrimaryIntake.set(power);
-        lowerPrimaryIntake.set(power);
+        primaryIntake.set(power);
     }
 
-    public void setFeederIntake(double power) {
-        power = intakeReversed ? -1 * power : power;
-        feederIntake.set(power);
+    public void deployIntake(double power) {
+        deployIntake.set(power);
     }
 
     public void toggleIntakeDirection() {

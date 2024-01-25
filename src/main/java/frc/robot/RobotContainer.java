@@ -36,6 +36,8 @@ public class RobotContainer {
   private final SendableChooser<Command> autoChooser;
 
   public static XboxController driveController = new XboxController(0);
+  public static XboxController manipController = new XboxController(1);
+
   Trigger ringInIntake = new Trigger(intakeLimitSwitch::get); //binds trigger to the output of the limitSwitch
   JoystickButton aButton = new JoystickButton(driveController, 1);
   JoystickButton bButton = new JoystickButton(driveController, 2);
@@ -45,6 +47,7 @@ public class RobotContainer {
     swerveS.setDefaultCommand(new SwerveC(swerveS));
     intakeS.setDefaultCommand(new IntakeC(intakeS));
     outakeS.setDefaultCommand(new OutakeC(outakeS));
+    ledStripS.setDefaultCommand(ledStripS.allianceWave());
     //NamedCommands.registerCommand("SpinMotor", new SpinMotor(randomMotor, 2));
 
     autoChooser = AutoBuilder.buildAutoChooser();
