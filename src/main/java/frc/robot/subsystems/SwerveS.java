@@ -61,6 +61,8 @@ public class SwerveS extends SubsystemBase {
         Constants.DriveConstants.kBackRightDriveReversed);
 
     private AHRS gyro = new AHRS(Port.kUSB1);
+    NetworkTableEntry pipeline;
+    
 
     private NetworkTable limelight = NetworkTableInstance.getDefault().getTable("limelight-swerve");
     NetworkTableEntry tx = limelight.getEntry("tx");
@@ -105,6 +107,7 @@ public class SwerveS extends SubsystemBase {
        ,
         this // Reference to this subsystem to set requirements
         );
+
     }
     
     public void zeroHeading() {
@@ -118,6 +121,19 @@ public class SwerveS extends SubsystemBase {
     public Rotation2d getRotation2d() {
         return Rotation2d.fromDegrees(getHeading());
     }
+    public void switchLimeLightPath() { 
+        //basically has 2 paths: target red and blue speakers and targets everything else 
+        pipeline = limelight.getEntry("pipeline");
+        if ((int)pipeline.getNumber(0)==0){
+            pipeline.setNumber(1);
+        }else{
+            pipeline.setNumber(0);
+        }
+    }
+    public InstantCommand switchLimeLightPathCommand(){
+        return new InstantCommand(this::switchLimeLightPath,this);
+    }
+
     
     @Override
     public void periodic() {
@@ -129,6 +145,7 @@ public class SwerveS extends SubsystemBase {
         SmartDashboard.putNumber("xError", xError);
         SmartDashboard.putBoolean("Auto Lock", autoLock);
         SmartDashboard.putBoolean("Red is Alliance", redIsAlliance);
+        
         // SmartDashboard.putNumber("BackRight Position (SwerveModulePosition)", backRight.getPosition().distanceMeters);
         // SmartDashboard.putNumber("FrontRight Position (SwerveModulePosition)", frontRight.getPosition().distanceMeters);
         // SmartDashboard.putNumber("BackLeft Position (SwerveModulePosition)", backLeft.getPosition().distanceMeters);
