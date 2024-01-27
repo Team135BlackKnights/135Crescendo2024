@@ -4,7 +4,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.LEDConstants;
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class LEDStripS extends SubsystemBase{
     int InitialLoopValue = 0;
     AddressableLEDBuffer ledBuffer;

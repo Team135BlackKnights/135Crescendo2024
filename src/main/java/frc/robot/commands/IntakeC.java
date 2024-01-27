@@ -4,12 +4,13 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.IntakeS;
 
-public class IntakeC extends Command {
-    private final IntakeS intakeS;
 
+public class IntakeC extends Command {
+
+    private final IntakeS intakeS;
+    
     public IntakeC(IntakeS intakeS) {
         this.intakeS = intakeS;
-
         addRequirements(intakeS);
     }
 

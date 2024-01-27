@@ -64,7 +64,7 @@ public class SwerveS extends SubsystemBase {
     NetworkTableEntry pipeline;
     
 
-    private NetworkTable limelight = NetworkTableInstance.getDefault().getTable("limelight-swerve");
+    public NetworkTable limelight = NetworkTableInstance.getDefault().getTable("limelight-swerve");
     NetworkTableEntry tx = limelight.getEntry("tx");
     double xError = tx.getDouble(0.0);
 
