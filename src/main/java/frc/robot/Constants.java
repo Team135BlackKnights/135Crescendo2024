@@ -43,7 +43,7 @@ public final class Constants {
       bottomFlywheel = 31;
 
     public static boolean
-      topFlywheelReversed = true,
+      topFlywheelReversed = false,
       bottomFlywheelReversed = false;
   }
 

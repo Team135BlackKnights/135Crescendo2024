@@ -4,6 +4,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -21,13 +22,18 @@ public class IntakeS extends SubsystemBase {
         deployIntake.setInverted(Constants.IntakeConstants.feederIntakeReversed);
     }
 
+    @Override
+    public void periodic() {
+        SmartDashboard.putBoolean("Intake Direction", intakeReversed);
+    }
+
     public static boolean noteIsLoaded() {
         return intakeLimitSwitch.get();
     }
 
     public void setPrimaryIntake(double power) {
         power = power <= 0.1 ? 0.1 : power;
-        power = intakeReversed ? -1 * power : power;
+        power = power * (intakeReversed ? -1 : 1);
         primaryIntake.set(power);
     }
 

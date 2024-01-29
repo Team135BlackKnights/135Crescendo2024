@@ -57,7 +57,7 @@ public class SwerveModule {
         driveMotor.setInverted(driveMotorReversed);
         turningMotor.setInverted(turningMotorReversed);
 
-        absoluteEncoder = driveMotor.getAnalog(Mode.kAbsolute);
+        absoluteEncoder = turningMotor.getAnalog(Mode.kAbsolute);
 
         driveEncoder = driveMotor.getEncoder();
         turningEncoder = turningMotor.getEncoder();
