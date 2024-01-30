@@ -3,7 +3,9 @@ package frc.robot.subsystems;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.CANSparkBase.IdleMode;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -18,8 +20,20 @@ public class OutakeS extends SubsystemBase {
         topFlywheel.setInverted(Constants.OutakeConstants.topFlywheelReversed);
         bottomFlywheel.setInverted(Constants.OutakeConstants.bottomFlywheelReversed);
 
+        topFlywheel.setIdleMode(IdleMode.kBrake);
+        bottomFlywheel.setIdleMode(IdleMode.kBrake);
+
         topFlywheelEncoder = topFlywheel.getEncoder();
         bottomFlywheelEncoder = bottomFlywheel.getEncoder();
+
+        topFlywheelEncoder.setVelocityConversionFactor(Constants.OutakeConstants.flywheelGearRatio);
+        bottomFlywheelEncoder.setVelocityConversionFactor(Constants.OutakeConstants.flywheelGearRatio);
+    }
+
+    @Override
+    public void periodic() {
+        SmartDashboard.putNumber("Top Flywheel Speed", topFlywheelEncoder.getVelocity());
+        SmartDashboard.putNumber("Bottom Flywheel Speed", bottomFlywheelEncoder.getVelocity());
     }
 
     public void setFiringSpeed(double power) {

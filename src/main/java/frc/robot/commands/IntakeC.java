@@ -24,7 +24,7 @@ public class IntakeC extends Command {
         double intakeSpeed = RobotContainer.driveController.getLeftTriggerAxis();
         double deployIntakeSpeed = 0;
 
-        if (RobotContainer.driveController.getLeftBumperPressed() == true) {
+        if (RobotContainer.driveController.getXButton() == true) {
             intakeSpeed = 0.5;
         }
 

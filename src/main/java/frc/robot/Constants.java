@@ -30,10 +30,12 @@ public final class Constants {
       deployIntakeID = 21,
       intakeLimitSwitchID = 6; //arbitrarily set, set it to proper value when it's wired up
 
+    public static double
+      deployIntakeGearRatio = 0;
+
     public static boolean
-      upperPrimaryIntakeReversed = false,
-      lowerPrimaryIntakeReversed = true,
-      feederIntakeReversed = false;
+      primaryIntakeReversed = true,
+      deployIntakeReversed = false;
   
   }
 
@@ -41,6 +43,9 @@ public final class Constants {
     public static int
       topFlywheel = 30,
       bottomFlywheel = 31;
+
+    public static double
+      flywheelGearRatio = 0.5;
 
     public static boolean
       topFlywheelReversed = false,

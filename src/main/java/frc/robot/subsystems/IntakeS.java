@@ -1,6 +1,8 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
+import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -14,12 +16,18 @@ public class IntakeS extends SubsystemBase {
     boolean intakeReversed = false;
     public CANSparkMax primaryIntake = new CANSparkMax(Constants.IntakeConstants.primaryIntakeID, MotorType.kBrushless);
     public CANSparkMax deployIntake = new CANSparkMax(Constants.IntakeConstants.deployIntakeID, MotorType.kBrushless);
+    public RelativeEncoder deployIntakeEncoder;
 
     public static final DigitalInput intakeLimitSwitch = new DigitalInput(IntakeConstants.intakeLimitSwitchID); //the intake limit switch
 
     public IntakeS() {
-        primaryIntake.setInverted(Constants.IntakeConstants.lowerPrimaryIntakeReversed);
-        deployIntake.setInverted(Constants.IntakeConstants.feederIntakeReversed);
+        primaryIntake.setInverted(Constants.IntakeConstants.primaryIntakeReversed);
+        deployIntake.setInverted(Constants.IntakeConstants.deployIntakeReversed);
+
+        primaryIntake.setIdleMode(IdleMode.kBrake);
+
+        deployIntakeEncoder = deployIntake.getEncoder();
+        deployIntakeEncoder.setPositionConversionFactor(Constants.IntakeConstants.deployIntakeGearRatio);
     }
 
     @Override
@@ -39,8 +47,22 @@ public class IntakeS extends SubsystemBase {
 
     public void deployIntake(double power) {
     
+        if (power < 0) {
+            if (deployIntakeEncoder.getPosition() < 0) {
+                power = 0;
+            } else if (deployIntakeEncoder.getPosition() < 3) {
+                power = power * 0.5;
+            }
+        }
+        if (power > 0) {
+            if (deployIntakeEncoder.getPosition() > 10) {
+                power = 0;
+            } else if (deployIntakeEncoder.getPosition() > 7) {
+                power = power * 0.5;
+            }
+        }
+
         deployIntake.set(power);
-        
     }
 
     public void toggleIntakeDirection() {
