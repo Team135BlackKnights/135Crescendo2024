@@ -7,8 +7,10 @@ package frc.robot;
 import frc.robot.commands.IntakeC;
 import frc.robot.commands.OutakeC;
 import frc.robot.commands.SwerveC;
+import frc.robot.commands.autoCommands.AutoLock;
 import frc.robot.commands.autoCommands.AutonIntake;
 import frc.robot.commands.autoCommands.FireShooter;
+import frc.robot.commands.autoCommands.MoveIntake;
 import frc.robot.subsystems.IntakeS;
 import frc.robot.subsystems.OutakeS;
 import frc.robot.subsystems.SwerveS;
@@ -44,6 +46,8 @@ public class RobotContainer {
     swerveS.setDefaultCommand(new SwerveC(swerveS));
     intakeS.setDefaultCommand(new IntakeC(intakeS));
     outakeS.setDefaultCommand(new OutakeC(outakeS));
+    NamedCommands.registerCommand("DeployIntake", new MoveIntake(intakeS));
+    NamedCommands.registerCommand("Lock Onto April Tags", new AutoLock(swerveS));
     NamedCommands.registerCommand("IntakeNote", new AutonIntake(intakeS));
     NamedCommands.registerCommand("ShootNote", new FireShooter(outakeS, intakeS, 2));
 
