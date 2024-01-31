@@ -14,6 +14,7 @@ public class AutonIntake extends Command {
 
     @Override
     public void initialize() {
+        intakeS.intakeReversed = false;
         isFinished = false;
     }
 

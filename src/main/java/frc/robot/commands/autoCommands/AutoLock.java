@@ -33,7 +33,7 @@ public class AutoLock extends Command{
 
     @Override 
     public void end(boolean interrupted){
-        speeds = new ChassisSpeeds();
+        speeds = new ChassisSpeeds(0,0,0);
         swerveS.setChassisSpeeds(speeds);
     }
 

@@ -13,7 +13,7 @@ import frc.robot.Constants;
 import frc.robot.Constants.IntakeConstants;
 
 public class IntakeS extends SubsystemBase {
-    boolean intakeReversed = false;
+    public boolean intakeReversed = false;
     public CANSparkMax primaryIntake = new CANSparkMax(Constants.IntakeConstants.primaryIntakeID, MotorType.kBrushless);
     public CANSparkMax deployIntake = new CANSparkMax(Constants.IntakeConstants.deployIntakeID, MotorType.kBrushless);
     public RelativeEncoder deployIntakeEncoder;

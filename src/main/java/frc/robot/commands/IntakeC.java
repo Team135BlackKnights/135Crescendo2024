@@ -16,7 +16,7 @@ public class IntakeC extends Command {
 
     @Override
     public void initialize() {
-
+        intakeS.intakeReversed = false;
     }
 
     @Override
