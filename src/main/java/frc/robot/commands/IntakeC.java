@@ -25,10 +25,10 @@ public class IntakeC extends Command {
         // Both driver and manip can control intake, driver takes prescendence when intaking, manip takes prescendence when outaking
 
         if (RobotContainer.manipController.getLeftTriggerAxis() > 0.1) {
-            intakeSpeed = RobotContainer.manipController.getLeftTriggerAxis()/2;
+            intakeSpeed = RobotContainer.manipController.getLeftTriggerAxis();
         }
         if (RobotContainer.manipController.getRightTriggerAxis() > 0.1) {
-            intakeSpeed = -1 * RobotContainer.manipController.getRightTriggerAxis()/2;
+            intakeSpeed = -1 * RobotContainer.manipController.getRightTriggerAxis();
         }
 
         if (RobotContainer.driveController.getLeftTriggerAxis() > 0.1) {
