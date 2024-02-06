@@ -46,6 +46,7 @@ public class RobotContainer {
     swerveS.setDefaultCommand(new SwerveC(swerveS));
     intakeS.setDefaultCommand(new IntakeC(intakeS));
     outakeS.setDefaultCommand(new OutakeC(outakeS));
+
     NamedCommands.registerCommand("DeployIntake", new MoveIntake(intakeS));
     NamedCommands.registerCommand("Lock Onto April Tags", new AutoLock(swerveS));
     NamedCommands.registerCommand("IntakeNote", new AutonIntake(intakeS));
@@ -59,7 +60,6 @@ public class RobotContainer {
 
   private void configureBindings() {
     aButton.onTrue(swerveS.toggleAutoLockCommand());
-    bButton.onTrue(intakeS.toggleIntakeDirectionCommand());
   }
 
   /**

@@ -91,7 +91,7 @@ public class SwerveModule {
     }
 
     public double getAbsoluteEncoderRad() {
-        double angle = absoluteEncoder.getVoltage() / RobotController.getVoltage5V();
+        double angle = absoluteEncoder.getVoltage() / RobotController.getVoltage3V3(); // use 5V when plugged into RIO 3.3V when using breakout board
         angle *= 2 * Math.PI;
         angle -= absoluteEncoderOffsetRad;
         angle += angle <= 0 ? 2*Math.PI : 0;

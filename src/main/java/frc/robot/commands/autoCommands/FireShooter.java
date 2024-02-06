@@ -26,7 +26,6 @@ public class FireShooter extends Command {
 
     @Override
     public void initialize() {
-        intakeS.intakeReversed = false;
         isFinished = false;
         timer.reset();
     }

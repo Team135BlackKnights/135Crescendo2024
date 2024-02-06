@@ -20,14 +20,16 @@ public class OutakeC extends Command {
 
     @Override
     public void execute() {
-        double outakeSpeed = Math.pow(RobotContainer.driveController.getRightTriggerAxis(),2);
+        double outakeSpeed = 0;
 
-        if (RobotContainer.driveController.getLeftBumper() == true) {
+        if (RobotContainer.manipController.getBButton() == true) {
             outakeSpeed = 1;
-        } else if (RobotContainer.driveController.getRightBumper() == true) {
+        } else if (RobotContainer.manipController.getAButton() == true) {
             outakeSpeed = 0.5;
-        } else if (RobotContainer.driveController.getYButton() == true) {
-            outakeSpeed = 0.25;
+        } else if (RobotContainer.manipController.getXButton() == true) {
+            outakeSpeed = 0.33;
+        } else if (RobotContainer.manipController.getYButton() == true) {
+            outakeSpeed = 0.2;
         }
 
         outakeS.setFiringSpeed(outakeSpeed);

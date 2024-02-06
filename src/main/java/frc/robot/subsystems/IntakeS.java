@@ -7,13 +7,11 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.IntakeConstants;
 
 public class IntakeS extends SubsystemBase {
-    public boolean intakeReversed = false;
     public CANSparkMax primaryIntake = new CANSparkMax(Constants.IntakeConstants.primaryIntakeID, MotorType.kBrushless);
     public CANSparkMax deployIntake = new CANSparkMax(Constants.IntakeConstants.deployIntakeID, MotorType.kBrushless);
     public RelativeEncoder deployIntakeEncoder;
@@ -28,11 +26,14 @@ public class IntakeS extends SubsystemBase {
 
         deployIntakeEncoder = deployIntake.getEncoder();
         deployIntakeEncoder.setPositionConversionFactor(Constants.IntakeConstants.deployIntakeGearRatio);
+
+        primaryIntake.burnFlash();
+        deployIntake.burnFlash();
     }
 
     @Override
     public void periodic() {
-        SmartDashboard.putBoolean("Intake Direction", intakeReversed);
+        SmartDashboard.putNumber("Deploy Intake", deployIntakeEncoder.getPosition());
     }
 
     public static boolean noteIsLoaded() {
@@ -40,36 +41,26 @@ public class IntakeS extends SubsystemBase {
     }
 
     public void setPrimaryIntake(double power) {
-        power = power <= 0.1 ? 0.1 : power;
-        power = power * (intakeReversed ? -1 : 1);
+        //power = power <= 0.1 ? 0.1 : power;
         primaryIntake.set(power);
     }
 
     public void deployIntake(double power) {
-    
         if (power < 0) {
             if (deployIntakeEncoder.getPosition() < 0) {
                 power = 0;
-            } else if (deployIntakeEncoder.getPosition() < 3) {
+            } else if (deployIntakeEncoder.getPosition() < 6.5) {
                 power = power * 0.5;
             }
         }
         if (power > 0) {
-            if (deployIntakeEncoder.getPosition() > 10) {
+            if (deployIntakeEncoder.getPosition() > 17.5) {
                 power = 0;
-            } else if (deployIntakeEncoder.getPosition() > 7) {
+            } else if (deployIntakeEncoder.getPosition() > 10) {
                 power = power * 0.5;
             }
         }
 
         deployIntake.set(power);
-    }
-
-    public void toggleIntakeDirection() {
-        intakeReversed = !intakeReversed;
-    }
-
-    public InstantCommand toggleIntakeDirectionCommand() {
-        return new InstantCommand(this::toggleIntakeDirection, this);
     }
 }

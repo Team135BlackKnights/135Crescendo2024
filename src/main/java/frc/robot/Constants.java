@@ -45,11 +45,11 @@ public final class Constants {
       bottomFlywheel = 31;
 
     public static double
-      flywheelGearRatio = 0.5;
+      flywheelGearRatio = 1.5;
 
     public static boolean
-      topFlywheelReversed = false,
-      bottomFlywheelReversed = false;
+      topFlywheelReversed = true,
+      bottomFlywheelReversed = true;
   }
 
   public static class SwerveConstants {
@@ -82,10 +82,10 @@ public final class Constants {
       
       // To find these set them to zero, then turn the robot on and manually set the wheels straight.
       // The encoder values being read are then your new Offset values
-      kFrontLeftAbsEncoderOffsetRad = 1.092054,
-      kFrontRightAbsEncoderOffsetRad = 2*Math.PI - 0.351707,
-      kBackLeftAbsEncoderOffsetRad = 2.050827,
-      kBackRightAbsEncoderOffsetRad = 1.706821; 
+      kFrontLeftAbsEncoderOffsetRad = 2*Math.PI - 1.993532,
+      kFrontRightAbsEncoderOffsetRad = 1.647362,
+      kBackLeftAbsEncoderOffsetRad = 2*Math.PI - 0.978094,
+      kBackRightAbsEncoderOffsetRad = 2*Math.PI - 1.332261; 
     
     // Declare the position of each module
     public static final SwerveDriveKinematics kDriveKinematics = new SwerveDriveKinematics(

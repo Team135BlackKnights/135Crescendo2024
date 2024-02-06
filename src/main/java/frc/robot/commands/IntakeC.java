@@ -16,23 +16,35 @@ public class IntakeC extends Command {
 
     @Override
     public void initialize() {
-        intakeS.intakeReversed = false;
     }
 
     @Override
     public void execute() {
-        double intakeSpeed = RobotContainer.driveController.getLeftTriggerAxis();
-        double deployIntakeSpeed = 0;
+        double intakeSpeed = 0;
 
-        if (RobotContainer.driveController.getXButton() == true) {
-            intakeSpeed = 0.5;
+        // Both driver and manip can control intake, driver takes prescendence when intaking, manip takes prescendence when outaking
+
+        if (RobotContainer.manipController.getLeftTriggerAxis() > 0.1) {
+            intakeSpeed = RobotContainer.manipController.getLeftTriggerAxis()/2;
+        }
+        if (RobotContainer.manipController.getRightTriggerAxis() > 0.1) {
+            intakeSpeed = -1 * RobotContainer.manipController.getRightTriggerAxis()/2;
         }
 
-        if (RobotContainer.manipController.getAButtonPressed() == true) {
-            deployIntakeSpeed = 0.5;
-        } else if (RobotContainer.manipController.getBButtonPressed() == true) {
-            deployIntakeSpeed = -0.5;
+        if (RobotContainer.driveController.getLeftTriggerAxis() > 0.1) {
+            intakeSpeed = RobotContainer.driveController.getLeftTriggerAxis();
         }
+        if (RobotContainer.driveController.getRightTriggerAxis() > 0.1) {
+            intakeSpeed = -1 * RobotContainer.driveController.getRightTriggerAxis();
+        }
+
+        intakeSpeed = Math.pow(intakeSpeed, 2) * (intakeSpeed < 0 ? -1 : 1);
+
+        if (RobotContainer.manipController.getLeftBumper() == true) {
+            intakeSpeed = -0.5;
+        }
+
+        double deployIntakeSpeed = RobotContainer.manipController.getRightX();
 
         intakeS.setPrimaryIntake(intakeSpeed * 1);
         intakeS.deployIntake(deployIntakeSpeed * 1);
