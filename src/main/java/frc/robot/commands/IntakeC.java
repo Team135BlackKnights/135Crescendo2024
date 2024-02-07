@@ -44,7 +44,7 @@ public class IntakeC extends Command {
             intakeSpeed = -0.5;
         }
 
-        double deployIntakeSpeed = RobotContainer.manipController.getRightX();
+        double deployIntakeSpeed = RobotContainer.manipController.getRightY();
 
         intakeS.setPrimaryIntake(intakeSpeed * 1);
         intakeS.deployIntake(deployIntakeSpeed * 1);

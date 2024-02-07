@@ -3,6 +3,7 @@ package frc.robot.commands.autoCommands;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.IntakeS;
 import frc.robot.subsystems.OutakeS;
@@ -11,9 +12,9 @@ public class FireShooter extends Command {
     private final OutakeS outakeS;
     private final IntakeS intakeS;
     private final double desSpeed;
-    private final double time = 1;
+    private final double time = 2;
     private boolean isFinished = false;
-    private final PIDController shooterPID = new PIDController(0, 0, 0);
+    private final PIDController shooterPID = new PIDController(0.0005, 0.0002, 0);
     private final Timer timer = new Timer();
 
     public FireShooter(OutakeS outakeS, IntakeS intakeS, double desSpeed) {
@@ -32,13 +33,15 @@ public class FireShooter extends Command {
 
     @Override
     public void execute() {
-        if (timer.get() >= time) {
-            isFinished = true;
-        }
+        //if (timer.get() >= time) {
+        //    isFinished = true;
+        //}
         double output = shooterPID.calculate(outakeS.getAverageFlywheelSpeed(), desSpeed);
-        if (Math.abs(shooterPID.getVelocityError()) <= 0.5) {
+        SmartDashboard.putNumber("Auto Shooter Output", output);
+        SmartDashboard.putNumber("Auto Velocity Error", shooterPID.getPositionError());
+        if (Math.abs(shooterPID.getPositionError()) <= 100) {
             timer.start();
-            intakeS.setPrimaryIntake(1);
+            intakeS.setPrimaryIntake(-1);
         }
         outakeS.setFiringSpeed(output);
     }

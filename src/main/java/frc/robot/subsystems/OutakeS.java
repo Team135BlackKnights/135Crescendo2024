@@ -34,6 +34,7 @@ public class OutakeS extends SubsystemBase {
     public void periodic() {
         SmartDashboard.putNumber("Top Flywheel Speed", topFlywheelEncoder.getVelocity());
         SmartDashboard.putNumber("Bottom Flywheel Speed", bottomFlywheelEncoder.getVelocity());
+        SmartDashboard.putNumber("Average Flywheel Speed", getAverageFlywheelSpeed());
     }
 
     public void setFiringSpeed(double power) {

@@ -47,10 +47,10 @@ public class RobotContainer {
     intakeS.setDefaultCommand(new IntakeC(intakeS));
     outakeS.setDefaultCommand(new OutakeC(outakeS));
 
-    NamedCommands.registerCommand("DeployIntake", new MoveIntake(intakeS));
+    NamedCommands.registerCommand("DeployIntake", new MoveIntake(intakeS, 3));
     NamedCommands.registerCommand("Lock Onto April Tags", new AutoLock(swerveS));
     NamedCommands.registerCommand("IntakeNote", new AutonIntake(intakeS));
-    NamedCommands.registerCommand("ShootNote", new FireShooter(outakeS, intakeS, 2));
+    NamedCommands.registerCommand("ShootNote", new FireShooter(outakeS, intakeS, 4000));
 
     autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auto Chooser",autoChooser);

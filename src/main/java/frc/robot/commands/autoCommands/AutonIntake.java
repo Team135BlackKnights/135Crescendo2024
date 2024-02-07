@@ -22,7 +22,7 @@ public class AutonIntake extends Command {
         if (IntakeS.noteIsLoaded()) {
             isFinished = true;
         }
-        intakeS.setPrimaryIntake(0.5);
+        intakeS.setPrimaryIntake(1);
     }
 
     @Override

@@ -46,20 +46,22 @@ public class IntakeS extends SubsystemBase {
     }
 
     public void deployIntake(double power) {
-        if (power < 0) {
+        if (power < 5) {
             if (deployIntakeEncoder.getPosition() < 0) {
                 power = 0;
-            } else if (deployIntakeEncoder.getPosition() < 6.5) {
+            } else if (deployIntakeEncoder.getPosition() < 44.1) {
                 power = power * 0.5;
             }
         }
         if (power > 0) {
-            if (deployIntakeEncoder.getPosition() > 17.5) {
+            if (deployIntakeEncoder.getPosition() > 113) {
                 power = 0;
-            } else if (deployIntakeEncoder.getPosition() > 10) {
+            } else if (deployIntakeEncoder.getPosition() > 79) {
                 power = power * 0.5;
             }
         }
+
+        SmartDashboard.putNumber("Deploy Intake Percentage", power);
 
         deployIntake.set(power);
     }
