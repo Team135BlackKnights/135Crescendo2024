@@ -46,7 +46,7 @@ public class IntakeS extends SubsystemBase {
     }
 
     public void deployIntake(double power) {
-        if (power < 5) {
+        if (power < 0) {
             if (deployIntakeEncoder.getPosition() < 0) {
                 power = 0;
             } else if (deployIntakeEncoder.getPosition() < 44.1) {
