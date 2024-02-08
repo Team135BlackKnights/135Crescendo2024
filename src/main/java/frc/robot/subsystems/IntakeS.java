@@ -14,7 +14,7 @@ import frc.robot.Constants.IntakeConstants;
 public class IntakeS extends SubsystemBase {
     public CANSparkMax primaryIntake = new CANSparkMax(Constants.IntakeConstants.primaryIntakeID, MotorType.kBrushless);
     public CANSparkMax deployIntake = new CANSparkMax(Constants.IntakeConstants.deployIntakeID, MotorType.kBrushless);
-    public RelativeEncoder deployIntakeEncoder;
+    public RelativeEncoder deployIntakeEncoder, primaryIntakeEncoder;
 
     public static final DigitalInput intakeLimitSwitch = new DigitalInput(IntakeConstants.intakeLimitSwitchID); //the intake limit switch
 
@@ -23,6 +23,10 @@ public class IntakeS extends SubsystemBase {
         deployIntake.setInverted(Constants.IntakeConstants.deployIntakeReversed);
 
         primaryIntake.setIdleMode(IdleMode.kBrake);
+
+        primaryIntakeEncoder = primaryIntake.getEncoder();
+        primaryIntakeEncoder.setPositionConversionFactor(Constants.IntakeConstants.primaryIntakeGearRatio);
+        primaryIntakeEncoder.setVelocityConversionFactor(Constants.IntakeConstants.primaryIntakeGearRatio);
 
         deployIntakeEncoder = deployIntake.getEncoder();
         deployIntakeEncoder.setPositionConversionFactor(Constants.IntakeConstants.deployIntakeGearRatio);
@@ -34,10 +38,11 @@ public class IntakeS extends SubsystemBase {
     @Override
     public void periodic() {
         SmartDashboard.putNumber("Deploy Intake", deployIntakeEncoder.getPosition());
+        SmartDashboard.putBoolean("Note Loaded?", noteIsLoaded());
     }
 
     public static boolean noteIsLoaded() {
-        return intakeLimitSwitch.get();
+        return !intakeLimitSwitch.get();
     }
 
     public void setPrimaryIntake(double power) {

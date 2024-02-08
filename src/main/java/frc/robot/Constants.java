@@ -28,9 +28,10 @@ public final class Constants {
     public static int
       primaryIntakeID = 20,
       deployIntakeID = 21,
-      intakeLimitSwitchID = 6; //arbitrarily set, set it to proper value when it's wired up
+      intakeLimitSwitchID = 1;
 
     public static double
+      primaryIntakeGearRatio = 1/4.5,
       deployIntakeGearRatio = 0;
 
     public static boolean

@@ -28,6 +28,9 @@ public class OutakeS extends SubsystemBase {
 
         topFlywheelEncoder.setVelocityConversionFactor(Constants.OutakeConstants.flywheelGearRatio);
         bottomFlywheelEncoder.setVelocityConversionFactor(Constants.OutakeConstants.flywheelGearRatio);
+
+        topFlywheel.burnFlash();
+        bottomFlywheel.burnFlash();
     }
 
     @Override

@@ -14,7 +14,7 @@ public class FireShooter extends Command {
     private final double desSpeed;
     private final double time = 2;
     private boolean isFinished = false;
-    private final PIDController shooterPID = new PIDController(0.0005, 0.0002, 0);
+    private final PIDController shooterPID = new PIDController(0.0004, 0.00011, 0);
     private final Timer timer = new Timer();
 
     public FireShooter(OutakeS outakeS, IntakeS intakeS, double desSpeed) {
@@ -33,17 +33,20 @@ public class FireShooter extends Command {
 
     @Override
     public void execute() {
-        //if (timer.get() >= time) {
-        //    isFinished = true;
-        //}
+        if (timer.get() >= time) {
+            isFinished = true;
+        }
         double output = shooterPID.calculate(outakeS.getAverageFlywheelSpeed(), desSpeed);
         SmartDashboard.putNumber("Auto Shooter Output", output);
         SmartDashboard.putNumber("Auto Velocity Error", shooterPID.getPositionError());
         if (Math.abs(shooterPID.getPositionError()) <= 100) {
             timer.start();
-            intakeS.setPrimaryIntake(-1);
+            intakeS.setPrimaryIntake(-0.5);
         }
         outakeS.setFiringSpeed(output);
+        if (timer.get() > 0) {
+            intakeS.setPrimaryIntake(-0.5);
+        }
     }
 
     @Override
