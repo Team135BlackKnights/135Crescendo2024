@@ -28,7 +28,7 @@ public final class Constants {
     public static int
       primaryIntakeID = 20,
       deployIntakeID = 21,
-      intakeLimitSwitchID = 1;
+      intakeLimitSwitchID = 9;
 
     public static double
       primaryIntakeGearRatio = 1/4.5,

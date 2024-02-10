@@ -9,7 +9,7 @@ public class AutoLock extends Command{
     boolean isFinished = false;
     double limelightDeadBand = .01;
     double limelightTx = 0;
-    PIDController pidController = new PIDController(5, 0, 0);
+    PIDController pidController = new PIDController(0.004, 0, 0);
     ChassisSpeeds speeds;
     public AutoLock(SwerveS swerveS){
         this.swerveS = swerveS;
