@@ -22,7 +22,7 @@ public class FireShooter extends Command {
         this.intakeS = intakeS;
         this.desSpeed = desSpeed;
 
-        addRequirements(outakeS);
+        addRequirements(outakeS, intakeS);
     }
 
     @Override

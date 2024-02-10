@@ -2,8 +2,8 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.38,
-      "y": 7.0
+      "x": 1.27,
+      "y": 5.54
     },
     "rotation": -90.0
   },
@@ -12,9 +12,9 @@
     "data": {
       "commands": [
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "Top Drive to Initial Scoring Position"
+            "name": "DeployIntake"
           }
         },
         {
@@ -36,7 +36,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Top Drive to First Ground Note"
+                  "pathName": "Middle Drive to First Ground Note"
                 }
               },
               {
@@ -51,44 +51,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Top Drive to Initial Scoring Position"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Lock Onto April Tags"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "ShootNote"
-          }
-        },
-        {
-          "type": "race",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "Top Drive to Center Ground Note (Lower)"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "IntakeNote"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Top Drive into Team Wing (Lower)"
+            "pathName": "Middle Drive to Scoring Position"
           }
         },
         {
@@ -106,6 +69,6 @@
       ]
     }
   },
-  "folder": "Top Autos",
+  "folder": "Middle Autos",
   "choreoAuto": false
 }
