@@ -20,6 +20,12 @@
         {
           "type": "named",
           "data": {
+            "name": "Lock Onto April Tags"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
             "name": "ShootNote"
           }
         },
@@ -40,6 +46,18 @@
                 }
               }
             ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Top Drive to Initial Scoring Position"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Lock Onto April Tags"
           }
         },
         {
@@ -70,7 +88,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Drive into Team Wing (Upper)"
+            "pathName": "Top Drive into Team Wing (Upper)"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Lock Onto April Tags"
           }
         },
         {
@@ -82,6 +106,6 @@
       ]
     }
   },
-  "folder": null,
+  "folder": "Top Autos",
   "choreoAuto": false
 }

@@ -2,8 +2,10 @@ package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkAbsoluteEncoder;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.revrobotics.SparkAbsoluteEncoder.Type;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -15,6 +17,7 @@ public class IntakeS extends SubsystemBase {
     public CANSparkMax primaryIntake = new CANSparkMax(Constants.IntakeConstants.primaryIntakeID, MotorType.kBrushless);
     public CANSparkMax deployIntake = new CANSparkMax(Constants.IntakeConstants.deployIntakeID, MotorType.kBrushless);
     public RelativeEncoder deployIntakeEncoder, primaryIntakeEncoder;
+    public SparkAbsoluteEncoder absDeployIntakeEncoder;
 
     public static final DigitalInput intakeLimitSwitch = new DigitalInput(IntakeConstants.intakeLimitSwitchID); //the intake limit switch
 
@@ -30,6 +33,8 @@ public class IntakeS extends SubsystemBase {
 
         deployIntakeEncoder = deployIntake.getEncoder();
         deployIntakeEncoder.setPositionConversionFactor(Constants.IntakeConstants.deployIntakeGearRatio);
+
+        absDeployIntakeEncoder = deployIntake.getAbsoluteEncoder(Type.kDutyCycle);
 
         primaryIntake.burnFlash();
         deployIntake.burnFlash();
