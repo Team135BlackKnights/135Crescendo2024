@@ -46,6 +46,7 @@ public final class Constants {
       bottomFlywheel = 31;
 
     public static double
+      flywheelMaxRPM = 6600,
       flywheelGearRatio = 1.5;
 
     public static boolean
