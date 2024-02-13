@@ -30,19 +30,23 @@ public class FireShooter extends Command {
 
     @Override
     public void initialize() {
+        //resets timer
         isFinished = false;
         timer.reset();
     }
 
     @Override
     public void execute() {
+        //if the timer hasnt reached the time, essentially uses a pid loop with a feedforward constant (desired velocity/max velocity) to set the motor speed as a percentage
         if (timer.get() >= time) {
             isFinished = true;
         }
         double output = feedforward + shooterPID.calculate(outakeS.getAverageFlywheelSpeed(), desSpeed);
+        //output velocity and error to smartDashboard
         SmartDashboard.putNumber("Auto Shooter Output", output);
         SmartDashboard.putNumber("Auto Velocity Error", shooterPID.getPositionError());
         if (Math.abs(shooterPID.getPositionError()) <= 100) {
+            //starts timer when within a certain position error, feeds to shoot
             timer.start();
             intakeS.setPrimaryIntake(-0.5);
         }

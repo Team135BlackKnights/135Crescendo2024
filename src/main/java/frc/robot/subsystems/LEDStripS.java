@@ -10,14 +10,18 @@ public class LEDStripS extends SubsystemBase{
     AddressableLED leds;
 
     public LEDStripS(){
+        //creates LED objects
         leds = new AddressableLED(LEDConstants.ledPort);
         ledBuffer = new AddressableLEDBuffer(LEDConstants.ledBufferLength);
+        //sets length of the LED strip to buffer length
         leds.setLength(ledBuffer.getLength());
+        //starts LED strips
         leds.start(); //FOR THE LOVE OF GOD PLEASE REMEMBER THIS IF YOU'RE GONNA CODE YOUR OWN SUBSYSTEM I SPENT LIKE 6 HOURS TROUBLESHOOTING AND IT DIDNT WORK BECAUSE OF THIS
     }
 
     @Override
     public void periodic() {
+        //checks if a note is loaded, sets color to constant orange if it is. If it isn't, sets it to pulse alliance colors
         if (IntakeS.noteIsLoaded()) {
             setConstantColors(LEDConstants.noteH, LEDConstants.noteS, LEDConstants.noteV);
         } else {
@@ -54,6 +58,7 @@ public class LEDStripS extends SubsystemBase{
         if (InitialLoopValue >= 2*Math.PI){
             InitialLoopValue = 0;
         }
+        //sets data to buffer
         leds.setData(ledBuffer);
     }
 

@@ -4,7 +4,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.IntakeS;
 
 public class MoveIntake extends Command {
-    
+    //variable declaration, new timer made, requirements added
     boolean isFinished = false;
     IntakeS intakeS;
     double time;
@@ -16,6 +16,7 @@ public class MoveIntake extends Command {
     }
 
     public void initialize(){
+        //resets and starts the timer upon command being called
         isFinished = false;
         timer.reset();
         timer.start();
@@ -23,6 +24,7 @@ public class MoveIntake extends Command {
 
     @Override
     public void execute(){
+        //intake deployed at full power for a certain amount of time
         intakeS.deployIntake(1);
         if (timer.get() > time) {
             isFinished = true;

@@ -137,6 +137,7 @@ public class SwerveS extends SubsystemBase {
     
     @Override
     public void periodic() {
+        //puts values to smartDashboard
         SmartDashboard.putNumber("Robot Heading", getRotation2d().getDegrees());
         SmartDashboard.putNumber("FrontLeft Abs Encoder", frontLeft.getAbsoluteEncoderRad());
         SmartDashboard.putNumber("FrontRight Abs Encoder", frontRight.getAbsoluteEncoderRad());
