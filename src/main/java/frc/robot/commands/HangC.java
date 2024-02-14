@@ -20,12 +20,15 @@ public class HangC extends Command {
 
     @Override
     public void execute(){
-        hangS.leftHang.set(RobotContainer.manipController.getLeftY()); //sets the motors to get the controller values
-        hangS.rightHang.set(RobotContainer.manipController.getLeftY()); 
+        double output = RobotContainer.manipController.getLeftY();
+        output = Math.abs(output) >= 0.2 ? output : 0;
+
+        hangS.leftHang.set(output); //sets the motors to get the controller values
+        hangS.rightHang.set(output); 
     }
 
     @Override
-    public void end(boolean x){
+    public void end(boolean interrupted){
 
     }
     @Override

@@ -152,7 +152,11 @@ public final class Constants {
   }
   public static class HangConstants{
     public static int
-    leftHangID = 40,
-    rightHangID = 41;
+      leftHangID = 40,
+      rightHangID = 41;
+
+    public static boolean
+      leftHangReversed = false,
+      rightHangReversed = false;
   }
 }

@@ -16,6 +16,10 @@ public class HangS extends SubsystemBase {
     public HangS(){
         leftHang.setIdleMode(IdleMode.kBrake);
         rightHang.setIdleMode(IdleMode.kBrake);
+
+        leftHang.setInverted(HangConstants.leftHangReversed);
+        rightHang.setInverted(HangConstants.rightHangReversed);
+
         leftHang.burnFlash();
         rightHang.burnFlash();
     }
