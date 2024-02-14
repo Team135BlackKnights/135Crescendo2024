@@ -5,9 +5,11 @@ import frc.robot.RobotContainer;
 import frc.robot.subsystems.OutakeS;
 
 public class OutakeC extends Command {
+   
     private final OutakeS outakeS;
 
     public OutakeC(OutakeS outakeS) {
+    
         this.outakeS = outakeS;
 
         addRequirements(outakeS);
@@ -20,6 +22,7 @@ public class OutakeC extends Command {
 
     @Override
     public void execute() {
+      
         double outakeSpeed = 0;
 
         if (RobotContainer.manipController.getBButton() == true) {
@@ -42,6 +45,7 @@ public class OutakeC extends Command {
 
     @Override
     public boolean isFinished() {
+     
         return false;
     }
 }

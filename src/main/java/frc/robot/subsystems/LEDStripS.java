@@ -10,6 +10,7 @@ public class LEDStripS extends SubsystemBase{
     AddressableLED leds;
 
     public LEDStripS(){
+       
         //creates LED objects
         leds = new AddressableLED(LEDConstants.ledPort);
         ledBuffer = new AddressableLEDBuffer(LEDConstants.ledBufferLength);
@@ -21,6 +22,7 @@ public class LEDStripS extends SubsystemBase{
 
     @Override
     public void periodic() {
+       
         //checks if a note is loaded, sets color to constant orange if it is. If it isn't, sets it to pulse alliance colors
         if (IntakeS.noteIsLoaded()) {
             setConstantColors(LEDConstants.noteH, LEDConstants.noteS, LEDConstants.noteV);
@@ -33,7 +35,9 @@ public class LEDStripS extends SubsystemBase{
         }
     }
 
-    public void setConstantColors(int h, int s, int v){//Essentially designed to make all the LEDs a constant color 
+    public void setConstantColors(int h, int s, int v){
+
+        //Essentially designed to make all the LEDs a constant color 
         for (var i = 0; i < ledBuffer.getLength(); i++) {
             // Sets the specified LED to the RGB values for red
             ledBuffer.setHSV(i, h, s, v);
@@ -54,10 +58,12 @@ public class LEDStripS extends SubsystemBase{
 
         // Increase the value computed in the sine function by pi/(the changable period) to make the gradient "move"
         InitialLoopValue += Math.PI/LEDConstants.sinePeriod; //offset by one "notch" each time
+        
         // Check bounds
         if (InitialLoopValue >= 2*Math.PI){
             InitialLoopValue = 0;
         }
+        
         //sets data to buffer
         leds.setData(ledBuffer);
     }

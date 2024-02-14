@@ -20,6 +20,7 @@ public class HangC extends Command {
 
     @Override
     public void execute(){
+       
         double output = RobotContainer.manipController.getLeftY();
         output = Math.abs(output) >= 0.2 ? output : 0;
 
@@ -28,6 +29,7 @@ public class HangC extends Command {
     }
 
     @Override
+   
     public void end(boolean interrupted){
 
     }
