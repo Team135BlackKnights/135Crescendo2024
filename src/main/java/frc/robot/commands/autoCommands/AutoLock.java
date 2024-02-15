@@ -3,6 +3,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.SwerveS;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.controller.PIDController;
+import frc.robot.Constants;
 
 public class AutoLock extends Command{
     SwerveS swerveS;
@@ -23,11 +24,12 @@ public class AutoLock extends Command{
 
     @Override
     public void execute(){
+        //takes x value of limelight as the distance nthat needs to be rotated, runs a chassisSpeedscommand to rotate until within an acceptable deadband
         limelightTx = swerveS.getXError();
         if (Math.abs(limelightTx)<limelightDeadBand){
             isFinished = true;
         }
-        speeds = new ChassisSpeeds(0,0,pidController.calculate(limelightTx,0));
+        speeds = new ChassisSpeeds(0,0,pidController.calculate(limelightTx,0)*Constants.DriveConstants.kMaxTurningSpeedRadPerSec);
         swerveS.setChassisSpeeds(speeds);
     }
 
