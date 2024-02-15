@@ -4,6 +4,7 @@ import frc.robot.subsystems.SwerveS;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.math.controller.PIDController;
+import frc.robot.Constants;
 
 public class AutoLock extends Command{
     SwerveS swerveS;
@@ -30,7 +31,7 @@ public class AutoLock extends Command{
         if (Math.abs(limelightTx)<limelightDeadBand){
             isFinished = true;
         }
-        speeds = new ChassisSpeeds(0,0,pidController.calculate(limelightTx,0)*-1);
+        speeds = new ChassisSpeeds(0,0,pidController.calculate(limelightTx,0)*Constants.DriveConstants.kMaxTurningSpeedRadPerSec;);
         swerveS.setChassisSpeeds(speeds);
     }
 
