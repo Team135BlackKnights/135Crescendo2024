@@ -14,6 +14,8 @@ public class AutoLock extends Command{
     PIDController pidController = new PIDController(0.004, 0, 0);
     ChassisSpeeds speeds;
     public AutoLock(SwerveS swerveS){
+
+        //adds requirements
         this.swerveS = swerveS;
         addRequirements(swerveS);
     }
@@ -25,18 +27,22 @@ public class AutoLock extends Command{
 
     @Override
     public void execute(){
+
+        //constantly pulls the x value of the limelight, essentially outputs a chassis speed where the only value is a rotational PID loop that ends when deadband is met and sets ChassisSpeeds 
         limelightTx = swerveS.getXError();
         SmartDashboard.putNumber("Auto X Error", limelightTx);
         SmartDashboard.putBoolean("Auto Lock Done", Math.abs(limelightTx)<limelightDeadBand);
         if (Math.abs(limelightTx)<limelightDeadBand){
             isFinished = true;
         }
-        speeds = new ChassisSpeeds(0,0,pidController.calculate(limelightTx,0)*Constants.DriveConstants.kMaxTurningSpeedRadPerSec);
+        speeds = new ChassisSpeeds(0,0,pidController.calculate(limelightTx,0)*-Constants.DriveConstants.kMaxTurningSpeedRadPerSec);
         swerveS.setChassisSpeeds(speeds);
     }
 
     @Override 
     public void end(boolean interrupted){
+
+        //when its done, set the chassisSpeeds to 0 and output it to swerve chassis (stop drivetrain from moving)
         speeds = new ChassisSpeeds(0,0,0);
         swerveS.setChassisSpeeds(speeds);
     }
