@@ -2,10 +2,9 @@ package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.SparkAbsoluteEncoder;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
-import com.revrobotics.SparkAbsoluteEncoder.Type;
+import com.revrobotics.SparkMaxAlternateEncoder.Type;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -19,7 +18,7 @@ public class IntakeS extends SubsystemBase {
     public CANSparkMax primaryIntake = new CANSparkMax(Constants.IntakeConstants.primaryIntakeID, MotorType.kBrushless);
     public CANSparkMax deployIntake = new CANSparkMax(Constants.IntakeConstants.deployIntakeID, MotorType.kBrushless);
     public RelativeEncoder deployIntakeEncoder, primaryIntakeEncoder;
-    public SparkAbsoluteEncoder absDeployIntakeEncoder;
+    public RelativeEncoder altDeployIntakeEncoder;
 
     public static final DigitalInput intakeLimitSwitch = new DigitalInput(IntakeConstants.intakeLimitSwitchID); //the intake limit switch
 
@@ -38,7 +37,7 @@ public class IntakeS extends SubsystemBase {
         deployIntakeEncoder = deployIntake.getEncoder();
         deployIntakeEncoder.setPositionConversionFactor(Constants.IntakeConstants.deployIntakeGearRatio);
 
-        absDeployIntakeEncoder = deployIntake.getAbsoluteEncoder(Type.kDutyCycle);
+        altDeployIntakeEncoder = deployIntake.getAlternateEncoder(Type.kQuadrature, 4096);
         //sets changes to motor (resource intensive, ONLY CALL ON INITIALIZATION)
         primaryIntake.burnFlash();
         deployIntake.burnFlash();
@@ -49,6 +48,7 @@ public class IntakeS extends SubsystemBase {
         
         //sets values to SmartDashboard periodically
         SmartDashboard.putNumber("Deploy Intake", deployIntakeEncoder.getPosition());
+        SmartDashboard.putNumber("Deploy Intake Abs Encoder", getDeployIntakePosition());
         SmartDashboard.putBoolean("Note Loaded?", noteIsLoaded());
     }
 
@@ -56,6 +56,11 @@ public class IntakeS extends SubsystemBase {
       
         //checks limit switch to see if note is loaded
         return !intakeLimitSwitch.get();
+    }
+
+    public double getDeployIntakePosition() {
+        double position = altDeployIntakeEncoder.getPosition();
+        return position;
     }
 
     public void setPrimaryIntake(double power) {

@@ -117,6 +117,10 @@ public class SwerveS extends SubsystemBase {
     public double getHeading() {
         return -1*Math.IEEEremainder(gyro.getAngle(),360); //modulus
     }
+
+    public double getTilt() {
+        return Math.IEEEremainder(gyro.getRoll(),360); //either getRoll() or getPitch()
+    }
     
     public Rotation2d getRotation2d() {
         return Rotation2d.fromDegrees(getHeading());
