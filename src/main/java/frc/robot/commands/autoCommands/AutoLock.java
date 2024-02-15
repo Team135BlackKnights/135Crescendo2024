@@ -31,7 +31,7 @@ public class AutoLock extends Command{
         if (Math.abs(limelightTx)<limelightDeadBand){
             isFinished = true;
         }
-        speeds = new ChassisSpeeds(0,0,pidController.calculate(limelightTx,0)*Constants.DriveConstants.kMaxTurningSpeedRadPerSec;);
+        speeds = new ChassisSpeeds(0,0,pidController.calculate(limelightTx,0)*Constants.DriveConstants.kMaxTurningSpeedRadPerSec);
         swerveS.setChassisSpeeds(speeds);
     }
 
