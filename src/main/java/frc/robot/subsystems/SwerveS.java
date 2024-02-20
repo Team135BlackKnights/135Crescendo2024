@@ -8,11 +8,13 @@ import com.pathplanner.lib.util.ReplanningConfig;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -22,6 +24,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.Constants.LimelightConstants;
 
 public class SwerveS extends SubsystemBase {
     private final SwerveModule frontLeft = new SwerveModule(
@@ -66,9 +69,7 @@ public class SwerveS extends SubsystemBase {
 
     public NetworkTable limelight = NetworkTableInstance.getDefault().getTable("limelight-swerve");
     NetworkTableEntry tx = limelight.getEntry("tx");
-    NetworkTableEntry tv = limelight.getEntry("tv");
     double xError = tx.getDouble(0.0);
-    double aprilTagVisible = tv.getDouble(0.0);
 
     Pose2d robotPosition = new Pose2d(0,0, getRotation2d());
 
@@ -77,6 +78,7 @@ public class SwerveS extends SubsystemBase {
     SwerveDriveOdometry odometry = new SwerveDriveOdometry(Constants.DriveConstants.kDriveKinematics, getRotation2d(), new SwerveModulePosition[]{frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()},robotPosition);
     SwerveModulePosition[] m_modulePositions = new SwerveModulePosition[]{frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()};
 
+    public boolean lockedOntoAprilTag;
     public boolean autoLock = false;
     public static boolean redIsAlliance = true; //used to determine the alliance for LED systems
     public SwerveS() {
@@ -166,8 +168,7 @@ public class SwerveS extends SubsystemBase {
         // SmartDashboard.putNumber("Robot Heading (getPose)", getPose().getRotation().getDegrees());
 
         xError = tx.getDouble(0.0);
-        aprilTagVisible = tv.getDouble(0.0);
-
+        lockedOntoAprilTag = (limelight.getEntry("tv").getDouble(0.0)==1);
         m_modulePositions[0] = frontLeft.getPosition();
         m_modulePositions[1] = frontRight.getPosition();
         m_modulePositions[2] = backLeft.getPosition();
@@ -183,10 +184,43 @@ public class SwerveS extends SubsystemBase {
         return xError;
     }
 
-    public boolean aprilTagVisible() {
-        return aprilTagVisible == 1;
-    }
     
+
+
+
+
+
+
+    public double getDistanceFromSpeakerInMeters(){
+
+        double distance = 0; //resets value so it doesn't output last value
+
+        /* if apriltag is detected, uses formula given here https://docs.limelightvision.io/docs/docs-limelight/tutorials/tutorial-estimating-distance
+        formula is d =(h2-h1)/tan(h2+h1)*/
+
+        if (lockedOntoAprilTag){
+        
+            // computing the angle
+            double theta = Units.degreesToRadians(LimelightConstants.limeLightAngleOffsetDegrees+limelight.getEntry("ty").getDouble(0.0));
+        
+            //computes distance
+            distance = Units.inchesToMeters(LimelightConstants.targetHeightoffFloorInches-LimelightConstants.limelightLensHeightoffFloorInches)/Math.tan(theta);}
+
+        else{
+            
+            //if robot does not have a lock onto april tag try to approximate distance from speaker with robot odometry
+            
+            //pulls robot pose and converts it to a translation
+            Pose2d pose = getPose();
+            Translation2d translation = new Translation2d(pose.getX(),pose.getY());
+            //compares it with the translation2d of the speaker (determined through pathPlanner)
+             distance = translation.getDistance(new Translation2d(0,5.55));
+        }
+
+
+        
+        return distance;
+    }
     public Pose2d getPose() {
         return robotPosition;
     }

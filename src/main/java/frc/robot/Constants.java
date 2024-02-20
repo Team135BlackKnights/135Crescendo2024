@@ -153,7 +153,7 @@ public final class Constants {
   public static class HangConstants{
     public static double
       hangLowerSoftStop = 5,
-      hangUpperSoftStop = 86; //Note: for some reason left and right encoders output different values, MAYBE change them to have left and right max?
+      hangUpperSoftStop = 101; //Note: for some reason left and right encoders output different values, MAYBE change them to have left and right max?
 
     public static int
       leftHangID = 41,
@@ -162,5 +162,10 @@ public final class Constants {
     public static boolean
       leftHangReversed = true,
       rightHangReversed = false;
+  }
+  public static class LimelightConstants{
+    public static double limeLightAngleOffsetDegrees = 70,
+    limelightLensHeightoffFloorInches = 18,
+    targetHeightoffFloorInches = 84.6841;
   }
 }
