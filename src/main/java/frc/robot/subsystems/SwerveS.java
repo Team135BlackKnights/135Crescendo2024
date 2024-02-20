@@ -66,7 +66,9 @@ public class SwerveS extends SubsystemBase {
 
     public NetworkTable limelight = NetworkTableInstance.getDefault().getTable("limelight-swerve");
     NetworkTableEntry tx = limelight.getEntry("tx");
+    NetworkTableEntry tv = limelight.getEntry("tv");
     double xError = tx.getDouble(0.0);
+    double aprilTagVisible = tv.getDouble(0.0);
 
     Pose2d robotPosition = new Pose2d(0,0, getRotation2d());
 
@@ -164,6 +166,7 @@ public class SwerveS extends SubsystemBase {
         // SmartDashboard.putNumber("Robot Heading (getPose)", getPose().getRotation().getDegrees());
 
         xError = tx.getDouble(0.0);
+        aprilTagVisible = tv.getDouble(0.0);
 
         m_modulePositions[0] = frontLeft.getPosition();
         m_modulePositions[1] = frontRight.getPosition();
@@ -178,6 +181,10 @@ public class SwerveS extends SubsystemBase {
 
     public double getXError() {
         return xError;
+    }
+
+    public boolean aprilTagVisible() {
+        return aprilTagVisible == 1;
     }
     
     public Pose2d getPose() {
