@@ -9,7 +9,7 @@ import frc.robot.Constants;
 public class AutoLock extends Command{
     SwerveS swerveS;
     boolean isFinished = false;
-    double limelightDeadBand = .1;
+    double limelightDeadBand = .05;
     double limelightTx = 0;
     PIDController pidController = new PIDController(0.004, 0, 0);
     ChassisSpeeds speeds;
@@ -35,7 +35,7 @@ public class AutoLock extends Command{
         if (Math.abs(limelightTx)<limelightDeadBand){
             isFinished = true;
         }
-        speeds = new ChassisSpeeds(0,0,pidController.calculate(limelightTx,0)*-Constants.DriveConstants.kMaxTurningSpeedRadPerSec);
+        speeds = new ChassisSpeeds(0,0,pidController.calculate(limelightTx,0)*Constants.DriveConstants.kMaxTurningSpeedRadPerSec);
         swerveS.setChassisSpeeds(speeds);
     }
 

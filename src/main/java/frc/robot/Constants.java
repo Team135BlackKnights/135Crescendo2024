@@ -151,12 +151,16 @@ public final class Constants {
     //Try to set this value to a multiple of however many LEDs we have (so like if we have 63 LEDs on the robot set the sine to 9)
   }
   public static class HangConstants{
+    public static double
+      hangLowerSoftStop = 5,
+      hangUpperSoftStop = 101; //Note: for some reason left and right encoders output different values, MAYBE change them to have left and right max?
+
     public static int
-      leftHangID = 40,
-      rightHangID = 41;
+      leftHangID = 41,
+      rightHangID = 40;
 
     public static boolean
-      leftHangReversed = false,
+      leftHangReversed = true,
       rightHangReversed = false;
   }
 }

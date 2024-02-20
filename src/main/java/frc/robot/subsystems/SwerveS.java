@@ -60,7 +60,7 @@ public class SwerveS extends SubsystemBase {
         Constants.DriveConstants.kBackRightAbsEncoderOffsetRad, 
         Constants.DriveConstants.kBackRightDriveReversed);
 
-    private AHRS gyro = new AHRS(Port.kUSB1);
+    private static AHRS gyro = new AHRS(Port.kUSB1);
     NetworkTableEntry pipeline;
     
 
@@ -118,7 +118,7 @@ public class SwerveS extends SubsystemBase {
         return -1*Math.IEEEremainder(gyro.getAngle(),360); //modulus
     }
 
-    public double getTilt() {
+    public static double getTilt() {
         return Math.IEEEremainder(gyro.getRoll(),360); //either getRoll() or getPitch()
     }
     
@@ -220,6 +220,7 @@ public class SwerveS extends SubsystemBase {
     }
 
     public void setChassisSpeeds(ChassisSpeeds speed) {
+        speed.omegaRadiansPerSecond = speed.omegaRadiansPerSecond * -1;
         SwerveModuleState[] moduleStates = Constants.DriveConstants.kDriveKinematics.toSwerveModuleStates(speed);
         setModuleStates(moduleStates);
     }

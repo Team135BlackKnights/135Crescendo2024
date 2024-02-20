@@ -8,6 +8,7 @@ import frc.robot.commands.HangC;
 import frc.robot.commands.IntakeC;
 import frc.robot.commands.OutakeC;
 import frc.robot.commands.SwerveC;
+import frc.robot.commands.VariableAngle;
 import frc.robot.commands.autoCommands.AutoLock;
 import frc.robot.commands.autoCommands.AutonIntake;
 import frc.robot.commands.autoCommands.FireShooter;
@@ -42,14 +43,14 @@ public class RobotContainer {
   public static XboxController manipController = new XboxController(1);
 
   JoystickButton aButton = new JoystickButton(driveController, 1);
-  JoystickButton bButton = new JoystickButton(driveController, 2);
+  JoystickButton yButton = new JoystickButton(manipController, 4);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     swerveS.setDefaultCommand(new SwerveC(swerveS));
     intakeS.setDefaultCommand(new IntakeC(intakeS));
     outakeS.setDefaultCommand(new OutakeC(outakeS));
-    hangS.setDefaultCommand(new HangC(hangS, swerveS));
+    hangS.setDefaultCommand(new HangC(hangS));
 
     NamedCommands.registerCommand("DeployIntake", new MoveIntake(intakeS));
     NamedCommands.registerCommand("Lock Onto April Tags", new AutoLock(swerveS));
@@ -64,6 +65,7 @@ public class RobotContainer {
 
   private void configureBindings() {
     aButton.onTrue(swerveS.toggleAutoLockCommand());
+    yButton.onTrue(new VariableAngle(intakeS, 80));
   }
 
   /**

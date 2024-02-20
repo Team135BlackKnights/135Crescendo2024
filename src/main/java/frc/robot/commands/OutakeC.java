@@ -31,8 +31,6 @@ public class OutakeC extends Command {
             outakeSpeed = 0.5;
         } else if (RobotContainer.manipController.getXButton() == true) {
             outakeSpeed = 0.33;
-        } else if (RobotContainer.manipController.getYButton() == true) {
-            outakeSpeed = 0.2;
         }
 
         outakeS.setFiringSpeed(outakeSpeed);

@@ -2,21 +2,20 @@ package frc.robot.commands;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.HangS;
 import frc.robot.subsystems.SwerveS;
 
 public class HangC extends Command {
     private final HangS hangS;
-    private final SwerveS swerveS;
 
-    private PIDController hangPidController = new PIDController(0.1, 0, 0);
+    private PIDController hangPidController = new PIDController(0.01, 0, 0);
     
-    public HangC(HangS hangS, SwerveS swerveS){
+    public HangC(HangS hangS){
         this.hangS = hangS;
-        this.swerveS = swerveS;
         
-        addRequirements(hangS, swerveS);
+        addRequirements(hangS);
     }
 
     @Override
@@ -27,13 +26,29 @@ public class HangC extends Command {
     @Override
     public void execute(){
        
-        double output = RobotContainer.manipController.getLeftY();
+        double output = RobotContainer.manipController.getLeftY() * -1;
         output = Math.abs(output) >= 0.2 ? output : 0;
 
-        double hangAdjustment = hangPidController.calculate(swerveS.getTilt(), 0);
+        //double hangAdjustment = hangPidController.calculate(SwerveS.getTilt(), 0);
+        double hangAdjustment = 0;
 
-        hangS.leftHang.set(output+hangAdjustment); //sets the motors to get the controller values
-        hangS.rightHang.set(output-hangAdjustment); 
+        double leftOutput = output + hangAdjustment;
+        double rightOutput = output - hangAdjustment;
+
+        if (leftOutput < 0 && hangS.leftHangEncoder.getPosition() < Constants.HangConstants.hangLowerSoftStop) {
+            leftOutput = 0;
+        } else if (leftOutput > 0 && hangS.leftHangEncoder.getPosition() > Constants.HangConstants.hangUpperSoftStop) {
+            leftOutput = 0;
+        }
+
+        if (rightOutput < 0 && hangS.rightHangEncoder.getPosition() < Constants.HangConstants.hangLowerSoftStop) {
+            rightOutput = 0;
+        } else if (rightOutput > 0 && hangS.rightHangEncoder.getPosition() > Constants.HangConstants.hangUpperSoftStop) {
+            rightOutput = 0;
+        }
+
+        hangS.leftHang.set(leftOutput); //sets the motors to get the controller values
+        hangS.rightHang.set(rightOutput); 
     }
 
     @Override

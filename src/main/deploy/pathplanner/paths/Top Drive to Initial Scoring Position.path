@@ -16,11 +16,11 @@
     },
     {
       "anchor": {
-        "x": 1.5,
+        "x": 0.88,
         "y": 7.0
       },
       "prevControl": {
-        "x": 1.4,
+        "x": 0.7799999999999999,
         "y": 7.0
       },
       "nextControl": null,
@@ -45,8 +45,8 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -90.0,
-    "rotateFast": false
+    "rotation": -120.0,
+    "rotateFast": true
   },
   "reversed": false,
   "folder": "Top Auto Paths",
