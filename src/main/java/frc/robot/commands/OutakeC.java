@@ -33,9 +33,9 @@ public class OutakeC extends Command {
         if (RobotContainer.manipController.getBButton() == true) {
             outakeSpeed = 1;
         } else if (RobotContainer.manipController.getAButton() == true) {
-            outakeSpeed = 0.5;// + shooterPID.calculate(outakeS.getAverageFlywheelSpeed(), 0.5*Constants.OutakeConstants.flywheelMaxRPM);
+            outakeSpeed = 0.5 + shooterPID.calculate(outakeS.getAverageFlywheelSpeed(), 4000);
         } else if (RobotContainer.manipController.getXButton() == true) {
-            outakeSpeed = 0.33;// + shooterPID.calculate(outakeS.getAverageFlywheelSpeed(), 0.33*Constants.OutakeConstants.flywheelMaxRPM);
+            outakeSpeed = 0.33 + shooterPID.calculate(outakeS.getAverageFlywheelSpeed(), 2700);
         }
 
         outakeS.setFiringSpeed(outakeSpeed);
