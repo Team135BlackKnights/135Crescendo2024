@@ -28,16 +28,20 @@ public class IntakeC extends Command {
 
         if (RobotContainer.manipController.getLeftTriggerAxis() > 0.1) {
             intakeSpeed = RobotContainer.manipController.getLeftTriggerAxis();
+            intakeSpeed = Math.pow(intakeSpeed, 3);
         }
         if (RobotContainer.manipController.getRightTriggerAxis() > 0.1) {
             intakeSpeed = -1 * RobotContainer.manipController.getRightTriggerAxis();
+            intakeSpeed = Math.pow(intakeSpeed, 2) * (intakeSpeed < 0 ? -1 : 1);
         }
 
         if (RobotContainer.driveController.getLeftTriggerAxis() > 0.1) {
             intakeSpeed = RobotContainer.driveController.getLeftTriggerAxis();
+            intakeSpeed = Math.pow(intakeSpeed, 2) * (intakeSpeed < 0 ? -1 : 1);
         }
         if (RobotContainer.driveController.getRightTriggerAxis() > 0.1) {
             intakeSpeed = -1 * RobotContainer.driveController.getRightTriggerAxis();
+            intakeSpeed = Math.pow(intakeSpeed, 2) * (intakeSpeed < 0 ? -1 : 1);
         }
 
         intakeSpeed = Math.pow(intakeSpeed, 2) * (intakeSpeed < 0 ? -1 : 1);
