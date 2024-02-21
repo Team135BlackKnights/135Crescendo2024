@@ -151,6 +151,7 @@ public final class Constants {
     //Try to set this value to a multiple of however many LEDs we have (so like if we have 63 LEDs on the robot set the sine to 9)
   }
   public static class HangConstants{
+<<<<<<< Updated upstream
     public static double
       hangLowerSoftStop = 5,
       hangUpperSoftStop = 101; //Note: for some reason left and right encoders output different values, MAYBE change them to have left and right max?
@@ -168,4 +169,14 @@ public final class Constants {
     limelightLensHeightoffFloorInches = 18,
     targetHeightoffFloorInches = 84.6841;
   }
+=======
+    public static int
+      leftHangID = 40,
+      rightHangID = 41;
+
+    public static boolean
+      leftHangReversed = false,
+      rightHangReversed = false;
+  }
+>>>>>>> Stashed changes
 }

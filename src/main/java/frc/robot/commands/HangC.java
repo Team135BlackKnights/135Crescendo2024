@@ -1,5 +1,6 @@
 package frc.robot.commands;
 
+<<<<<<< Updated upstream
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
@@ -11,6 +12,14 @@ public class HangC extends Command {
     private final HangS hangS;
 
     private PIDController hangPidController = new PIDController(0.01, 0, 0);
+=======
+import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.RobotContainer;
+import frc.robot.subsystems.HangS;
+
+public class HangC extends Command {
+    private final HangS hangS;
+>>>>>>> Stashed changes
     
     public HangC(HangS hangS){
         this.hangS = hangS;
@@ -26,6 +35,7 @@ public class HangC extends Command {
     @Override
     public void execute(){
        
+<<<<<<< Updated upstream
         double output = RobotContainer.manipController.getLeftY() * -1;
         output = Math.abs(output) >= 0.2 ? output : 0;
 
@@ -49,6 +59,13 @@ public class HangC extends Command {
 
         hangS.leftHang.set(leftOutput); //sets the motors to get the controller values
         hangS.rightHang.set(rightOutput); 
+=======
+        double output = RobotContainer.manipController.getLeftY();
+        output = Math.abs(output) >= 0.2 ? output : 0;
+
+        hangS.leftHang.set(output); //sets the motors to get the controller values
+        hangS.rightHang.set(output); 
+>>>>>>> Stashed changes
     }
 
     @Override
