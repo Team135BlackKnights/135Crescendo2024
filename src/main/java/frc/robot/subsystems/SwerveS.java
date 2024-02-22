@@ -11,7 +11,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
@@ -75,12 +75,15 @@ public class SwerveS extends SubsystemBase {
 
     // LIST MODULES IN THE SAME EXACT ORDER USED WHEN DECLARING SwerveDriveKinematics
     ChassisSpeeds m_ChassisSpeeds = Constants.DriveConstants.kDriveKinematics.toChassisSpeeds(new SwerveModuleState[]{frontLeft.getState(), frontRight.getState(), backLeft.getState(), backRight.getState()});
-    SwerveDriveOdometry odometry = new SwerveDriveOdometry(Constants.DriveConstants.kDriveKinematics, getRotation2d(), new SwerveModulePosition[]{frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()},robotPosition);
     SwerveModulePosition[] m_modulePositions = new SwerveModulePosition[]{frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()};
+    SwerveDrivePoseEstimator odometry = new SwerveDrivePoseEstimator(Constants.DriveConstants.kDriveKinematics, getRotation2d(),m_modulePositions, robotPosition);
 
     public static boolean lockedOntoAprilTag;
     public static boolean autoLock = false;
     public static boolean redIsAlliance = true; //used to determine the alliance for LED systems
+    public double latency = 0;
+
+
     public SwerveS() {
         // Waits for the RIO to finishing booting
         new Thread(() -> {
@@ -191,6 +194,11 @@ public class SwerveS extends SubsystemBase {
         else{
             return true;
         }
+    }
+
+    //essentially designed to use MegaTag to update the PoseEstimator (odometry)
+    public void updatePoseEstimatorWithVisionBotPose() {
+    
     }
 
 
