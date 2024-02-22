@@ -78,8 +78,8 @@ public class SwerveS extends SubsystemBase {
     SwerveDriveOdometry odometry = new SwerveDriveOdometry(Constants.DriveConstants.kDriveKinematics, getRotation2d(), new SwerveModulePosition[]{frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()},robotPosition);
     SwerveModulePosition[] m_modulePositions = new SwerveModulePosition[]{frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()};
 
-    public boolean lockedOntoAprilTag;
-    public boolean autoLock = false;
+    public static boolean lockedOntoAprilTag;
+    public static boolean autoLock = false;
     public static boolean redIsAlliance = true; //used to determine the alliance for LED systems
     public SwerveS() {
         // Waits for the RIO to finishing booting

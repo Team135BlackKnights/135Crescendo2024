@@ -1,11 +1,12 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.RobotContainer;
 import frc.robot.Constants.LEDConstants;
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 public class LEDStripS extends SubsystemBase{
-    int InitialLoopValue = 0;
+    double InitialLoopValue = 0;
     AddressableLEDBuffer ledBuffer;
     AddressableLED leds;
 
@@ -24,6 +25,10 @@ public class LEDStripS extends SubsystemBase{
     public void periodic() {
        
         //checks if a note is loaded, sets color to constant orange if it is. If it isn't, sets it to pulse alliance colors
+        if (SwerveS.autoLock && SwerveS.lockedOntoAprilTag){
+            setConstantColors(LEDConstants.greenH, LEDConstants.greenS, LEDConstants.greenV);
+        }
+        else{
         if (IntakeS.noteIsLoaded()) {
             setConstantColors(LEDConstants.noteH, LEDConstants.noteS, LEDConstants.noteV);
         } else {
@@ -33,6 +38,7 @@ public class LEDStripS extends SubsystemBase{
                 setColorWave(LEDConstants.blueH, LEDConstants.blueS, LEDConstants.sinePeriod);
             }
         }
+    }
     }
 
     public void setConstantColors(int h, int s, int v){
@@ -46,7 +52,6 @@ public class LEDStripS extends SubsystemBase{
         leds.setData(ledBuffer);
     }
     public void setColorWave(int h, int s, double sinePeriod){//value is basically how dark it is, is controlled by the wave function
-    
         for (var i = 0; i < ledBuffer.getLength(); i++) {
             /*The line of code below essentially just takes the number of the LED then multiplies it by pi divided by a variable that can be toggled to change wave size (sine is used because it oscillates). 
             To prevent a negative number from happening (as value only takes arguments in the range 0-255) and then rounds it down to ensure that the value outputted is an integer since this function only
@@ -54,16 +59,16 @@ public class LEDStripS extends SubsystemBase{
             final int value = (int)Math.floor(Math.abs(Math.sin(((i*Math.PI/sinePeriod)+InitialLoopValue)))*255); //Tweak sine period to make the gradient more gentle or sharp (more is more gentle)
             // Set the value
             ledBuffer.setHSV(i, h, s, value);
+            
         }
 
         // Increase the value computed in the sine function by pi/(the changable period) to make the gradient "move"
         InitialLoopValue += Math.PI/LEDConstants.sinePeriod; //offset by one "notch" each time
         
-        // Check bounds
-        if (InitialLoopValue >= 2*Math.PI){
-            InitialLoopValue = 0;
-        }
         
+        //Check bounds
+        InitialLoopValue %=2*Math.PI;
+    
         //sets data to buffer
         leds.setData(ledBuffer);
     }
