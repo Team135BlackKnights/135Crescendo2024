@@ -10,7 +10,8 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
-
+import edu.wpi.first.wpilibj.I2C;
+import edu.wpi.first.wpilibj.util.Color;
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
  * constants. This class should not be used for any other purpose. All constants should be declared
@@ -25,6 +26,10 @@ public final class Constants {
   }
 
   public static class IntakeConstants {
+
+    public static I2C.Port colorSensorPort = I2C.Port.kOnboard;
+    public static Color noteColor = new Color(0.55, 0.36, .08);
+
     public static int
       primaryIntakeID = 20,
       deployIntakeID = 21,
