@@ -8,6 +8,7 @@ import frc.robot.commands.HangC;
 import frc.robot.commands.IntakeC;
 import frc.robot.commands.OutakeC;
 import frc.robot.commands.SwerveC;
+import frc.robot.commands.VariableAngle;
 import frc.robot.commands.autoCommands.AutoLock;
 import frc.robot.commands.autoCommands.AutonIntake;
 import frc.robot.commands.autoCommands.FireShooter;
@@ -42,7 +43,7 @@ public class RobotContainer {
   public static XboxController manipController = new XboxController(1);
 
   JoystickButton aButton = new JoystickButton(driveController, 1);
-  JoystickButton bButton = new JoystickButton(driveController, 2);
+  JoystickButton yButton = new JoystickButton(manipController, 4);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -64,6 +65,7 @@ public class RobotContainer {
 
   private void configureBindings() {
     aButton.onTrue(swerveS.toggleAutoLockCommand());
+    yButton.onTrue(new VariableAngle(intakeS, 80));
   }
 
   /**

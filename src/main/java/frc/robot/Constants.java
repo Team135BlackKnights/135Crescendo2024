@@ -139,16 +139,16 @@ public final class Constants {
     ledBufferLength = 92, // amount of LEDs in the light strip
     noteH = 19, //note HSV value
     noteS = 255,
-    noteV = 50,
+    noteV = 100,
     redH = 0, //red HSV valuess
     redS = 255,
-    redV = 50,
+    redV = 100,
     blueH = 120, //blue HSV values
     blueS = 255,
-    blueV = 50,
+    blueV = 100,
     greenH = 50,//green hsv values
     greenS = 255,
-    greenV = 50;
+    greenV = 100;
      
     public static double sinePeriod = 16; 
     //Basically controls how different the waves are from one another when the setColorWave function is called. Due to how it is calculated , this value CANNOT be zero (divide by zero error). 

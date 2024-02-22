@@ -1,11 +1,13 @@
 package frc.robot.commands;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.OutakeS;
 
 public class OutakeC extends Command {
     private final OutakeS outakeS;
+    private final PIDController shooterPID = new PIDController(0.0001, 0, 0);
 
     public OutakeC(OutakeS outakeS) {
         this.outakeS = outakeS;
@@ -25,11 +27,9 @@ public class OutakeC extends Command {
         if (RobotContainer.manipController.getBButton() == true) {
             outakeSpeed = 1;
         } else if (RobotContainer.manipController.getAButton() == true) {
-            outakeSpeed = 0.5;
+            outakeSpeed = 0.5 + shooterPID.calculate(outakeS.getAverageFlywheelSpeed(), 4000);
         } else if (RobotContainer.manipController.getXButton() == true) {
-            outakeSpeed = 0.33;
-        } else if (RobotContainer.manipController.getYButton() == true) {
-            outakeSpeed = 0.2;
+            outakeSpeed = 0.33 + shooterPID.calculate(outakeS.getAverageFlywheelSpeed(), 2700);
         }
 
         outakeS.setFiringSpeed(outakeSpeed);
