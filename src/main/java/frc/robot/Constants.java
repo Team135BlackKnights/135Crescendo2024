@@ -141,7 +141,7 @@ public final class Constants {
     noteS = 85,
     noteV = 50,
     redH = 0, //red HSV valuess
-    redS = 85,
+    redS = 160,
     redV = 50,
     blueH = 120, //blue HSV values
     blueS = 85,
