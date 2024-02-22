@@ -31,9 +31,8 @@ public class LEDStripS extends SubsystemBase{
             //if its locked on, set to constant green
             if (SwerveS.lockedOntoAprilTag){
                 setConstantColors(LEDConstants.greenH, LEDConstants.greenS, LEDConstants.greenV);
-
-            //if its not locked on, set to flashing green
-            }else{
+            }
+            else{ //if its not locked on, set to flashing green
                 setColorWave(LEDConstants.greenH, LEDConstants.greenS, LEDConstants.sinePeriod);
             }    
         }
@@ -44,15 +43,17 @@ public class LEDStripS extends SubsystemBase{
             if (IntakeS.noteIsLoaded()) {
                 setConstantColors(LEDConstants.noteH, LEDConstants.noteS, LEDConstants.noteV);
             
-            } else {
+            }
+            else {
                 // if there isn't a note loaded, do wave pattern with alliance color
                 if(SwerveS.redIsAlliance) {
                     setColorWave(LEDConstants.redH, LEDConstants.redS, LEDConstants.sinePeriod);
-                } else {
+                }
+                else {
                     setColorWave(LEDConstants.blueH, LEDConstants.blueS, LEDConstants.sinePeriod);
+                }
             }
         }
-    }
     }
 
     public void setConstantColors(int h, int s, int v){//Essentially designed to make all the LEDs a constant color 
@@ -60,7 +61,6 @@ public class LEDStripS extends SubsystemBase{
             // Sets the specified LED to the RGB values for red
             ledBuffer.setHSV(i, h, s, v);
         }
-         
         leds.setData(ledBuffer);
     }
     public void setColorWave(int h, int s, double sinePeriod){//value is basically how dark it is, is controlled by the wave function
@@ -86,5 +86,3 @@ public class LEDStripS extends SubsystemBase{
     }
 
 }
-
-
