@@ -1,5 +1,6 @@
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 //import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
@@ -49,6 +50,7 @@ public class HangC extends Command {
 
         hangS.leftHang.set(leftOutput); //sets the motors to get the controller values
         hangS.rightHang.set(rightOutput); 
+    
     }
 
     @Override

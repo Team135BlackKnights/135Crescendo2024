@@ -1,5 +1,6 @@
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.IntakeS;
@@ -48,6 +49,9 @@ public class IntakeC extends Command {
 
         intakeS.setPrimaryIntake(intakeSpeed * 1);
         intakeS.deployIntake(deployIntakeSpeed * 1);
+        SmartDashboard.putNumber("Red", IntakeS.colorSensorV3.getRed());
+        SmartDashboard.putNumber("Green", IntakeS.colorSensorV3.getGreen());
+        SmartDashboard.putNumber("Blue", IntakeS.colorSensorV3.getBlue());
     }
 
     @Override

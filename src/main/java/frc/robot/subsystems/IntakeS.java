@@ -6,12 +6,18 @@ import com.revrobotics.SparkAbsoluteEncoder;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.SparkAbsoluteEncoder.Type;
-
+import com.revrobotics.ColorMatchResult;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.IntakeConstants;
+
+import com.revrobotics.ColorSensorV3;
+import com.revrobotics.ColorMatch;
+
+
 
 public class IntakeS extends SubsystemBase {
     //declarations of motors/encoders and limit switch
@@ -19,10 +25,15 @@ public class IntakeS extends SubsystemBase {
     public CANSparkMax deployIntake = new CANSparkMax(Constants.IntakeConstants.deployIntakeID, MotorType.kBrushless);
     public RelativeEncoder deployIntakeEncoder, primaryIntakeEncoder;
     public SparkAbsoluteEncoder absDeployIntakeEncoder;
-
-    public static final DigitalInput intakeLimitSwitch = new DigitalInput(IntakeConstants.intakeLimitSwitchID); //the intake limit switch
+    public static ColorSensorV3 colorSensorV3 = new ColorSensorV3(Constants.IntakeConstants.colorSensorPort);
+    public static ColorMatch colorMatch = new ColorMatch();
+    public static Color detected = new Color();
+    public static ColorMatchResult colorMatchResult;
 
     public IntakeS() {
+        //set note color to color match
+        colorMatch.addColorMatch(Constants.IntakeConstants.noteColor);
+
         //sets intake motors to reversed, sets idleMode to brake
         primaryIntake.setInverted(Constants.IntakeConstants.primaryIntakeReversed);
         deployIntake.setInverted(Constants.IntakeConstants.deployIntakeReversed);
@@ -50,8 +61,15 @@ public class IntakeS extends SubsystemBase {
     }
 
     public static boolean noteIsLoaded() {
-        //checks limit switch to see if note is loaded
-        return !intakeLimitSwitch.get();
+        //pulls data from color sensor
+        detected = colorSensorV3.getColor();
+        colorMatchResult = colorMatch.matchClosestColor(detected);
+        if (colorMatchResult.color == IntakeConstants.noteColor){
+            return true;
+        }
+        else{
+            return false;
+        }
     }
 
     public void setPrimaryIntake(double power) {
