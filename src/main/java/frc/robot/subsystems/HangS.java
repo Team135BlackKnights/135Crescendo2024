@@ -1,0 +1,40 @@
+package frc.robot.subsystems;
+
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
+import com.revrobotics.CANSparkBase.IdleMode;
+import com.revrobotics.CANSparkLowLevel.MotorType;
+import frc.robot.Constants.HangConstants;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
+
+public class HangS extends SubsystemBase {
+  
+    //hang motors
+    public CANSparkMax leftHang = new CANSparkMax(HangConstants.leftHangID, MotorType.kBrushless);
+    public CANSparkMax rightHang = new CANSparkMax(HangConstants.rightHangID, MotorType.kBrushless);
+    public RelativeEncoder leftHangEncoder, rightHangEncoder;
+    
+    //sets hang idle mode & saves it
+    public HangS(){
+    
+        leftHang.setIdleMode(IdleMode.kCoast);
+        rightHang.setIdleMode(IdleMode.kCoast);
+
+        leftHang.setInverted(HangConstants.leftHangReversed);
+        rightHang.setInverted(HangConstants.rightHangReversed);
+
+        leftHangEncoder = leftHang.getEncoder();
+        rightHangEncoder = rightHang.getEncoder();
+
+        leftHang.burnFlash();
+        rightHang.burnFlash();
+    }
+
+    @Override
+    public void periodic() {
+        SmartDashboard.putNumber("Left Hang", leftHangEncoder.getPosition());
+        SmartDashboard.putNumber("Right Hang", rightHangEncoder.getPosition());
+    }
+}
