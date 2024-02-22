@@ -184,7 +184,14 @@ public class SwerveS extends SubsystemBase {
         return xError;
     }
 
-    
+    public boolean aprilTagVisible(){
+        if (xError != 0.0){
+            return false;
+        }
+        else{
+            return true;
+        }
+    }
 
 
 

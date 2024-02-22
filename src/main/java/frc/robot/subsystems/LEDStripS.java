@@ -54,6 +54,11 @@ public class LEDStripS extends SubsystemBase{
             final int value = (int)Math.floor(Math.abs(Math.sin(((i*Math.PI/sinePeriod)+InitialLoopValue)))*255); //Tweak sine period to make the gradient more gentle or sharp (more is more gentle)
             // Set the value
             ledBuffer.setHSV(i, h, s, value);
+            System.out.println(i);
+            System.out.println(h);
+            System.out.println(s);
+            System.out.println(value);
+            System.out.println(" ");
         }
 
         // Increase the value computed in the sine function by pi/(the changable period) to make the gradient "move"

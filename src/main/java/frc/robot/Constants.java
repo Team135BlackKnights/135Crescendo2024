@@ -139,19 +139,18 @@ public final class Constants {
     ledBufferLength = 41, // amount of LEDs in the light strip
     noteH = 26, //note HSV value
     noteS = 85,
-    noteV = 100,
+    noteV = 50,
     redH = 0, //red HSV values
     redS = 85,
     redV = 100,
     blueH = 246, //blue HSV values
     blueS = 85,
-    blueV = 100;
+    blueV = 50;
     public static double sinePeriod = 16; 
     //Basically controls how different the waves are from one another when the setColorWave function is called. Due to how it is calculated , this value CANNOT be zero (divide by zero error). 
     //Try to set this value to a multiple of however many LEDs we have (so like if we have 63 LEDs on the robot set the sine to 9)
   }
   public static class HangConstants{
-<<<<<<< Updated upstream
     public static double
       hangLowerSoftStop = 5,
       hangUpperSoftStop = 101; //Note: for some reason left and right encoders output different values, MAYBE change them to have left and right max?
@@ -169,14 +168,4 @@ public final class Constants {
     limelightLensHeightoffFloorInches = 18,
     targetHeightoffFloorInches = 84.6841;
   }
-=======
-    public static int
-      leftHangID = 40,
-      rightHangID = 41;
-
-    public static boolean
-      leftHangReversed = false,
-      rightHangReversed = false;
-  }
->>>>>>> Stashed changes
 }

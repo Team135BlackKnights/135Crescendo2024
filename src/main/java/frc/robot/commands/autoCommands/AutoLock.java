@@ -2,10 +2,7 @@ package frc.robot.commands.autoCommands;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.SwerveS;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-<<<<<<< Updated upstream
 import edu.wpi.first.wpilibj.Timer;
-=======
->>>>>>> Stashed changes
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.math.controller.PIDController;
 import frc.robot.Constants;
@@ -13,12 +10,7 @@ import frc.robot.Constants;
 public class AutoLock extends Command{
     SwerveS swerveS;
     boolean isFinished = false;
-<<<<<<< Updated upstream
     double limelightDeadBand = .05, limelightTx = 0, maxTimeTargetting = 1.5;
-=======
-    double limelightDeadBand = .1;
-    double limelightTx = 0;
->>>>>>> Stashed changes
     PIDController pidController = new PIDController(0.004, 0, 0);
     ChassisSpeeds speeds;
 
@@ -40,7 +32,6 @@ public class AutoLock extends Command{
 
     @Override
     public void execute(){
-<<<<<<< Updated upstream
         if (timer.get() >= maxTimeTargetting) {
             isFinished = true;
         }
@@ -48,19 +39,12 @@ public class AutoLock extends Command{
         if (!swerveS.aprilTagVisible()) {
             timer.start();
         }
-=======
->>>>>>> Stashed changes
 
         //constantly pulls the x value of the limelight, essentially outputs a chassis speed where the only value is a rotational PID loop that ends when deadband is met and sets ChassisSpeeds 
         limelightTx = swerveS.getXError();
         SmartDashboard.putNumber("Auto X Error", limelightTx);
-<<<<<<< Updated upstream
         SmartDashboard.putBoolean("Auto Lock Done", Math.abs(limelightTx) < limelightDeadBand);
         if (Math.abs(limelightTx) < limelightDeadBand && swerveS.aprilTagVisible()){
-=======
-        SmartDashboard.putBoolean("Auto Lock Done", Math.abs(limelightTx)<limelightDeadBand);
-        if (Math.abs(limelightTx)<limelightDeadBand){
->>>>>>> Stashed changes
             isFinished = true;
         }
         speeds = new ChassisSpeeds(0,0,pidController.calculate(limelightTx,0)*-Constants.DriveConstants.kMaxTurningSpeedRadPerSec);
