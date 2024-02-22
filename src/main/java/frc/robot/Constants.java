@@ -28,7 +28,7 @@ public final class Constants {
   public static class IntakeConstants {
 
     public static I2C.Port colorSensorPort = I2C.Port.kOnboard;
-    public static Color noteColor = new Color(0, 0, 0);
+    public static Color noteColor = new Color(0.55, 0.36, .08);
 
     public static int
       primaryIntakeID = 20,
