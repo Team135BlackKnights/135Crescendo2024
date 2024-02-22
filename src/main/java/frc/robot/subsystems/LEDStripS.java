@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotContainer;
 import frc.robot.Constants.LEDConstants;
+import frc.robot.commands.autoCommands.AutoLock;
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 public class LEDStripS extends SubsystemBase{
@@ -25,7 +26,7 @@ public class LEDStripS extends SubsystemBase{
        /*NOTE: This code does not have a designated indicator for when the AutoLock software*/
 
         //if the AutoLock command is running or if the swerve subsystem is called:
-        if (SwerveS.autoLock || !AutoLock.isFinished){
+        if (SwerveS.autoLock){
         
             //if its locked on, set to constant green
             if (SwerveS.lockedOntoAprilTag){
@@ -33,7 +34,7 @@ public class LEDStripS extends SubsystemBase{
 
             //if its not locked on, set to flashing green
             }else{
-                setColorWave(LEDConstants.greenH, LEDConstants.greenS, LedConstants.sinePeriod);
+                setColorWave(LEDConstants.greenH, LEDConstants.greenS, LEDConstants.sinePeriod);
             }    
         }
         
