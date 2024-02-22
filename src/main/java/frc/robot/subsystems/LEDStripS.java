@@ -1,9 +1,7 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.RobotContainer;
 import frc.robot.Constants.LEDConstants;
-import frc.robot.commands.autoCommands.AutoLock;
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 public class LEDStripS extends SubsystemBase{
@@ -29,7 +27,7 @@ public class LEDStripS extends SubsystemBase{
         if (SwerveS.autoLock){
         
             //if its locked on, set to constant green
-            if (SwerveS.lockedOntoAprilTag){
+            if (SwerveS.aprilTagVisible()){
                 setConstantColors(LEDConstants.greenH, LEDConstants.greenS, LEDConstants.greenV);
 
             //if its not locked on, set to flashing green

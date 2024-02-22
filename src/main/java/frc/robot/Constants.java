@@ -138,16 +138,16 @@ public final class Constants {
     ledPort = 9, 
     ledBufferLength = 92, // amount of LEDs in the light strip
     noteH = 19, //note HSV value
-    noteS = 85,
+    noteS = 255,
     noteV = 50,
     redH = 0, //red HSV valuess
-    redS = 85,
+    redS = 255,
     redV = 50,
     blueH = 120, //blue HSV values
-    blueS = 85,
+    blueS = 255,
     blueV = 50,
-    greenH = 120,//green hsv values
-    greenS = 85,
+    greenH = 50,//green hsv values
+    greenS = 255,
     greenV = 50;
      
     public static double sinePeriod = 16; 

@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.5,
+      "x": 0.38,
       "y": 7.0
     },
-    "rotation": -90.0
+    "rotation": 90.0
   },
   "command": {
     "type": "sequential",
@@ -39,7 +39,7 @@
         {
           "type": "named",
           "data": {
-            "name": "Lock Onto April Tags"
+            "name": "ShootNote"
           }
         },
         {
