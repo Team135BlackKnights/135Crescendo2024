@@ -1,16 +1,16 @@
 package frc.robot.commands;
 
-import edu.wpi.first.math.controller.PIDController;
+//import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.HangS;
-import frc.robot.subsystems.SwerveS;
+
 
 public class HangC extends Command {
     private final HangS hangS;
 
-    private PIDController hangPidController = new PIDController(0.01, 0, 0);
+    //private PIDController hangPidController = new PIDController(0.01, 0, 0);
     
     public HangC(HangS hangS){
         this.hangS = hangS;

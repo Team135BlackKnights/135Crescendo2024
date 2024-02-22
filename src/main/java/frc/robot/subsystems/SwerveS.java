@@ -8,11 +8,13 @@ import com.pathplanner.lib.util.ReplanningConfig;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -22,6 +24,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.Constants.LimelightConstants;
 
 public class SwerveS extends SubsystemBase {
     private final SwerveModule frontLeft = new SwerveModule(
@@ -75,7 +78,8 @@ public class SwerveS extends SubsystemBase {
     SwerveDriveOdometry odometry = new SwerveDriveOdometry(Constants.DriveConstants.kDriveKinematics, getRotation2d(), new SwerveModulePosition[]{frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()},robotPosition);
     SwerveModulePosition[] m_modulePositions = new SwerveModulePosition[]{frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()};
 
-    public boolean autoLock = false;
+    public static boolean lockedOntoAprilTag;
+    public static boolean autoLock = false;
     public static boolean redIsAlliance = true; //used to determine the alliance for LED systems
     public SwerveS() {
         // Waits for the RIO to finishing booting
@@ -159,7 +163,6 @@ public class SwerveS extends SubsystemBase {
         // SmartDashboard.putNumber("Robot Heading (getPose)", getPose().getRotation().getDegrees());
 
         xError = tx.getDouble(0.0);
-
         m_modulePositions[0] = frontLeft.getPosition();
         m_modulePositions[1] = frontRight.getPosition();
         m_modulePositions[2] = backLeft.getPosition();
