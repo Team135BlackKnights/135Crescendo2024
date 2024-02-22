@@ -136,14 +136,14 @@ public final class Constants {
     //basically anything pertaining to the LEDs go in here
     public static int 
     ledPort = 9, 
-    ledBufferLength = 41, // amount of LEDs in the light strip
-    noteH = 26, //note HSV value
+    ledBufferLength = 92, // amount of LEDs in the light strip
+    noteH = 19, //note HSV value
     noteS = 85,
     noteV = 50,
     redH = 0, //red HSV values
     redS = 85,
-    redV = 100,
-    blueH = 246, //blue HSV values
+    redV = 50,
+    blueH = 166, //blue HSV values
     blueS = 85,
     blueV = 50;
     public static double sinePeriod = 16; 

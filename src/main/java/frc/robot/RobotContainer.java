@@ -50,6 +50,7 @@ public class RobotContainer {
     swerveS.setDefaultCommand(new SwerveC(swerveS));
     intakeS.setDefaultCommand(new IntakeC(intakeS));
     outakeS.setDefaultCommand(new OutakeC(outakeS));
+    hangS.setDefaultCommand(new HangC(hangS));
     
     NamedCommands.registerCommand("DeployIntake", new MoveIntake(intakeS));
     NamedCommands.registerCommand("Lock Onto April Tags", new AutoLock(swerveS));
