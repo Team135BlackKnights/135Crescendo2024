@@ -223,6 +223,7 @@ public class SwerveS extends SubsystemBase {
     }
 
     public void setChassisSpeeds(ChassisSpeeds speed) {
+        speed.omegaRadiansPerSecond = speed.omegaRadiansPerSecond * -1;
         SwerveModuleState[] moduleStates = Constants.DriveConstants.kDriveKinematics.toSwerveModuleStates(speed);
         setModuleStates(moduleStates);
     }
