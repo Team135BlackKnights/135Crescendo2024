@@ -220,7 +220,7 @@ public class SwerveS extends SubsystemBase {
             //pulls robot pose and converts it to a translation
             Pose2d pose = getPose();
             Translation2d translation = new Translation2d(pose.getX(),pose.getY());
-            //compares it with the translation2d of the speaker (determined through pathPlanner)
+            //compares it with the translation2d of the speaker,(determined through pathPlanner)
              distance = translation.getDistance(new Translation2d(0,5.55));
         }
 

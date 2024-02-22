@@ -23,19 +23,33 @@ public class LEDStripS extends SubsystemBase{
 
     @Override
     public void periodic() {
-       
-        //checks if a note is loaded, sets color to constant orange if it is. If it isn't, sets it to pulse alliance colors
-        if (SwerveS.autoLock && SwerveS.lockedOntoAprilTag){
-            setConstantColors(LEDConstants.greenH, LEDConstants.greenS, LEDConstants.greenV);
+       /*NOTE: This code does not have a designated indicator for when the AutoLock software*/
+
+        //if the AutoLock command is running or if the swerve subsystem is called:
+        if (SwerveS.autoLock || !AutoLock.isFinished){
+        
+            //if its locked on, set to constant green
+            if (SwerveS.lockedOntoAprilTag){
+                setConstantColors(LEDConstants.greenH, LEDConstants.greenS, LEDConstants.greenV);
+
+            //if its not locked on, set to flashing green
+            }else{
+                setColorWave(LEDConstants.greenH, LEDConstants.greenS, LedConstants.sinePeriod);
+            }    
         }
+        
         else{
-        if (IntakeS.noteIsLoaded()) {
-            setConstantColors(LEDConstants.noteH, LEDConstants.noteS, LEDConstants.noteV);
-        } else {
-            if (SwerveS.redIsAlliance) {
-                setColorWave(LEDConstants.redH, LEDConstants.redS, LEDConstants.sinePeriod);
+
+            //if there is a note stored in the intake, set it to a constant note color
+            if (IntakeS.noteIsLoaded()) {
+                setConstantColors(LEDConstants.noteH, LEDConstants.noteS, LEDConstants.noteV);
+            
             } else {
-                setColorWave(LEDConstants.blueH, LEDConstants.blueS, LEDConstants.sinePeriod);
+                // if there isn't a note loaded, do wave pattern with alliance color
+                if(SwerveS.redIsAlliance) {
+                    setColorWave(LEDConstants.redH, LEDConstants.redS, LEDConstants.sinePeriod);
+                } else {
+                    setColorWave(LEDConstants.blueH, LEDConstants.blueS, LEDConstants.sinePeriod);
             }
         }
     }

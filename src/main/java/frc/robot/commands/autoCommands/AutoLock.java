@@ -8,6 +8,7 @@ import edu.wpi.first.math.controller.PIDController;
 import frc.robot.Constants;
 
 public class AutoLock extends Command{
+
     SwerveS swerveS;
     boolean isFinished = false;
     double limelightDeadBand = .05, limelightTx = 0, maxTimeTargetting = 1.5;
