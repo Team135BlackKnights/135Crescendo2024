@@ -80,7 +80,7 @@ public final class Constants {
       kMaxSpeedMetersPerSecond = Units.feetToMeters(12.0),
       kMaxTurningSpeedRadPerSec = 4.414667 * 2 * Math.PI, // 1.33655 *2 *Math.PI
       kTeleDriveMaxAcceleration = Units.feetToMeters(5.66), //guess
-      kTeleTurningMaxAcceleration = 1, //guess
+      kTeleTurningMaxAcceleration = 5, //guess
       
       // To find these set them to zero, then turn the robot on and manually set the wheels straight.
       // The encoder values being read are then your new Offset values
@@ -136,7 +136,7 @@ public final class Constants {
     //basically anything pertaining to the LEDs go in here
     public static int 
     ledPort = 9, 
-    ledBufferLength = 41, // amount of LEDs in the light strip
+    ledBufferLength = 92, // amount of LEDs in the light strip
     noteH = 26, //note HSV value
     noteS = 85,
     noteV = 100,

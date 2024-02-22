@@ -98,13 +98,12 @@ public class SwerveS extends SubsystemBase {
         this::getChassisSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
         this::setChassisSpeeds, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
         new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
-            new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants // We didn't have the chance to optimize PID constants so there will be some error in autonomous until these values are fixed
-            new PIDConstants(5.0, 0.0, 0.0), // Rotation PID constants
+            new PIDConstants(0.5, 0.0, 0.0), // Translation PID constants // We didn't have the chance to optimize PID constants so there will be some error in autonomous until these values are fixed
+            new PIDConstants(0.5, 0.0, 0.0), // Rotation PID constants
             Constants.DriveConstants.kMaxSpeedMetersPerSecond, // Max module speed, in m/s
             Constants.DriveConstants.kDriveBaseRadius, // Drive base radius in meters. Distance from robot center to furthest module.
             new ReplanningConfig() // Default path replanning config. See the API for the options here
-        ), this::getAlliance
-       ,
+        ), this::getAlliance,
         this // Reference to this subsystem to set requirements
         );
 

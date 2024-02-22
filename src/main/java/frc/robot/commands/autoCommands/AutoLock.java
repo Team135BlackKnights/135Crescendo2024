@@ -8,8 +8,7 @@ import frc.robot.Constants;
 public class AutoLock extends Command{
     SwerveS swerveS;
     boolean isFinished = false;
-    double limelightDeadBand = .01;
-    double limelightTx = 0;
+    double limelightDeadBand = 1, limelightTx = 0, maxTimeTargetting = 1.5;
     PIDController pidController = new PIDController(0.004, 0, 0);
     ChassisSpeeds speeds;
     public AutoLock(SwerveS swerveS){
