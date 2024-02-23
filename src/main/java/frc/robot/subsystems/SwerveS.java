@@ -5,7 +5,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
-
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -13,6 +13,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -22,6 +23,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.Constants.LimelightConstants;
 
 public class SwerveS extends SubsystemBase {
     private final SwerveModule frontLeft = new SwerveModule(
@@ -185,13 +187,7 @@ public class SwerveS extends SubsystemBase {
     public static boolean aprilTagVisible() {
         return aprilTagVisible == 1;
 
-    public boolean aprilTagVisible(){
-        if (xError != 0.0){
-            return false;
-        }
-        else{
-            return true;
-        }
+   
     }
 
     //essentially designed to use MegaTag to update the PoseEstimator (odometry)
@@ -211,7 +207,7 @@ public class SwerveS extends SubsystemBase {
         /* if apriltag is detected, uses formula given here https://docs.limelightvision.io/docs/docs-limelight/tutorials/tutorial-estimating-distance
         formula is d =(h2-h1)/tan(h2+h1)*/
 
-        if (lockedOntoAprilTag){
+        if (aprilTagVisible()){
         
             // computing the angle
             double theta = Units.degreesToRadians(LimelightConstants.limeLightAngleOffsetDegrees+limelight.getEntry("ty").getDouble(0.0));
