@@ -10,7 +10,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.NetworkTable;
@@ -75,11 +75,14 @@ public class SwerveS extends SubsystemBase {
 
     // LIST MODULES IN THE SAME EXACT ORDER USED WHEN DECLARING SwerveDriveKinematics
     ChassisSpeeds m_ChassisSpeeds = Constants.DriveConstants.kDriveKinematics.toChassisSpeeds(new SwerveModuleState[]{frontLeft.getState(), frontRight.getState(), backLeft.getState(), backRight.getState()});
-    SwerveDriveOdometry odometry = new SwerveDriveOdometry(Constants.DriveConstants.kDriveKinematics, getRotation2d(), new SwerveModulePosition[]{frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()},robotPosition);
     SwerveModulePosition[] m_modulePositions = new SwerveModulePosition[]{frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()};
+    SwerveDrivePoseEstimator odometry = new SwerveDrivePoseEstimator(Constants.DriveConstants.kDriveKinematics, getRotation2d(),m_modulePositions, robotPosition);
 
     public static boolean autoLock = false;
     public static boolean redIsAlliance = true; //used to determine the alliance for LED systems
+    public double latency = 0;
+
+
     public SwerveS() {
         // Waits for the RIO to finishing booting
         new Thread(() -> {
@@ -181,6 +184,55 @@ public class SwerveS extends SubsystemBase {
 
     public static boolean aprilTagVisible() {
         return aprilTagVisible == 1;
+
+    public boolean aprilTagVisible(){
+        if (xError != 0.0){
+            return false;
+        }
+        else{
+            return true;
+        }
+    }
+
+    //essentially designed to use MegaTag to update the PoseEstimator (odometry)
+    public void updatePoseEstimatorWithVisionBotPose() {
+    
+    }
+
+
+
+
+
+
+    public double getDistanceFromSpeakerInMeters(){
+
+        double distance = 0; //resets value so it doesn't output last value
+
+        /* if apriltag is detected, uses formula given here https://docs.limelightvision.io/docs/docs-limelight/tutorials/tutorial-estimating-distance
+        formula is d =(h2-h1)/tan(h2+h1)*/
+
+        if (lockedOntoAprilTag){
+        
+            // computing the angle
+            double theta = Units.degreesToRadians(LimelightConstants.limeLightAngleOffsetDegrees+limelight.getEntry("ty").getDouble(0.0));
+        
+            //computes distance
+            distance = Units.inchesToMeters(LimelightConstants.targetHeightoffFloorInches-LimelightConstants.limelightLensHeightoffFloorInches)/Math.tan(theta);}
+
+        else{
+            
+            //if robot does not have a lock onto april tag try to approximate distance from speaker with robot odometry
+            
+            //pulls robot pose and converts it to a translation
+            Pose2d pose = getPose();
+            Translation2d translation = new Translation2d(pose.getX(),pose.getY());
+            //compares it with the translation2d of the speaker,(determined through pathPlanner)
+             distance = translation.getDistance(new Translation2d(0,5.55));
+        }
+
+
+        
+        return distance;
     }
     
     public Pose2d getPose() {

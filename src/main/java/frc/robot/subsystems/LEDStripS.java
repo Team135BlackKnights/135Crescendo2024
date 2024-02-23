@@ -29,8 +29,10 @@ public class LEDStripS extends SubsystemBase{
             //if its locked on, set to constant green
             if (SwerveS.aprilTagVisible()){
                 setConstantColors(LEDConstants.greenH, LEDConstants.greenS, LEDConstants.greenV);
-            }
-            else{ //if its not locked on, set to flashing green
+
+
+            //if its not locked on, set to flashing green
+            }else{
                 setColorWave(LEDConstants.greenH, LEDConstants.greenS, LEDConstants.sinePeriod);
             }    
         }
