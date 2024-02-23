@@ -13,9 +13,9 @@ public class FireShooter extends Command {
     private final OutakeS outakeS;
     private final IntakeS intakeS;
     private final double desSpeed;
-    private final double time = 0.125;
+    private final double time = 2;
     private boolean isFinished = false;
-    private final PIDController shooterPID = new PIDController(0.00045, 0.00011, 0);
+    private final PIDController shooterPID = new PIDController(0.0001, 0, 0);
     private final  double feedforward;
     private final Timer timer = new Timer();
 

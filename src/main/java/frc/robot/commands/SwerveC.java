@@ -12,7 +12,6 @@ import frc.robot.RobotContainer;
 import frc.robot.subsystems.SwerveS;
 
 public class SwerveC extends Command {
-  
   public ChassisSpeeds chassisSpeeds;
   private final SwerveS swerveS;
   private final boolean fieldOriented = true;
@@ -36,7 +35,6 @@ public class SwerveC extends Command {
   
   @Override
   public void execute() {
-   
     // Get desired ChassisSpeeds from controller
     double xSpeed = -RobotContainer.driveController.getLeftX();
     double ySpeed = RobotContainer.driveController.getLeftY();
@@ -82,13 +80,11 @@ public class SwerveC extends Command {
   
   @Override
   public void end(boolean interrupted) {
-  
     swerveS.stopModules();
   }
   
   @Override
   public boolean isFinished() {
-   
     return false;
   }
   

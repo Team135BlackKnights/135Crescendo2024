@@ -19,6 +19,7 @@ public class AutonIntake extends Command {
 
     @Override
     public void execute() {
+        //runs intake if note is not loaded
         if (IntakeS.noteIsLoaded()) {
             isFinished = true;
         }

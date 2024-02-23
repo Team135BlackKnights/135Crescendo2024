@@ -10,7 +10,8 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
-
+import edu.wpi.first.wpilibj.I2C;
+import edu.wpi.first.wpilibj.util.Color;
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
  * constants. This class should not be used for any other purpose. All constants should be declared
@@ -25,6 +26,10 @@ public final class Constants {
   }
 
   public static class IntakeConstants {
+
+    public static I2C.Port colorSensorPort = I2C.Port.kOnboard;
+    public static Color noteColor = new Color(0.55, 0.36, .08);
+
     public static int
       primaryIntakeID = 20,
       deployIntakeID = 21,
@@ -80,7 +85,7 @@ public final class Constants {
       kMaxSpeedMetersPerSecond = Units.feetToMeters(12.0),
       kMaxTurningSpeedRadPerSec = 4.414667 * 2 * Math.PI, // 1.33655 *2 *Math.PI
       kTeleDriveMaxAcceleration = Units.feetToMeters(5.66), //guess
-      kTeleTurningMaxAcceleration = 1, //guess
+      kTeleTurningMaxAcceleration = 5, //guess
       
       // To find these set them to zero, then turn the robot on and manually set the wheels straight.
       // The encoder values being read are then your new Offset values
@@ -138,17 +143,17 @@ public final class Constants {
     ledPort = 9, 
     ledBufferLength = 92, // amount of LEDs in the light strip
     noteH = 19, //note HSV value
-    noteS = 85,
-    noteV = 50,
-    redH = 0, //red HSV values
-    redS = 85,
-    redV = 50,
+    noteS = 255,
+    noteV = 100,
+    redH = 0, //red HSV valuess
+    redS = 255,
+    redV = 100,
     blueH = 120, //blue HSV values
-    blueS = 85,
-    blueV = 50,
-    greenH = 120,//green hsv values
-    greenS = 85,
-    greenV = 50;
+    blueS = 255,
+    blueV = 100,
+    greenH = 50,//green hsv values
+    greenS = 255,
+    greenV = 100;
      
     public static double sinePeriod = 16; 
     //Basically controls how different the waves are from one another when the setColorWave function is called. Due to how it is calculated , this value CANNOT be zero (divide by zero error). 

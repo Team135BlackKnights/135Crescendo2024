@@ -49,6 +49,7 @@ public class HangC extends Command {
 
         hangS.leftHang.set(leftOutput); //sets the motors to get the controller values
         hangS.rightHang.set(rightOutput); 
+    
     }
 
     @Override

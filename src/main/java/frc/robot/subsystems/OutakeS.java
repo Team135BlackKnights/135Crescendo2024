@@ -18,23 +18,18 @@ public class OutakeS extends SubsystemBase {
     public RelativeEncoder bottomFlywheelEncoder;
 
     public OutakeS() {
-        
         //checks to see if motors are inverted
         topFlywheel.setInverted(Constants.OutakeConstants.topFlywheelReversed);
         bottomFlywheel.setInverted(Constants.OutakeConstants.bottomFlywheelReversed);
-        
         //sets idle mode on motors
         topFlywheel.setIdleMode(IdleMode.kBrake);
         bottomFlywheel.setIdleMode(IdleMode.kBrake);
-        
         //assigns values to encoders
         topFlywheelEncoder = topFlywheel.getEncoder();
         bottomFlywheelEncoder = bottomFlywheel.getEncoder();
-        
         //makes encoders work with the gear ratio (basically means that one turn of the wheel will be one turn of the encoder)
         topFlywheelEncoder.setVelocityConversionFactor(Constants.OutakeConstants.flywheelGearRatio);
         bottomFlywheelEncoder.setVelocityConversionFactor(Constants.OutakeConstants.flywheelGearRatio);
-       
         //sets changes to the motors' controllers
         topFlywheel.burnFlash();
         bottomFlywheel.burnFlash();
@@ -42,7 +37,6 @@ public class OutakeS extends SubsystemBase {
 
     @Override
     public void periodic() {
-        
         //output values to smartDashboard
         SmartDashboard.putNumber("Top Flywheel Speed", topFlywheelEncoder.getVelocity());
         SmartDashboard.putNumber("Bottom Flywheel Speed", bottomFlywheelEncoder.getVelocity());
@@ -50,14 +44,12 @@ public class OutakeS extends SubsystemBase {
     }
 
     public void setFiringSpeed(double power) {
-       
         //sets percentages to motors
         topFlywheel.set(power);
         bottomFlywheel.set(power);
     }
 
     public double getAverageFlywheelSpeed() {
-       
         //pulls the speed of the flywheels, used for pid loop
         double speed = topFlywheelEncoder.getVelocity() + bottomFlywheelEncoder.getVelocity();
         speed = speed/2;

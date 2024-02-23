@@ -8,13 +8,11 @@ import com.pathplanner.lib.util.ReplanningConfig;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -24,7 +22,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.Constants.LimelightConstants;
 
 public class SwerveS extends SubsystemBase {
     private final SwerveModule frontLeft = new SwerveModule(
@@ -63,13 +60,16 @@ public class SwerveS extends SubsystemBase {
         Constants.DriveConstants.kBackRightAbsEncoderOffsetRad, 
         Constants.DriveConstants.kBackRightDriveReversed);
 
-    private static AHRS gyro = new AHRS(Port.kUSB1);
+    private AHRS gyro = new AHRS(Port.kUSB1);
     NetworkTableEntry pipeline;
     
 
-    public NetworkTable limelight = NetworkTableInstance.getDefault().getTable("limelight-swerve");
+    public static NetworkTable limelight = NetworkTableInstance.getDefault().getTable("limelight-swerve");
     NetworkTableEntry tx = limelight.getEntry("tx");
+    static NetworkTableEntry tv = limelight.getEntry("tv");
+
     double xError = tx.getDouble(0.0);
+    static double aprilTagVisible = tv.getDouble(0.0);
 
     Pose2d robotPosition = new Pose2d(0,0, getRotation2d());
 
@@ -78,7 +78,6 @@ public class SwerveS extends SubsystemBase {
     SwerveModulePosition[] m_modulePositions = new SwerveModulePosition[]{frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()};
     SwerveDrivePoseEstimator odometry = new SwerveDrivePoseEstimator(Constants.DriveConstants.kDriveKinematics, getRotation2d(),m_modulePositions, robotPosition);
 
-    public static boolean lockedOntoAprilTag;
     public static boolean autoLock = false;
     public static boolean redIsAlliance = true; //used to determine the alliance for LED systems
     public double latency = 0;
@@ -105,13 +104,12 @@ public class SwerveS extends SubsystemBase {
         this::getChassisSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
         this::setChassisSpeeds, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
         new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
-            new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants // We didn't have the chance to optimize PID constants so there will be some error in autonomous until these values are fixed
-            new PIDConstants(5.0, 0.0, 0.0), // Rotation PID constants
+            new PIDConstants(0.5, 0.0, 0.0), // Translation PID constants // We didn't have the chance to optimize PID constants so there will be some error in autonomous until these values are fixed
+            new PIDConstants(0.5, 0.0, 0.0), // Rotation PID constants
             Constants.DriveConstants.kMaxSpeedMetersPerSecond, // Max module speed, in m/s
             Constants.DriveConstants.kDriveBaseRadius, // Drive base radius in meters. Distance from robot center to furthest module.
             new ReplanningConfig() // Default path replanning config. See the API for the options here
-        ), this::getAlliance
-       ,
+        ), this::getAlliance,
         this // Reference to this subsystem to set requirements
         );
 
@@ -123,10 +121,6 @@ public class SwerveS extends SubsystemBase {
     
     public double getHeading() {
         return -1*Math.IEEEremainder(gyro.getAngle(),360); //modulus
-    }
-
-    public static double getTilt() {
-        return Math.IEEEremainder(gyro.getRoll(),360); //either getRoll() or getPitch()
     }
     
     public Rotation2d getRotation2d() {
@@ -156,7 +150,7 @@ public class SwerveS extends SubsystemBase {
         SmartDashboard.putNumber("BackRight Abs Encoder", backRight.getAbsoluteEncoderRad());
         SmartDashboard.putNumber("xError", xError);
         SmartDashboard.putBoolean("Auto Lock", autoLock);
-        SmartDashboard.putBoolean("Red is Alliance", redIsAlliance);
+        SmartDashboard.putBoolean("Red is Alliance", getAlliance());
         
         // SmartDashboard.putNumber("BackRight Position (SwerveModulePosition)", backRight.getPosition().distanceMeters);
         // SmartDashboard.putNumber("FrontRight Position (SwerveModulePosition)", frontRight.getPosition().distanceMeters);
@@ -171,7 +165,8 @@ public class SwerveS extends SubsystemBase {
         // SmartDashboard.putNumber("Robot Heading (getPose)", getPose().getRotation().getDegrees());
 
         xError = tx.getDouble(0.0);
-        lockedOntoAprilTag = (limelight.getEntry("tv").getDouble(0.0)==1);
+        aprilTagVisible = tv.getDouble(0.0);
+
         m_modulePositions[0] = frontLeft.getPosition();
         m_modulePositions[1] = frontRight.getPosition();
         m_modulePositions[2] = backLeft.getPosition();
@@ -186,6 +181,9 @@ public class SwerveS extends SubsystemBase {
     public double getXError() {
         return xError;
     }
+
+    public static boolean aprilTagVisible() {
+        return aprilTagVisible == 1;
 
     public boolean aprilTagVisible(){
         if (xError != 0.0){
@@ -236,6 +234,7 @@ public class SwerveS extends SubsystemBase {
         
         return distance;
     }
+    
     public Pose2d getPose() {
         return robotPosition;
     }
@@ -276,7 +275,6 @@ public class SwerveS extends SubsystemBase {
     }
 
     public void setChassisSpeeds(ChassisSpeeds speed) {
-        speed.omegaRadiansPerSecond = speed.omegaRadiansPerSecond * -1;
         SwerveModuleState[] moduleStates = Constants.DriveConstants.kDriveKinematics.toSwerveModuleStates(speed);
         setModuleStates(moduleStates);
     }

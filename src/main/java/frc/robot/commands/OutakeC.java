@@ -5,15 +5,11 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.OutakeS;
 
-
 public class OutakeC extends Command {
-   
     private final OutakeS outakeS;
-
-    private final PIDController shooterPID = new PIDController(0.00045, 0.00011, 0);
+    private final PIDController shooterPID = new PIDController(0.0001, 0, 0);
 
     public OutakeC(OutakeS outakeS) {
-    
         this.outakeS = outakeS;
 
         addRequirements(outakeS);
@@ -26,7 +22,6 @@ public class OutakeC extends Command {
 
     @Override
     public void execute() {
-      
         double outakeSpeed = 0;
 
         if (RobotContainer.manipController.getBButton() == true) {
@@ -47,7 +42,6 @@ public class OutakeC extends Command {
 
     @Override
     public boolean isFinished() {
-     
         return false;
     }
 }

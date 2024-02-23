@@ -39,7 +39,26 @@
         {
           "type": "named",
           "data": {
-            "name": "Lock Onto April Tags"
+            "name": "ShootNote"
+          }
+        },
+        {
+          "type": "race",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Top Drive to First Ground Note"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "IntakeNote"
+                }
+              }
+            ]
           }
         }
       ]

@@ -1,7 +1,6 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.RobotContainer;
 import frc.robot.Constants.LEDConstants;
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
@@ -11,7 +10,6 @@ public class LEDStripS extends SubsystemBase{
     AddressableLED leds;
 
     public LEDStripS(){
-       
         //creates LED objects
         leds = new AddressableLED(LEDConstants.ledPort);
         ledBuffer = new AddressableLEDBuffer(LEDConstants.ledBufferLength);
@@ -29,8 +27,9 @@ public class LEDStripS extends SubsystemBase{
         if (SwerveS.autoLock){
         
             //if its locked on, set to constant green
-            if (SwerveS.lockedOntoAprilTag){
+            if (SwerveS.aprilTagVisible()){
                 setConstantColors(LEDConstants.greenH, LEDConstants.greenS, LEDConstants.greenV);
+
 
             //if its not locked on, set to flashing green
             }else{
@@ -44,25 +43,24 @@ public class LEDStripS extends SubsystemBase{
             if (IntakeS.noteIsLoaded()) {
                 setConstantColors(LEDConstants.noteH, LEDConstants.noteS, LEDConstants.noteV);
             
-            } else {
+            }
+            else {
                 // if there isn't a note loaded, do wave pattern with alliance color
                 if(SwerveS.redIsAlliance) {
                     setColorWave(LEDConstants.redH, LEDConstants.redS, LEDConstants.sinePeriod);
-                } else {
+                }
+                else {
                     setColorWave(LEDConstants.blueH, LEDConstants.blueS, LEDConstants.sinePeriod);
+                }
             }
         }
     }
-    }
 
-    public void setConstantColors(int h, int s, int v){
-
-        //Essentially designed to make all the LEDs a constant color 
+    public void setConstantColors(int h, int s, int v){//Essentially designed to make all the LEDs a constant color 
         for (var i = 0; i < ledBuffer.getLength(); i++) {
             // Sets the specified LED to the RGB values for red
             ledBuffer.setHSV(i, h, s, v);
         }
-         
         leds.setData(ledBuffer);
     }
     public void setColorWave(int h, int s, double sinePeriod){//value is basically how dark it is, is controlled by the wave function
@@ -88,5 +86,3 @@ public class LEDStripS extends SubsystemBase{
     }
 
 }
-
-
