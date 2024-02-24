@@ -18,6 +18,7 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.SerialPort.Port;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -61,20 +62,22 @@ public class SwerveS extends SubsystemBase {
         Constants.DriveConstants.kBackRightAbsEncoderPort, 
         Constants.DriveConstants.kBackRightAbsEncoderOffsetRad, 
         Constants.DriveConstants.kBackRightDriveReversed);
-
+    //gyro
     private AHRS gyro = new AHRS(Port.kUSB1);
-    NetworkTableEntry pipeline;
     
-
+    /*limelight stuff
+    All potential values that can be pulled from the limelight NetworkTable: https://docs.limelightvision.io/docs/docs-limelight/apis/complete-networktables-api*/
+    NetworkTableEntry pipeline;
     public static NetworkTable limelight = NetworkTableInstance.getDefault().getTable("limelight-swerve");
     NetworkTableEntry tx = limelight.getEntry("tx");
     static NetworkTableEntry tv = limelight.getEntry("tv");
-
     double xError = tx.getDouble(0.0);
     static double aprilTagVisible = tv.getDouble(0.0);
-
+    
+    
+    //drivetrain, odometry
     Pose2d robotPosition = new Pose2d(0,0, getRotation2d());
-
+    
     // LIST MODULES IN THE SAME EXACT ORDER USED WHEN DECLARING SwerveDriveKinematics
     ChassisSpeeds m_ChassisSpeeds = Constants.DriveConstants.kDriveKinematics.toChassisSpeeds(new SwerveModuleState[]{frontLeft.getState(), frontRight.getState(), backLeft.getState(), backRight.getState()});
     SwerveModulePosition[] m_modulePositions = new SwerveModulePosition[]{frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()};
@@ -192,7 +195,25 @@ public class SwerveS extends SubsystemBase {
 
     //essentially designed to use MegaTag to update the PoseEstimator (odometry)
     public void updatePoseEstimatorWithVisionBotPose() {
-    
+        //sanity check, doesn't do anything if unexpected value occurs
+        
+        //computes latency
+        latency = Timer.getFPGATimestamp() - (limelight.getEntry("tl").getDouble(0)/1000) - (limelight.getEntry("tc").getDouble(0)/1000);
+        
+        //sanity check, ends if we're getting some unreasonable value (or aprilTags not detected)
+        if (getPose().getX() == 0){
+            return;
+        }
+        /*computes distance from current pose to limelight pose
+         * Note: I'm pretty sure pathPlanner (and by extension our odometry)'s coordinate system has its origin at the blue side
+         * To avoid issues, we call the blue origin based
+        */
+
+        
+
+
+        
+        
     }
 
 

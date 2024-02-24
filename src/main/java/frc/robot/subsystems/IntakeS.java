@@ -12,7 +12,6 @@ import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.IntakeConstants;
-
 import com.revrobotics.ColorSensorV3;
 import com.revrobotics.ColorMatch;
 
@@ -30,7 +29,8 @@ public class IntakeS extends SubsystemBase {
     public static ColorMatchResult colorMatchResult;
 
     public IntakeS() {
-        //set note color to color match
+
+        //adding a lot of baseline colors to lessen the chances of a false detection
         colorMatch.addColorMatch(Constants.IntakeConstants.noteColor);
         colorMatch.addColorMatch(Color.kBlue);
         colorMatch.addColorMatch(Color.kRed);
@@ -57,27 +57,44 @@ public class IntakeS extends SubsystemBase {
 
     @Override
     public void periodic() {
+        
+        //reads the color
         detected = colorSensorV3.getColor();
         //sets values to SmartDashboard periodically
         SmartDashboard.putNumber("Deploy Intake", deployIntakeEncoder.getPosition());
         SmartDashboard.putBoolean("Note Loaded?", noteIsLoaded());
+        //outputs color to SmartDashboard
         SmartDashboard.putNumber("Red", detected.red);
         SmartDashboard.putNumber("Green", detected.green);
         SmartDashboard.putNumber("Blue", detected.blue);
-        colorMatchResult = colorMatch.matchClosestColor(detected);
+        try{
         SmartDashboard.putString("data", colorMatchResult.color.toString());
+        } catch (Exception e){
+            
+        }
+        //returns the color that the sensor detects
+        colorMatchResult = colorMatch.matchClosestColor(detected);
     }
 
     public static boolean noteIsLoaded() {
-        //pulls data from color sensor
         
-        colorMatchResult = colorMatch.matchClosestColor(detected);
+        //try statement here so that if for some reason the sensor gets unplugged or returns "null" there's no issues
+        try {
+                    //basically just "if the color is orange true, else false"
         if (colorMatchResult.color == IntakeConstants.noteColor){
             return true;
         }
         else{
             return false;
         }
+        }
+        catch (Exception e){
+            /*basically just default to false if no color detected, most safe solution
+              only reason I'm using this is to simulate robot code
+            */
+            return false;
+        }
+
     }
 
     public void setPrimaryIntake(double power) {
