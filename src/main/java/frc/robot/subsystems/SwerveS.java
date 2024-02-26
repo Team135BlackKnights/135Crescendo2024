@@ -18,6 +18,7 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.SerialPort.Port;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -72,6 +73,8 @@ public class SwerveS extends SubsystemBase {
     static double aprilTagVisible = tv.getDouble(0.0);
 
     Pose2d robotPosition = new Pose2d(0,0, getRotation2d());
+
+    Field2d robotField = new Field2d();
 
     // LIST MODULES IN THE SAME EXACT ORDER USED WHEN DECLARING SwerveDriveKinematics
     ChassisSpeeds m_ChassisSpeeds = Constants.DriveConstants.kDriveKinematics.toChassisSpeeds(new SwerveModuleState[]{frontLeft.getState(), frontRight.getState(), backLeft.getState(), backRight.getState()});
@@ -173,6 +176,9 @@ public class SwerveS extends SubsystemBase {
         m_ChassisSpeeds = Constants.DriveConstants.kDriveKinematics.toChassisSpeeds(new SwerveModuleState[]{frontLeft.getState(), frontRight.getState(), backLeft.getState(), backRight.getState()});
 
         robotPosition = odometry.update(getRotation2d(), m_modulePositions);
+
+        SmartDashboard.putData("Field", robotField);
+        robotField.setRobotPose(robotPosition);
     }
 
     public double getXError() {

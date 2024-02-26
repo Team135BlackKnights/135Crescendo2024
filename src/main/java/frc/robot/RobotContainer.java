@@ -52,7 +52,7 @@ public class RobotContainer {
     outakeS.setDefaultCommand(new OutakeC(outakeS));
     hangS.setDefaultCommand(new HangC(hangS));
     
-    NamedCommands.registerCommand("DeployIntake", new MoveIntake(intakeS, 10));
+    NamedCommands.registerCommand("DeployIntake", new MoveIntake(intakeS, 3));
     NamedCommands.registerCommand("Lock Onto April Tags", new AutoLock(swerveS));
     NamedCommands.registerCommand("IntakeNote", new AutonIntake(intakeS));
     NamedCommands.registerCommand("ShootNote", new FireShooter(outakeS, intakeS, 4000));
