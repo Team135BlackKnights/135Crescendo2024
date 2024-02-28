@@ -50,7 +50,7 @@ public class FireShooter extends Command {
             timer.start();
             intakeS.setPrimaryIntake(-0.5);
         }
-        outakeS.setFiringSpeed(output);
+        outakeS.setIndividualFlywheelSpeeds(output,output);
         if (timer.get() > 0) {
             intakeS.setPrimaryIntake(-0.5);
         }
@@ -58,7 +58,7 @@ public class FireShooter extends Command {
 
     @Override
     public void end(boolean interrupted) {
-        outakeS.setFiringSpeed(0);
+        outakeS.setIndividualFlywheelSpeeds(0,0);
         intakeS.setPrimaryIntake(0);
         timer.stop();
     }

@@ -22,8 +22,20 @@ public class OutakeC extends Command {
 
     @Override
     public void execute() {
-        double outakeSpeed = 0;
-
+        //for amp
+        if (RobotContainer.manipController.getRightBumper()){
+            double idealPercentTop = .029;
+            double idealPercentBottom = .24;
+            double topWheelSpeed = 0;
+            double bottomWheelSpeed = 0;
+            double[] flywheelSpeeds = outakeS.getAverageFlywheelSpeeds();
+            topWheelSpeed = idealPercentTop + shooterPID.calculate(flywheelSpeeds[0], 8000*idealPercentTop);
+            bottomWheelSpeed = idealPercentBottom + shooterPID.calculate(flywheelSpeeds[1],8000*idealPercentBottom);
+            outakeS.setIndividualFlywheelSpeeds(topWheelSpeed, bottomWheelSpeed);
+        }
+        //for speaker
+        else{
+            double outakeSpeed = 0;
         if (RobotContainer.manipController.getBButton() == true) {
             outakeSpeed = 1;
         } else if (RobotContainer.manipController.getAButton() == true) {
@@ -31,8 +43,9 @@ public class OutakeC extends Command {
         } else if (RobotContainer.manipController.getXButton() == true) {
             outakeSpeed = 0.33 + shooterPID.calculate(outakeS.getAverageFlywheelSpeed(), 2700);
         }
-
-        outakeS.setFiringSpeed(outakeSpeed);
+        outakeS.setIndividualFlywheelSpeeds(outakeSpeed, outakeSpeed);
+    }
+        
     }
 
     @Override

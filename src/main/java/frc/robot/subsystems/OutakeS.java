@@ -43,16 +43,21 @@ public class OutakeS extends SubsystemBase {
         SmartDashboard.putNumber("Average Flywheel Speed", getAverageFlywheelSpeed());
     }
 
-    public void setFiringSpeed(double power) {
-        //sets percentages to motors
-        topFlywheel.set(power);
-        bottomFlywheel.set(power);
-    }
-
     public double getAverageFlywheelSpeed() {
         //pulls the speed of the flywheels, used for pid loop
         double speed = topFlywheelEncoder.getVelocity() + bottomFlywheelEncoder.getVelocity();
         speed = speed/2;
         return speed;
+    }
+    public double[] getAverageFlywheelSpeeds(){
+        return new double[]{topFlywheelEncoder.getVelocity(), bottomFlywheelEncoder.getVelocity()};
+    }
+    
+    /*
+     **For shooting amp
+     */
+    public void setIndividualFlywheelSpeeds(double topWheelSpeed, double bottomWheelSpeed){
+        topFlywheel.set(topWheelSpeed);
+        bottomFlywheel.set(bottomWheelSpeed);
     }
 }
