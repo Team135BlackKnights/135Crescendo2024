@@ -74,7 +74,7 @@ public final class Constants {
       kDeadband = 0.1,
       kAutoDeadband = 0.01,
 
-      kTurningP = 0.5;
+      kTurningP = 0.4;
   }
 
   public static class DriveConstants {

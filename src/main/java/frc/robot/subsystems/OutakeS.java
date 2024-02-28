@@ -49,7 +49,7 @@ public class OutakeS extends SubsystemBase {
         speed = speed/2;
         return speed;
     }
-    public double[] getAverageFlywheelSpeeds(){
+    public double[] getFlywheelSpeeds(){
         return new double[]{topFlywheelEncoder.getVelocity(), bottomFlywheelEncoder.getVelocity()};
     }
     

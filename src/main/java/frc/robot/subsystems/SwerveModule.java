@@ -34,6 +34,9 @@ public class SwerveModule {
     private final boolean absoluteEncoderReversed;
     private final double absoluteEncoderOffsetRad;
 
+    private final SwerveModuleState currentState;
+    private final SwerveModulePosition currentPosition;
+
     /**
      * 
      * @param driveMotorId Drive CANSparkMax Motor ID
@@ -74,6 +77,9 @@ public class SwerveModule {
         turningPidController = new PIDController(Constants.SwerveConstants.kTurningP, 0, 0);
         //makes the value loop around
         turningPidController.enableContinuousInput(-Math.PI, Math.PI);
+
+        currentState = new SwerveModuleState();
+        currentPosition = new SwerveModulePosition();
     }
 
     public double getDrivePosition() {
@@ -131,7 +137,7 @@ public class SwerveModule {
     public SwerveModulePosition getPosition() {
         //basically creates a new swervemoduleposition based on the current positions of the drive and turning encoders
         return new SwerveModulePosition(
-            driveEncoder.getPosition(), new Rotation2d(turningEncoder.getPosition()));
+            driveEncoder.getPosition(), new Rotation2d(getAbsoluteEncoderRad()));
     }
     
 

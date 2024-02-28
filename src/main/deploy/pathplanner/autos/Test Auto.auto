@@ -20,26 +20,8 @@
                 "data": {
                   "pathName": "Top Drive to Initial Scoring Position"
                 }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "DeployIntake"
-                }
               }
             ]
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Lock Onto April Tags"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "ShootNote"
           }
         }
       ]

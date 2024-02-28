@@ -4,7 +4,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.OutakeS;
-import frc.robot.Constants;
+import frc.robot.Constants.OutakeConstants;
 
 public class OutakeC extends Command {
     private final OutakeS outakeS;
@@ -25,12 +25,9 @@ public class OutakeC extends Command {
     public void execute() {
         //for amp
         if (RobotContainer.manipController.getRightBumper()){
-            
-            double topWheelSpeed = 0;
-            double bottomWheelSpeed = 0;
-            double[] flywheelSpeeds = outakeS.getAverageFlywheelSpeeds();
-            topWheelSpeed = Constants.OutakeConstants.idealPercentTop + shooterPID.calculate(flywheelSpeeds[0], 8000*Constants.OutakeConstants.idealPercentTop);
-            bottomWheelSpeed = Constants.OutakeConstants.idealPercentBottom + shooterPID.calculate(flywheelSpeeds[1],8000*Constants.OutakeConstants.idealPercentBottom);
+            double[] flywheelSpeeds = outakeS.getFlywheelSpeeds();
+            double topWheelSpeed = OutakeConstants.idealPercentTop + shooterPID.calculate(flywheelSpeeds[0], OutakeConstants.flywheelMaxRPM*OutakeConstants.idealPercentTop);
+            double bottomWheelSpeed = OutakeConstants.idealPercentBottom + shooterPID.calculate(flywheelSpeeds[1],OutakeConstants.flywheelMaxRPM*OutakeConstants.idealPercentBottom);
             outakeS.setIndividualFlywheelSpeeds(topWheelSpeed, bottomWheelSpeed);
         }
         //for speaker

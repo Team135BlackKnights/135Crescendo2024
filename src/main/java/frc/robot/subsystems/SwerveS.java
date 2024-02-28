@@ -105,15 +105,17 @@ public class SwerveS extends SubsystemBase {
         this::getChassisSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
         this::setChassisSpeeds, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
         new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
-            new PIDConstants(0.5, 0.0, 0.0), // Translation PID constants // We didn't have the chance to optimize PID constants so there will be some error in autonomous until these values are fixed
-            new PIDConstants(0.5, 0.0, 0.0), // Rotation PID constants
+            new PIDConstants(2, 0.0, 0.0), // Translation PID constants // We didn't have the chance to optimize PID constants so there will be some error in autonomous until these values are fixed
+            new PIDConstants(2, 0.0, 0.0), // Rotation PID constants
             Constants.DriveConstants.kMaxSpeedMetersPerSecond, // Max module speed, in m/s
             Constants.DriveConstants.kDriveBaseRadius, // Drive base radius in meters. Distance from robot center to furthest module.
             new ReplanningConfig() // Default path replanning config. See the API for the options here
-        ), this::getAlliance,
+        ),
+        this::getAlliance,
         this // Reference to this subsystem to set requirements
         );
 
+        SmartDashboard.putData("Field", robotField);
     }
     
     public void zeroHeading() {
@@ -161,9 +163,9 @@ public class SwerveS extends SubsystemBase {
         // SmartDashboard.putNumber("FrontRight Angle (SwerveModulePosition)", frontRight.getPosition().angle.getDegrees());
         // SmartDashboard.putNumber("BackLeft Angle (SwerveModulePosition)", backLeft.getPosition().angle.getDegrees());
         // SmartDashboard.putNumber("FrontLeft Angle (SwerveModulePosition)", frontLeft.getPosition().angle.getDegrees());
-        // SmartDashboard.putNumber("Position X (getPose)", getPose().getX());
-        // SmartDashboard.putNumber("Position Y (getPose)", getPose().getY());
-        // SmartDashboard.putNumber("Robot Heading (getPose)", getPose().getRotation().getDegrees());
+        SmartDashboard.putNumber("Position X (getPose)", getPose().getX());
+        SmartDashboard.putNumber("Position Y (getPose)", getPose().getY());
+        SmartDashboard.putNumber("Robot Heading (getPose)", getPose().getRotation().getDegrees());
 
         xError = tx.getDouble(0.0);
         aprilTagVisible = tv.getDouble(0.0);
@@ -178,7 +180,9 @@ public class SwerveS extends SubsystemBase {
 
         robotPosition = odometry.update(getRotation2d(), m_modulePositions);
 
-        SmartDashboard.putData("Field", robotField);
+        robotField.setRobotPose(getPose());
+
+
         PathPlannerLogging.setLogCurrentPoseCallback((pose) -> {
             // Do whatever you want with the pose here
             robotField.setRobotPose(pose);
@@ -207,7 +211,8 @@ public class SwerveS extends SubsystemBase {
     }
     
     public Pose2d getPose() {
-        return robotPosition;
+        Pose2d actualPosition = new Pose2d(-robotPosition.getY(), robotPosition.getX(), getRotation2d());
+        return actualPosition;
     }
 
     public ChassisSpeeds getChassisSpeeds() {
@@ -226,6 +231,7 @@ public class SwerveS extends SubsystemBase {
 
 
     public void resetPose(Pose2d pose) {
+        pose = new Pose2d(pose.getY(), -pose.getX(), getRotation2d());
         // LIST MODULES IN THE SAME EXACT ORDER USED WHEN DECLARING SwerveDriveKinematics
         odometry.resetPosition(getRotation2d(), new SwerveModulePosition[]{frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()}, pose);
     }
