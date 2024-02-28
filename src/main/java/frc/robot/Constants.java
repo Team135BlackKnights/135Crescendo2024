@@ -145,7 +145,7 @@ public final class Constants {
     public static int 
     ledPort = 9, 
     ledBufferLength = 90, // amount of LEDs in the light strip
-    noteH = 19, //note HSV value
+    noteH = 12, //note HSV value
     noteS = 255,
     noteV = 100,
     redH = 0, //red HSV valuess

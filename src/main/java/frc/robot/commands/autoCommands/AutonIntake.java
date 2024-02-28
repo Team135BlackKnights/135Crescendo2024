@@ -1,11 +1,13 @@
 package frc.robot.commands.autoCommands;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.IntakeS;
 
 public class AutonIntake extends Command {
     private final IntakeS intakeS;
     private boolean isFinished = false;
+    Timer timer = new Timer();
     
     public AutonIntake(IntakeS intakeS) {
         this.intakeS = intakeS;
@@ -19,11 +21,18 @@ public class AutonIntake extends Command {
 
     @Override
     public void execute() {
-        //runs intake if note is not loaded
-        if (IntakeS.noteIsLoaded()) {
+        if (timer.get() > 0.125) {
             isFinished = true;
         }
-        intakeS.setPrimaryIntake(-0.25);
+        if (timer.get() > 0) {
+            intakeS.setPrimaryIntake(0.25);
+        } else {
+            intakeS.setPrimaryIntake(-0.5);
+        }
+        //runs intake if note is not loaded
+        if (IntakeS.noteIsLoaded()) {
+            timer.start();
+        }
     }
 
     @Override

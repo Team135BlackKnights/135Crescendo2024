@@ -18,6 +18,7 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.SerialPort.Port;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -90,7 +91,6 @@ public class SwerveS extends SubsystemBase {
             try {
                 Thread.sleep(1000);
                 zeroHeading();
-                redIsAlliance = getAlliance();
                 frontLeft.resetEncoders();
                 frontRight.resetEncoders();
                 backLeft.resetEncoders();
@@ -105,7 +105,7 @@ public class SwerveS extends SubsystemBase {
         this::getChassisSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
         this::setChassisSpeeds, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
         new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
-            new PIDConstants(2, 0.0, 0.0), // Translation PID constants // We didn't have the chance to optimize PID constants so there will be some error in autonomous until these values are fixed
+            new PIDConstants(0.5, 0.0, 0.0), // Translation PID constants // We didn't have the chance to optimize PID constants so there will be some error in autonomous until these values are fixed
             new PIDConstants(2, 0.0, 0.0), // Rotation PID constants
             Constants.DriveConstants.kMaxSpeedMetersPerSecond, // Max module speed, in m/s
             Constants.DriveConstants.kDriveBaseRadius, // Drive base radius in meters. Distance from robot center to furthest module.
@@ -123,7 +123,7 @@ public class SwerveS extends SubsystemBase {
     }
     
     public double getHeading() {
-        return -1*Math.IEEEremainder(gyro.getAngle(),360); //modulus
+        return -1*Math.IEEEremainder(gyro.getAngle() + (getAlliance() ? 180 : 0),360); //modulus
     }
     
     public Rotation2d getRotation2d() {
@@ -145,6 +145,7 @@ public class SwerveS extends SubsystemBase {
     
     @Override
     public void periodic() {
+        redIsAlliance = getAlliance();
         //puts values to smartDashboard
         SmartDashboard.putNumber("Robot Heading", getRotation2d().getDegrees());
         SmartDashboard.putNumber("FrontLeft Abs Encoder", frontLeft.getAbsoluteEncoderRad());
@@ -170,10 +171,10 @@ public class SwerveS extends SubsystemBase {
         xError = tx.getDouble(0.0);
         aprilTagVisible = tv.getDouble(0.0);
 
-        m_modulePositions[0] = frontLeft.getPosition();
-        m_modulePositions[1] = frontRight.getPosition();
-        m_modulePositions[2] = backLeft.getPosition();
-        m_modulePositions[3] = backRight.getPosition();
+        m_modulePositions[0] = frontRight.getPosition();
+        m_modulePositions[1] = backRight.getPosition();
+        m_modulePositions[2] = frontLeft.getPosition();
+        m_modulePositions[3] = backLeft.getPosition();
 
         // LIST MODULES IN THE SAME EXACT ORDER USED WHEN DECLARING SwerveDriveKinematics
         m_ChassisSpeeds = Constants.DriveConstants.kDriveKinematics.toChassisSpeeds(new SwerveModuleState[]{frontLeft.getState(), frontRight.getState(), backLeft.getState(), backRight.getState()});
@@ -253,8 +254,12 @@ public class SwerveS extends SubsystemBase {
 
     public void setChassisSpeeds(ChassisSpeeds speed) {
         speed.omegaRadiansPerSecond = speed.omegaRadiansPerSecond * -1;
+        speed = new ChassisSpeeds(speed.vyMetersPerSecond, -speed.vxMetersPerSecond, speed.omegaRadiansPerSecond);
         SwerveModuleState[] moduleStates = Constants.DriveConstants.kDriveKinematics.toSwerveModuleStates(speed);
-        setModuleStates(moduleStates);
+        frontLeft.setDesiredState(moduleStates[0]);
+        frontRight.setDesiredState(moduleStates[1]);
+        backLeft.setDesiredState(moduleStates[2]);
+        backRight.setDesiredState(moduleStates[3]);
     }
     
     public void setModuleStates(SwerveModuleState[] desiredStates) {

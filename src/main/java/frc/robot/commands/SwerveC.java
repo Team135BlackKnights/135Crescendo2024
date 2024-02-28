@@ -3,6 +3,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -63,6 +64,12 @@ public class SwerveC extends Command {
     ySpeed = yLimiter.calculate(ySpeed) * Constants.DriveConstants.kMaxSpeedMetersPerSecond;
     turningSpeed = turningLimiter.calculate(turningSpeed) * Constants.DriveConstants.kMaxTurningSpeedRadPerSec;
     
+    
+    if (swerveS.getAlliance()) {
+      xSpeed *= -1;
+      ySpeed *= -1;
+      turningSpeed *= 1;
+    }
 
     // Convert ChassisSpeeds into the ChassisSpeeds type
     if (fieldOriented) {
