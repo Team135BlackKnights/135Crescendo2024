@@ -52,11 +52,14 @@ public final class Constants {
 
     public static double
       flywheelMaxRPM = 6600,
-      flywheelGearRatio = 1.5;
+      flywheelGearRatio = 1.5,
+      idealPercentTop = .0291,
+      idealPercentBottom = .241;
 
     public static boolean
       topFlywheelReversed = true,
       bottomFlywheelReversed = true;
+    
   }
 
   public static class SwerveConstants {
@@ -177,4 +180,5 @@ public final class Constants {
     limelightLensHeightoffFloorInches = 18,
     targetHeightoffFloorInches = 84.6841;
   }
+  
 }
