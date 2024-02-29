@@ -46,6 +46,10 @@ public class IntakeC extends Command {
 
         double deployIntakeSpeed = RobotContainer.manipController.getRightY();
 
+        if (RobotContainer.manipController.getXButton() == true || RobotContainer.manipController.getAButton() == true || RobotContainer.manipController.getRightBumper() == true) {
+            deployIntakeSpeed = 0.25;
+        }
+
         intakeS.setPrimaryIntake(intakeSpeed * 1);
         intakeS.deployIntake(deployIntakeSpeed * 1);
         

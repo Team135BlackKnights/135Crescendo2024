@@ -3,12 +3,12 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.2724014336917566,
+        "x": 1.8,
         "y": 5.54
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.2724014336917566,
+        "x": 2.8000000000000003,
         "y": 5.54
       },
       "isLocked": false,
@@ -39,8 +39,8 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 90.0,
-    "rotateFast": false
+    "rotation": -10.0,
+    "rotateFast": true
   },
   "reversed": false,
   "folder": "Middle Auto Paths",

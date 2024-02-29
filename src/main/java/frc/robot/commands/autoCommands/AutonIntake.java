@@ -8,6 +8,7 @@ public class AutonIntake extends Command {
     private final IntakeS intakeS;
     private boolean isFinished = false;
     Timer timer = new Timer();
+    Timer delayTimer = new Timer();
     
     public AutonIntake(IntakeS intakeS) {
         this.intakeS = intakeS;
@@ -17,6 +18,8 @@ public class AutonIntake extends Command {
     @Override
     public void initialize() {
         isFinished = false;
+        delayTimer.reset();
+        delayTimer.start();
     }
 
     @Override
@@ -30,7 +33,8 @@ public class AutonIntake extends Command {
             intakeS.setPrimaryIntake(-0.5);
         }
         //runs intake if note is not loaded
-        if (IntakeS.noteIsLoaded()) {
+        if (IntakeS.noteIsLoaded() && delayTimer.get() > 0.5) {
+            delayTimer.stop();
             timer.start();
         }
     }
@@ -38,6 +42,10 @@ public class AutonIntake extends Command {
     @Override
     public void end(boolean interrupted) {
         intakeS.setPrimaryIntake(0);
+        timer.stop();
+        timer.reset();
+        delayTimer.stop();
+        delayTimer.reset();
     }
 
     @Override

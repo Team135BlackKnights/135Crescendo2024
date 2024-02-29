@@ -53,8 +53,8 @@ public final class Constants {
     public static double
       flywheelMaxRPM = 6600,
       flywheelGearRatio = 1.5,
-      idealPercentTop = .0291,
-      idealPercentBottom = .241;
+      idealPercentTop = .034,
+      idealPercentBottom = .31;
 
     public static boolean
       topFlywheelReversed = true,
@@ -158,7 +158,7 @@ public final class Constants {
     greenS = 255,
     greenV = 100,
     goldH = 23, //gold hsv values
-    goldS = 189,
+    goldS = 255,
     goldV = 100;
      
     //Basically controls how different the waves are from one another when the setColorWave function is called. Due to how it is calculated , this value CANNOT be zero (divide by zero error). 

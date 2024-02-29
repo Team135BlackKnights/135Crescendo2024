@@ -5,7 +5,7 @@
       "x": 0.42,
       "y": 7.0
     },
-    "rotation": -90.0
+    "rotation": 0.0
   },
   "command": {
     "type": "sequential",
@@ -20,13 +20,7 @@
         {
           "type": "named",
           "data": {
-            "name": "Lock Onto April Tags"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "ShootNote"
+            "name": "ShootNote 3600 RPM"
           }
         },
         {
@@ -57,13 +51,7 @@
         {
           "type": "named",
           "data": {
-            "name": "Lock Onto April Tags"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "ShootNote"
+            "name": "ShootNote 3600 RPM"
           }
         },
         {
@@ -86,21 +74,9 @@
           }
         },
         {
-          "type": "path",
-          "data": {
-            "pathName": "Top Drive into Team Wing (Upper)"
-          }
-        },
-        {
           "type": "named",
           "data": {
-            "name": "Lock Onto April Tags"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "ShootNote"
+            "name": "ShootNote 3600 RPM"
           }
         },
         {
@@ -125,19 +101,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Top Drive into Team Wing (Lower)"
+            "pathName": "Top Drive to Initial Scoring Position"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "Lock Onto April Tags"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "ShootNote"
+            "name": "ShootNote 3600 RPM"
           }
         }
       ]

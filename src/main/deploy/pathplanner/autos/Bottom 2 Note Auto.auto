@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.27,
-      "y": 5.54
+      "x": 0.38,
+      "y": 4.1
     },
-    "rotation": 0.0
+    "rotation": 0
   },
   "command": {
     "type": "sequential",
@@ -18,7 +18,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Middle Drive to Scoring Position"
+                  "pathName": "Bottom Drive to Initial Scoring Position"
                 }
               },
               {
@@ -33,7 +33,7 @@
         {
           "type": "named",
           "data": {
-            "name": "ShootNote 3000 RPM"
+            "name": "ShootNote 3600 RPM"
           }
         },
         {
@@ -43,7 +43,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Middle Drive to First Ground Note"
+                  "pathName": "Bottom Drive to Ground Note"
                 }
               },
               {
@@ -58,18 +58,18 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Middle Drive to Scoring Position"
+            "pathName": "Bottom Drive to Initial Scoring Position"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "ShootNote 3000 RPM"
+            "name": "ShootNote 3600 RPM"
           }
         }
       ]
     }
   },
-  "folder": "Middle Autos",
+  "folder": "Bottom Autos",
   "choreoAuto": false
 }
