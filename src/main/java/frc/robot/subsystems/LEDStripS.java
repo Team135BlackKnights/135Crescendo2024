@@ -23,13 +23,23 @@ public class LEDStripS extends SubsystemBase{
 
     @Override
     public void periodic() {
-       /*NOTE: This code does not have a designated indicator for when the AutoLock software*/
+       /*NOTE: This code does not have a designated indicator for when the AutoLock program is running*/
 
-        //if the AutoLock command is running or if the swerve subsystem is called:
-        if (SwerveS.disabled){
-            setColorWave(LEDConstants.goldH, LEDConstants.goldS, LEDConstants.disabledSinePeriod);
+        //if there is a note stored in the intake, set it to a constant note color
+        if (IntakeS.noteIsLoaded()){
+            
+            setConstantColors(LEDConstants.noteH, LEDConstants.noteS, LEDConstants.noteV);
         }
+
+        // if it's disabled make it so LEDs are off
+        else if(SwerveS.disabled){
+            //setColorWave(LEDConstants.goldH, LEDConstants.goldS, LEDConstants.disabledSinePeriod);
+            setConstantColors(0, 0, 0);
+        }
+
         else{
+
+            //if it is trying to autolock
             if (SwerveS.autoLock){
                 
                 //if its locked on, set to constant green
@@ -45,25 +55,18 @@ public class LEDStripS extends SubsystemBase{
         
             else{
 
-                //if there is a note stored in the intake, set it to a constant note color
-                if (IntakeS.noteIsLoaded()) {
-                    setConstantColors(LEDConstants.noteH, LEDConstants.noteS, LEDConstants.noteV);
+                //If none of the previous conditions are met do the wave pattern with our alliance color
+                if(SwerveS.redIsAlliance) {
+                    setColorWave(LEDConstants.redH, LEDConstants.redS, LEDConstants.sinePeriod);
                 }
-
-                else {
-                    // if there isn't a note loaded, do wave pattern with alliance color
-                    if(SwerveS.redIsAlliance) {
-                        setColorWave(LEDConstants.redH, LEDConstants.redS, LEDConstants.sinePeriod);
-                    }
                     
-                    else {
-                    setColorWave(LEDConstants.blueH, LEDConstants.blueS, LEDConstants.sinePeriod);
-                    }
+                else {
+                setColorWave(LEDConstants.blueH, LEDConstants.blueS, LEDConstants.sinePeriod);
+                }
                 }
             }
         }
         
-    }
 
     public void setConstantColors(int h, int s, int v){//Essentially designed to make all the LEDs a constant color 
         for (var i = 0; i < ledBuffer.getLength(); i++) {
