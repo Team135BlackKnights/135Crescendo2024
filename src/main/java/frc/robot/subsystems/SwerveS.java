@@ -9,21 +9,25 @@ import com.pathplanner.lib.util.ReplanningConfig;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.SerialPort.Port;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.Constants.LimelightConstants;
 
 public class SwerveS extends SubsystemBase {
     private final SwerveModule frontLeft = new SwerveModule(
@@ -247,6 +251,63 @@ public class SwerveS extends SubsystemBase {
 
     public void toggleAutoLock() {
         autoLock = !autoLock;
+    }
+     public void updatePoseEstimatorWithVisionBotPose() {
+        //sanity check, doesn't do anything if unexpected value occurs
+        
+        //computes latency
+        double latency = Timer.getFPGATimestamp() - (limelight.getEntry("tl").getDouble(0)/1000) - (limelight.getEntry("tc").getDouble(0)/1000);
+        
+        //sanity check, ends if we're getting some unreasonable value (or aprilTags not detected)
+        if (getPose().getX() == 0){
+            return;
+        }
+        /*computes distance from current pose to limelight pose
+         * Note: I'm pretty sure pathPlanner (and by extension our odometry)'s coordinate system has its origin at the blue side
+         * To avoid issues, we call the blue origin based
+        */
+
+        
+
+
+        
+        
+    }
+
+
+
+
+
+
+    public double getDistanceFromSpeakerInMeters(){
+
+        double distance = 0; //resets value so it doesn't output last value
+
+        /* if apriltag is detected, uses formula given here https://docs.limelightvision.io/docs/docs-limelight/tutorials/tutorial-estimating-distance
+        formula is d =(h2-h1)/tan(h2+h1)*/
+
+        if (aprilTagVisible()){
+        
+            // computing the angle
+            double theta = Units.degreesToRadians(LimelightConstants.limeLightAngleOffsetDegrees+limelight.getEntry("ty").getDouble(0.0));
+        
+            //computes distance
+            distance = Units.inchesToMeters(LimelightConstants.targetHeightoffFloorInches-LimelightConstants.limelightLensHeightoffFloorInches)/Math.tan(theta);}
+
+        else{
+            
+            //if robot does not have a lock onto april tag try to approximate distance from speaker with robot odometry
+            
+            //pulls robot pose and converts it to a translation
+            Pose2d pose = getPose();
+            Translation2d translation = new Translation2d(pose.getX(),pose.getY());
+            //compares it with the translation2d of the speaker,(determined through pathPlanner)
+             distance = translation.getDistance(new Translation2d(0,5.55));
+        }
+
+
+        
+        return distance;
     }
 
     public InstantCommand toggleAutoLockCommand() {
