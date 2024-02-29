@@ -156,11 +156,16 @@ public final class Constants {
     blueV = 100,
     greenH = 50,//green hsv values
     greenS = 255,
-    greenV = 100;
+    greenV = 100,
+    goldH = 23, //gold hsv values
+    goldS = 189,
+    goldV = 100;
      
-    public static double sinePeriod = 16; 
     //Basically controls how different the waves are from one another when the setColorWave function is called. Due to how it is calculated , this value CANNOT be zero (divide by zero error). 
     //Try to set this value to a multiple of however many LEDs we have (so like if we have 63 LEDs on the robot set the sine to 9)
+    public static double sinePeriod = 16,
+    disabledSinePeriod = 32;
+    //goes half as fast in idle
   }
   public static class HangConstants{
     public static double

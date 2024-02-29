@@ -83,6 +83,7 @@ public class SwerveS extends SubsystemBase {
     SwerveDriveOdometry odometry = new SwerveDriveOdometry(Constants.DriveConstants.kDriveKinematics, getRotation2d(), new SwerveModulePosition[]{frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()},robotPosition);
     SwerveModulePosition[] m_modulePositions = new SwerveModulePosition[]{frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()};
 
+    public static boolean disabled = true;
     public static boolean autoLock = false;
     public static boolean redIsAlliance = true; //used to determine the alliance for LED systems
     public SwerveS() {
@@ -146,6 +147,7 @@ public class SwerveS extends SubsystemBase {
     @Override
     public void periodic() {
         redIsAlliance = getAlliance();
+        disabled = DriverStation.isDisabled();
         //puts values to smartDashboard
         SmartDashboard.putNumber("Robot Heading", getRotation2d().getDegrees());
         SmartDashboard.putNumber("FrontLeft Abs Encoder", frontLeft.getAbsoluteEncoderRad());

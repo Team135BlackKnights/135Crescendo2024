@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.LEDConstants;
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
+
 public class LEDStripS extends SubsystemBase{
     double InitialLoopValue = 0;
     AddressableLEDBuffer ledBuffer;
@@ -25,34 +26,43 @@ public class LEDStripS extends SubsystemBase{
        /*NOTE: This code does not have a designated indicator for when the AutoLock software*/
 
         //if the AutoLock command is running or if the swerve subsystem is called:
-        if (SwerveS.autoLock){
-        
-            //if its locked on, set to constant green
-            if (SwerveS.aprilTagVisible()){
-                setConstantColors(LEDConstants.greenH, LEDConstants.greenS, LEDConstants.greenV);
-            }
-            else{ //if its not locked on, set to flashing green
-                setColorWave(LEDConstants.greenH, LEDConstants.greenS, LEDConstants.sinePeriod);
-            }    
+        if (SwerveS.disabled){
+            setColorWave(LEDConstants.goldH, LEDConstants.goldS, LEDConstants.disabledSinePeriod);
         }
-        
         else{
-
-            //if there is a note stored in the intake, set it to a constant note color
-            if (IntakeS.noteIsLoaded()) {
-                setConstantColors(LEDConstants.noteH, LEDConstants.noteS, LEDConstants.noteV);
-            
-            }
-            else {
-                // if there isn't a note loaded, do wave pattern with alliance color
-                if(SwerveS.redIsAlliance) {
-                    setColorWave(LEDConstants.redH, LEDConstants.redS, LEDConstants.sinePeriod);
+            if (SwerveS.autoLock){
+                
+                //if its locked on, set to constant green
+                if (SwerveS.aprilTagVisible()){
+                    setConstantColors(LEDConstants.greenH, LEDConstants.greenS, LEDConstants.greenV);
                 }
+                
+                //if its not locked on, set to flashing green
+                else{ 
+                    setColorWave(LEDConstants.greenH, LEDConstants.greenS, LEDConstants.sinePeriod);
+                }    
+            }
+        
+            else{
+
+                //if there is a note stored in the intake, set it to a constant note color
+                if (IntakeS.noteIsLoaded()) {
+                    setConstantColors(LEDConstants.noteH, LEDConstants.noteS, LEDConstants.noteV);
+                }
+
                 else {
+                    // if there isn't a note loaded, do wave pattern with alliance color
+                    if(SwerveS.redIsAlliance) {
+                        setColorWave(LEDConstants.redH, LEDConstants.redS, LEDConstants.sinePeriod);
+                    }
+                    
+                    else {
                     setColorWave(LEDConstants.blueH, LEDConstants.blueS, LEDConstants.sinePeriod);
+                    }
                 }
             }
         }
+        
     }
 
     public void setConstantColors(int h, int s, int v){//Essentially designed to make all the LEDs a constant color 
