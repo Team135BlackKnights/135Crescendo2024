@@ -91,7 +91,7 @@ for (var i = 0; i < ledBuffer.getLength(); i++) {
         
 
         // Increase the value computed in the sine function by pi/(the changable period) to make the gradient "move"
-        InitialLoopValue += Math.PI/LEDConstants.sinePeriod; //offset by one "notch" each time
+        InitialLoopValue += Math.PI/sinePeriod; //offset by one "notch" each time
         
         
         //Check bounds
