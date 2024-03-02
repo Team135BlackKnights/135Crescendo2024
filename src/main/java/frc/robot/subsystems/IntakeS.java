@@ -28,8 +28,10 @@ public class IntakeS extends SubsystemBase {
     public static ColorMatch colorMatch = new ColorMatch();
     public static Color detected = new Color();
     public static ColorMatchResult colorMatchResult;
-
+    public static Thread sensorThread;
+    public static int timesRan;
     public IntakeS() {
+        timesRan = 0;
         //set note color to color match
         colorMatch.addColorMatch(Constants.IntakeConstants.noteColor);
         colorMatch.addColorMatch(Color.kBlue);
@@ -53,19 +55,34 @@ public class IntakeS extends SubsystemBase {
         //sets changes to motor (resource intensive, ONLY CALL ON INITIALIZATION)
         primaryIntake.burnFlash();
         deployIntake.burnFlash();
+        
+        //Color sensor thread
+        sensorThread = new Thread(()-> {
+        detected = colorSensorV3.getColor();
+        colorMatchResult = colorMatch.matchClosestColor(detected);
+        });
     }
 
     @Override
     public void periodic() {
-        detected = colorSensorV3.getColor();
+        timesRan +=1;
+        timesRan %=5;
+        if (timesRan == 0){
+            updateSensorColor();
+        }
         //sets values to SmartDashboard periodically
         SmartDashboard.putNumber("Deploy Intake", deployIntakeEncoder.getPosition());
         SmartDashboard.putBoolean("Note Loaded?", noteIsLoaded());
         SmartDashboard.putNumber("Red", detected.red);
         SmartDashboard.putNumber("Green", detected.green);
         SmartDashboard.putNumber("Blue", detected.blue);
-        colorMatchResult = colorMatch.matchClosestColor(detected);
         SmartDashboard.putString("data", colorMatchResult.color.toString());
+    }
+    
+    public void updateSensorColor(){
+        sensorThread.setDaemon(true);
+        sensorThread.run();
+
     }
 
     public static boolean noteIsLoaded() {
