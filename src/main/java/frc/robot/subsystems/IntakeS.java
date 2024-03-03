@@ -28,8 +28,8 @@ public class IntakeS extends SubsystemBase {
     public static ColorMatch colorMatch = new ColorMatch();
     public static Color detected = new Color();
     public static ColorMatchResult colorMatchResult;
-    public Thread sensorUpdateThread;
-    int timesRan;
+    public static Thread sensorThread;
+    public static int timesRan;
     public IntakeS() {
         timesRan = 0;
         //set note color to color match
@@ -55,22 +55,19 @@ public class IntakeS extends SubsystemBase {
         //sets changes to motor (resource intensive, ONLY CALL ON INITIALIZATION)
         primaryIntake.burnFlash();
         deployIntake.burnFlash();
-        sensorUpdateThread = new Thread(() -> {
-             detected = colorSensorV3.getColor();
-             colorMatchResult = colorMatch.matchClosestColor(detected);
-        });
         
-    }
-    public void updateSensor(){
-        sensorUpdateThread.setDaemon(true);
-        sensorUpdateThread.run();
+        //Color sensor thread
+        sensorThread = new Thread(()-> {
+        detected = colorSensorV3.getColor();
+        colorMatchResult = colorMatch.matchClosestColor(detected);
+        });
     }
     @Override
     public void periodic() {
-        timesRan += 1;
-        timesRan %= 5;
+        timesRan +=1;
+        timesRan %=5;
         if (timesRan == 0){
-            updateSensor();
+            updateSensorColor();
         }
         //sets values to SmartDashboard periodically
         SmartDashboard.putNumber("Deploy Intake", deployIntakeEncoder.getPosition());
@@ -78,13 +75,12 @@ public class IntakeS extends SubsystemBase {
         SmartDashboard.putNumber("Red", detected.red);
         SmartDashboard.putNumber("Green", detected.green);
         SmartDashboard.putNumber("Blue", detected.blue);
-        
         SmartDashboard.putString("data", colorMatchResult.color.toString());
     }
     
     public void updateSensorColor(){
-        sensorUpdateThread.setDaemon(true);
-        sensorUpdateThread.run();
+        sensorThread.setDaemon(true);
+        sensorThread.run();
 
     }
 
