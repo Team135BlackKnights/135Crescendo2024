@@ -81,6 +81,12 @@ public class IntakeS extends SubsystemBase {
         
         SmartDashboard.putString("data", colorMatchResult.color.toString());
     }
+    
+    public void updateSensorColor(){
+        sensorUpdateThread.setDaemon(true);
+        sensorUpdateThread.run();
+
+    }
 
     public static boolean noteIsLoaded() {
         //pulls data from color sensor

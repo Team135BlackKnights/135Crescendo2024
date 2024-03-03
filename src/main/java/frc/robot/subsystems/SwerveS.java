@@ -33,7 +33,9 @@ import frc.robot.Constants.LimelightConstants;
 import frc.robot.LimelightHelpers.PoseEstimate;;
 
 public class SwerveS extends SubsystemBase {
-    
+    Thread limelightThread = new Thread(() -> {
+        updatePoseEstimatorWithVisionBotPose();
+    });
     private final SwerveModule frontLeft = new SwerveModule(
         Constants.DriveConstants.kFrontLeftDrivePort, 
         Constants.DriveConstants.kFrontLeftTurningPort, 
@@ -258,8 +260,9 @@ public class SwerveS extends SubsystemBase {
     }
      public void updatePoseEstimatorWithVisionBotPose() {
         //sanity check, doesn't do anything if unexpected value occurs
-
+        
         //computes latency
+        
         results = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight-swerve");
         int count = results.tagCount;
         Pose2d poseLimelight = results.pose;
