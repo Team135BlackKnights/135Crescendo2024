@@ -12,6 +12,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -27,9 +28,12 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.LimelightHelpers;
 import frc.robot.Constants.LimelightConstants;
+import frc.robot.LimelightHelpers.PoseEstimate;;
 
 public class SwerveS extends SubsystemBase {
+    
     private final SwerveModule frontLeft = new SwerveModule(
         Constants.DriveConstants.kFrontLeftDrivePort, 
         Constants.DriveConstants.kFrontLeftTurningPort, 
@@ -68,7 +72,7 @@ public class SwerveS extends SubsystemBase {
 
     private AHRS gyro = new AHRS(Port.kUSB1);
     NetworkTableEntry pipeline;
-    
+    public PoseEstimate results;    
 
     public static NetworkTable limelight = NetworkTableInstance.getDefault().getTable("limelight-swerve");
     NetworkTableEntry tx = limelight.getEntry("tx");
@@ -254,13 +258,45 @@ public class SwerveS extends SubsystemBase {
     }
      public void updatePoseEstimatorWithVisionBotPose() {
         //sanity check, doesn't do anything if unexpected value occurs
-        
+
         //computes latency
-        double latency = Timer.getFPGATimestamp() - (limelight.getEntry("tl").getDouble(0)/1000) - (limelight.getEntry("tc").getDouble(0)/1000);
-        
-        //sanity check, ends if we're getting some unreasonable value (or aprilTags not detected)
-        if (getPose().getX() == 0){
+        results = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight-swerve");
+        int count = results.tagCount;
+        Pose2d poseLimelight = results.pose;
+        double latency = Timer.getFPGATimestamp() - (limelight.getEntry("tl").getDouble(0.0)/1000.0) - (limelight.getEntry("cl").getDouble(0.0)/1000.0);
+        Pose2d odomPose = getPose();
+        Translation2d transOdom = new Translation2d(odomPose.getX(),odomPose.getY());
+        Translation2d transLim = new Translation2d(poseLimelight.getX(),poseLimelight.getY());
+        double poseDifference = transOdom.getDistance(transLim);
+        //ends if unreasonable result
+        if (poseLimelight.getX() == 0){
             return;
+        }
+        if (count != 0){
+            double xyStds = 0;
+            double degStds = 0;
+            if (count>=2){
+                xyStds = .5;
+                degStds = 6;
+            }
+            if (results.avgTagArea > .8 && poseDifference <.5){
+                xyStds = 1.0;
+                degStds = 12;
+            }
+            else if (results.avgTagArea > 0.1 && poseDifference < 0.3) {
+                xyStds = 2.0;
+                degStds = 30;
+            }
+            poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(xyStds, xyStds, Units.degreesToRadians(degStds)));
+            poseEstimator.addVisionMeasurement(odomPose, latency);
+        }
+        else{
+            return;
+        }
+       
+        //sanity check, ends if we're getting some unreasonable value (or aprilTags not detected)
+        
+
         }
         /*computes distance from current pose to limelight pose
          * Note: I'm pretty sure pathPlanner (and by extension our odometry)'s coordinate system has its origin at the blue side
@@ -268,11 +304,11 @@ public class SwerveS extends SubsystemBase {
         */
 
         
-
+    
 
         
         
-    }
+    
 
 
 
