@@ -64,7 +64,7 @@ public final class Constants {
 
   public static class SwerveConstants {
     public static double
-      kWheelDiameter = Units.inchesToMeters(4), 
+      kWheelDiameter = Units.inchesToMeters(3.873), 
       kDriveMotorGearRatio = 1/8.14, 
       kTurningMotorGearRatio = (7/150),
       kDriveEncoderRot2Meter = kDriveMotorGearRatio * Math.PI * kWheelDiameter,
@@ -169,8 +169,8 @@ public final class Constants {
   }
   public static class HangConstants{
     public static double
-      hangLowerSoftStop = 12,
-      hangUpperSoftStop = 87; //Note: for some reason left and right encoders output different values, MAYBE change them to have left and right max?
+      hangLowerSoftStop = 5,
+      hangUpperSoftStop = 101; //Note: for some reason left and right encoders output different values, MAYBE change them to have left and right max?
 
     public static int
       leftHangID = 41,

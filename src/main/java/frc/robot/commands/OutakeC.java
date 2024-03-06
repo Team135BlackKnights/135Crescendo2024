@@ -33,6 +33,9 @@ public class OutakeC extends Command {
         //for speaker
         else{
             double outakeSpeed = 0;
+            if (RobotContainer.driveController.getLeftBumper() == true) {
+            outakeSpeed = -0.5;
+        }
         if (RobotContainer.manipController.getBButton() == true) {
             outakeSpeed = 1;
         } else if (RobotContainer.manipController.getAButton() == true) {

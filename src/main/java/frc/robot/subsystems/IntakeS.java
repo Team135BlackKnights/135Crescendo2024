@@ -57,14 +57,15 @@ public class IntakeS extends SubsystemBase {
 
     @Override
     public void periodic() {
-        detected = colorSensorV3.getColor();
+        //color sensor is using too much CPU changed to be for auto only
+        //detected = colorSensorV3.getColor();
         //sets values to SmartDashboard periodically
         SmartDashboard.putNumber("Deploy Intake", deployIntakeEncoder.getPosition());
         SmartDashboard.putBoolean("Note Loaded?", noteIsLoaded());
         SmartDashboard.putNumber("Red", detected.red);
         SmartDashboard.putNumber("Green", detected.green);
         SmartDashboard.putNumber("Blue", detected.blue);
-        colorMatchResult = colorMatch.matchClosestColor(detected);
+        //colorMatchResult = colorMatch.matchClosestColor(detected);
         SmartDashboard.putString("data", colorMatchResult.color.toString());
     }
 
