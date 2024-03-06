@@ -28,7 +28,7 @@ public class IntakeS extends SubsystemBase {
     public static ColorMatch colorMatch = new ColorMatch();
     public static Color detected = new Color();
     public static ColorMatchResult colorMatchResult;
-
+    public static boolean isOrange;
     public IntakeS() {
         //set note color to color match
         colorMatch.addColorMatch(Constants.IntakeConstants.noteColor);
@@ -53,32 +53,26 @@ public class IntakeS extends SubsystemBase {
         //sets changes to motor (resource intensive, ONLY CALL ON INITIALIZATION)
         primaryIntake.burnFlash();
         deployIntake.burnFlash();
+        
     }
 
     @Override
     public void periodic() {
-        detected = colorSensorV3.getColor();
         //sets values to SmartDashboard periodically
         SmartDashboard.putNumber("Deploy Intake", deployIntakeEncoder.getPosition());
         SmartDashboard.putBoolean("Note Loaded?", noteIsLoaded());
-        SmartDashboard.putNumber("Red", detected.red);
-        SmartDashboard.putNumber("Green", detected.green);
-        SmartDashboard.putNumber("Blue", detected.blue);
-        colorMatchResult = colorMatch.matchClosestColor(detected);
-        SmartDashboard.putString("data", colorMatchResult.color.toString());
     }
 
     public static boolean noteIsLoaded() {
-        //pulls data from color sensor
-        
-        colorMatchResult = colorMatch.matchClosestColor(detected);
-        if (colorMatchResult.color == IntakeConstants.noteColor){
-            return true;
-        }
-        else{
-            return false;
-        }
+        Thread sensorThread = new Thread(() -> {
+            detected = colorMatch.matchClosestColor(colorSensorV3.getColor()).color;
+            isOrange = (detected == IntakeConstants.noteColor);
+            });
+        sensorThread.setDaemon(true);
+        sensorThread.run();
+        return isOrange;
     }
+    
 
     public void setPrimaryIntake(double power) {
         // sets the primary intake, comment below is a deadband check
@@ -109,4 +103,4 @@ public class IntakeS extends SubsystemBase {
 
         deployIntake.set(power);
     }
-}
+    }
