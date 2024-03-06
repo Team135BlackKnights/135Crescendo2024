@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.LEDConstants;
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
+import edu.wpi.first.wpilibj.DriverStation;
 
 public class LEDStripS extends SubsystemBase{
     int initialLoopValue = 0;
@@ -33,16 +34,16 @@ public class LEDStripS extends SubsystemBase{
         //if there is a note stored in the intake, set it to a constant note color
         if (IntakeS.noteIsLoaded()){
             
-            setConstantColors(LEDConstants.noteH, LEDConstants.noteS, LEDConstants.noteV);
+            setConstantColors(LEDConstants.greenH, LEDConstants.greenS, LEDConstants.greenV);
         }
 
         // if it's disabled make it so LEDs are off
-        else if(SwerveS.disabled){
+        else if (DriverStation.isDisabled()) {
             //setColorWave(LEDConstants.goldH, LEDConstants.goldS, LEDConstants.disabledSinePeriod);
             setConstantColors(0, 0, 0);
         }
 
-        else{
+         else{
 
             //if it is trying to autolock
             if (SwerveS.autoLock){
@@ -54,21 +55,23 @@ public class LEDStripS extends SubsystemBase{
                 
                 //if its not locked on, set to flashing green
                 else{ 
-                    setColorWave(LEDConstants.greenH, LEDConstants.greenS, LEDConstants.sinePeriod);
+                    setConstantColors(LEDConstants.greenH, LEDConstants.greenS, LEDConstants.greenV-70);
                 }    
+            } else {
+                setConstantColors(0,0,0);
             }
         
-            else{
+            /* else{
 
                 //If none of the previous conditions are met do the wave pattern with our alliance color
                 if(SwerveS.redIsAlliance) {
-                    setColorWave(LEDConstants.redH, LEDConstants.redS, LEDConstants.sinePeriod);
+                    setConstantColors(LEDConstants.redH, LEDConstants.redS, LEDConstants.redV);
                 }
                     
                 else {
-                setColorWave(LEDConstants.blueH, LEDConstants.blueS, LEDConstants.sinePeriod);
+                setConstantColors(LEDConstants.blueH, LEDConstants.blueS, LEDConstants.blueV);
                 }
-                }
+                } */
             }
         }
         
