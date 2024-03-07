@@ -2,11 +2,11 @@ package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.SparkAbsoluteEncoder;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
-import com.revrobotics.SparkAbsoluteEncoder.Type;
 import com.revrobotics.ColorMatchResult;
+
+import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -23,13 +23,15 @@ public class IntakeS extends SubsystemBase {
     public CANSparkMax primaryIntake = new CANSparkMax(Constants.IntakeConstants.primaryIntakeID, MotorType.kBrushless);
     public CANSparkMax deployIntake = new CANSparkMax(Constants.IntakeConstants.deployIntakeID, MotorType.kBrushless);
     public RelativeEncoder deployIntakeEncoder, primaryIntakeEncoder;
-    public SparkAbsoluteEncoder absDeployIntakeEncoder;
+    public DutyCycleEncoder absDeployIntakeEncoder;
     public static ColorSensorV3 colorSensorV3 = new ColorSensorV3(Constants.IntakeConstants.colorSensorPort);
     public static ColorMatch colorMatch = new ColorMatch();
     public static Color detected = new Color();
     public static ColorMatchResult colorMatchResult;
+
     public static Thread sensorThread;
     public static int timesRan;
+  
     public IntakeS() {
         timesRan = 0;
         //set note color to color match
@@ -51,31 +53,37 @@ public class IntakeS extends SubsystemBase {
         deployIntakeEncoder = deployIntake.getEncoder();
         deployIntakeEncoder.setPositionConversionFactor(Constants.IntakeConstants.deployIntakeGearRatio);
 
-        absDeployIntakeEncoder = deployIntake.getAbsoluteEncoder(Type.kDutyCycle);
+        absDeployIntakeEncoder = new DutyCycleEncoder(Constants.IntakeConstants.intakeAbsEncoderID);
         //sets changes to motor (resource intensive, ONLY CALL ON INITIALIZATION)
         primaryIntake.burnFlash();
         deployIntake.burnFlash();
         
+
         //Color sensor thread
         sensorThread = new Thread(()-> {
         detected = colorSensorV3.getColor();
         colorMatchResult = colorMatch.matchClosestColor(detected);
         });
+
     }
     @Override
     public void periodic() {
+
         timesRan +=1;
         timesRan %=5;
         if (timesRan == 0){
             updateSensorColor();
         }
+
         //sets values to SmartDashboard periodically
         SmartDashboard.putNumber("Deploy Intake", deployIntakeEncoder.getPosition());
+        SmartDashboard.putNumber("Deploy Intake Abs", getIntakePosition());
         SmartDashboard.putBoolean("Note Loaded?", noteIsLoaded());
-        SmartDashboard.putNumber("Red", detected.red);
-        SmartDashboard.putNumber("Green", detected.green);
-        SmartDashboard.putNumber("Blue", detected.blue);
-        SmartDashboard.putString("data", colorMatchResult.color.toString());
+
+    }
+
+    public double getIntakePosition() {
+        return absDeployIntakeEncoder.getAbsolutePosition()*Constants.IntakeConstants.absIntakeEncoderConversionFactor - Constants.IntakeConstants.absIntakeEncoderOffset;
     }
     
     public void updateSensorColor(){
@@ -85,6 +93,7 @@ public class IntakeS extends SubsystemBase {
     }
 
     public static boolean noteIsLoaded() {
+
         //pulls data from color sensor
         
         
@@ -93,8 +102,9 @@ public class IntakeS extends SubsystemBase {
         }
         else{
             return false;
-        }
+        
     }
+    
 
     public void setPrimaryIntake(double power) {
         // sets the primary intake, comment below is a deadband check
@@ -125,4 +135,4 @@ public class IntakeS extends SubsystemBase {
 
         deployIntake.set(power);
     }
-}
+    }

@@ -33,9 +33,12 @@ public final class Constants {
     public static int
       primaryIntakeID = 20,
       deployIntakeID = 21,
+      intakeAbsEncoderID = 1,
       intakeLimitSwitchID = 9;
 
     public static double
+      absIntakeEncoderOffset = 10.855296,
+      absIntakeEncoderConversionFactor = 360,
       primaryIntakeGearRatio = 1/4.5,
       deployIntakeGearRatio = 0;
 
@@ -64,7 +67,7 @@ public final class Constants {
 
   public static class SwerveConstants {
     public static double
-      kWheelDiameter = Units.inchesToMeters(4), 
+      kWheelDiameter = Units.inchesToMeters(3.873), 
       kDriveMotorGearRatio = 1/8.14, 
       kTurningMotorGearRatio = (7/150),
       kDriveEncoderRot2Meter = kDriveMotorGearRatio * Math.PI * kWheelDiameter,
@@ -74,7 +77,7 @@ public final class Constants {
       kDeadband = 0.1,
       kAutoDeadband = 0.01,
 
-      kTurningP = 0.4;
+      kTurningP = 0.5;
   }
 
   public static class DriveConstants {
@@ -92,10 +95,10 @@ public final class Constants {
       
       // To find these set them to zero, then turn the robot on and manually set the wheels straight.
       // The encoder values being read are then your new Offset values
-      kFrontLeftAbsEncoderOffsetRad = 2*Math.PI - 1.993532,
-      kFrontRightAbsEncoderOffsetRad = 1.647362,
-      kBackLeftAbsEncoderOffsetRad = 2*Math.PI - 0.978094,
-      kBackRightAbsEncoderOffsetRad = 2*Math.PI - 1.332261; 
+      kFrontLeftAbsEncoderOffsetRad = 0.562867,
+      kFrontRightAbsEncoderOffsetRad = 2.610261,
+      kBackLeftAbsEncoderOffsetRad = 2*Math.PI - 2.891372,
+      kBackRightAbsEncoderOffsetRad = 2*Math.PI - 0.116861; 
     
     // Declare the position of each module
     public static final SwerveDriveKinematics kDriveKinematics = new SwerveDriveKinematics(
@@ -105,36 +108,36 @@ public final class Constants {
       new Translation2d(-kChassisLength / 2, -kChassisWidth / 2));
 
     public static int
-      kFrontLeftDrivePort = 10, //10
-      kFrontLeftTurningPort = 11, //20
-      kFrontLeftAbsEncoderPort = 0, //1
+      kFrontLeftDrivePort = 16, //10
+      kFrontLeftTurningPort = 17, //20
+      kFrontLeftAbsEncoderPort = 2, //1
 
-      kFrontRightDrivePort = 12, //11
-      kFrontRightTurningPort = 13, //21
-      kFrontRightAbsEncoderPort = 1, //2
+      kFrontRightDrivePort = 10, //11
+      kFrontRightTurningPort = 11, //21
+      kFrontRightAbsEncoderPort = 0, //2
 
-      kBackLeftDrivePort = 16, //13
-      kBackLeftTurningPort = 17, //23
-      kBackLeftAbsEncoderPort = 2, //3
+      kBackLeftDrivePort = 14, //13
+      kBackLeftTurningPort = 15, //23
+      kBackLeftAbsEncoderPort = 3, //3
 
-      kBackRightDrivePort = 14, //14
-      kBackRightTurningPort = 15, //24
-      kBackRightAbsEncoderPort = 3; //4
+      kBackRightDrivePort = 12, //14
+      kBackRightTurningPort = 13, //24
+      kBackRightAbsEncoderPort = 1; //4
 
     public static boolean
       kFrontLeftDriveReversed = false,
       kFrontLeftTurningReversed = true,
       kFrontLeftAbsEncoderReversed = false,
 
-      kFrontRightDriveReversed = false,
+      kFrontRightDriveReversed = true,
       kFrontRightTurningReversed = true,
       kFrontRightAbsEncoderReversed = false,
 
-      kBackLeftDriveReversed = false,
+      kBackLeftDriveReversed = true,
       kBackLeftTurningReversed = true,
       kBackLeftAbsEncoderReversed = false,
 
-      kBackRightDriveReversed = false,
+      kBackRightDriveReversed = true,
       kBackRightTurningReversed = true,
       kBackRigthAbsEncoderReversed = false;
 
@@ -160,8 +163,9 @@ public final class Constants {
     goldH = 23, //gold hsv values
     goldS = 255,
     goldV = 100;
+
     public static int[] ledStates;
-     
+   
     //Basically controls how different the waves are from one another when the setColorWave function is called. Due to how it is calculated , this value CANNOT be zero (divide by zero error). 
     //Try to set this value to a multiple of however many LEDs we have (so like if we have 63 LEDs on the robot set the sine to 9)
     public static double sinePeriod = 16,
@@ -170,8 +174,8 @@ public final class Constants {
   }
   public static class HangConstants{
     public static double
-      hangLowerSoftStop = 12,
-      hangUpperSoftStop = 87; //Note: for some reason left and right encoders output different values, MAYBE change them to have left and right max?
+      hangLowerSoftStop = 5,
+      hangUpperSoftStop = 101; //Note: for some reason left and right encoders output different values, MAYBE change them to have left and right max?
 
     public static int
       leftHangID = 41,
