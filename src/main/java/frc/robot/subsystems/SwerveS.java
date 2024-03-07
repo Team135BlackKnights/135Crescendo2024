@@ -9,23 +9,33 @@ import com.pathplanner.lib.util.ReplanningConfig;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.SerialPort.Port;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.LimelightHelpers;
+import frc.robot.Constants.LimelightConstants;
+import frc.robot.LimelightHelpers.PoseEstimate;;
 
 public class SwerveS extends SubsystemBase {
+    Thread limelightThread = new Thread(() -> {
+        updatePoseEstimatorWithVisionBotPose();
+    });
     private final SwerveModule frontLeft = new SwerveModule(
         Constants.DriveConstants.kFrontLeftDrivePort, 
         Constants.DriveConstants.kFrontLeftTurningPort, 
@@ -64,7 +74,7 @@ public class SwerveS extends SubsystemBase {
 
     private AHRS gyro = new AHRS(Port.kUSB1);
     NetworkTableEntry pipeline;
-    
+    public PoseEstimate results;    
 
     public static NetworkTable limelight = NetworkTableInstance.getDefault().getTable("limelight-swerve");
     NetworkTableEntry tx = limelight.getEntry("tx");
@@ -79,7 +89,7 @@ public class SwerveS extends SubsystemBase {
 
     // LIST MODULES IN THE SAME EXACT ORDER USED WHEN DECLARING SwerveDriveKinematics
     ChassisSpeeds m_ChassisSpeeds = Constants.DriveConstants.kDriveKinematics.toChassisSpeeds(new SwerveModuleState[]{frontLeft.getState(), frontRight.getState(), backLeft.getState(), backRight.getState()});
-    SwerveDriveOdometry odometry = new SwerveDriveOdometry(Constants.DriveConstants.kDriveKinematics, getRotation2d(), new SwerveModulePosition[]{frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()},robotPosition);
+    SwerveDrivePoseEstimator poseEstimator = new SwerveDrivePoseEstimator(Constants.DriveConstants.kDriveKinematics, getRotation2d(), new SwerveModulePosition[]{frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()},robotPosition);
     SwerveModulePosition[] m_modulePositions = new SwerveModulePosition[]{frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()};
 
     public static boolean disabled = true;
@@ -180,7 +190,7 @@ public class SwerveS extends SubsystemBase {
         // LIST MODULES IN THE SAME EXACT ORDER USED WHEN DECLARING SwerveDriveKinematics
         m_ChassisSpeeds = Constants.DriveConstants.kDriveKinematics.toChassisSpeeds(new SwerveModuleState[]{frontLeft.getState(), frontRight.getState(), backLeft.getState(), backRight.getState()});
 
-        robotPosition = odometry.update(getRotation2d(), m_modulePositions);
+        robotPosition = poseEstimator.update(getRotation2d(), m_modulePositions);
 
         robotField.setRobotPose(getPose());
 
@@ -235,7 +245,7 @@ public class SwerveS extends SubsystemBase {
     public void resetPose(Pose2d pose) {
         pose = new Pose2d(pose.getY(), -pose.getX(), getRotation2d());
         // LIST MODULES IN THE SAME EXACT ORDER USED WHEN DECLARING SwerveDriveKinematics
-        odometry.resetPosition(getRotation2d(), new SwerveModulePosition[]{frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()}, pose);
+        poseEstimator.resetPosition(getRotation2d(), new SwerveModulePosition[]{frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()}, pose);
     }
 
     public void stopModules() {
@@ -247,6 +257,96 @@ public class SwerveS extends SubsystemBase {
 
     public void toggleAutoLock() {
         autoLock = !autoLock;
+    }
+     public void updatePoseEstimatorWithVisionBotPose() {
+        //sanity check, doesn't do anything if unexpected value occurs
+        
+        //computes latency
+        
+        results = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight-swerve");
+        int count = results.tagCount;
+        Pose2d poseLimelight = results.pose;
+        double latency = Timer.getFPGATimestamp() - (limelight.getEntry("tl").getDouble(0.0)/1000.0) - (limelight.getEntry("cl").getDouble(0.0)/1000.0);
+        Pose2d odomPose = getPose();
+        Translation2d transOdom = new Translation2d(odomPose.getX(),odomPose.getY());
+        Translation2d transLim = new Translation2d(poseLimelight.getX(),poseLimelight.getY());
+        double poseDifference = transOdom.getDistance(transLim);
+        //ends if unreasonable result
+        if (poseLimelight.getX() == 0){
+            return;
+        }
+        if (count != 0){
+            double xyStds = 0;
+            double degStds = 0;
+            if (count>=2){
+                xyStds = .5;
+                degStds = 6;
+            }
+            if (results.avgTagArea > .8 && poseDifference <.5){
+                xyStds = 1.0;
+                degStds = 12;
+            }
+            else if (results.avgTagArea > 0.1 && poseDifference < 0.3) {
+                xyStds = 2.0;
+                degStds = 30;
+            }
+            poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(xyStds, xyStds, Units.degreesToRadians(degStds)));
+            poseEstimator.addVisionMeasurement(odomPose, latency);
+        }
+        else{
+            return;
+        }
+       
+        //sanity check, ends if we're getting some unreasonable value (or aprilTags not detected)
+        
+
+        }
+        /*computes distance from current pose to limelight pose
+         * Note: I'm pretty sure pathPlanner (and by extension our odometry)'s coordinate system has its origin at the blue side
+         * To avoid issues, we call the blue origin based
+        */
+
+        
+    
+
+        
+        
+    
+
+
+
+
+
+
+    public double getDistanceFromSpeakerInMeters(){
+
+        double distance = 0; //resets value so it doesn't output last value
+
+        /* if apriltag is detected, uses formula given here https://docs.limelightvision.io/docs/docs-limelight/tutorials/tutorial-estimating-distance
+        formula is d =(h2-h1)/tan(h2+h1)*/
+
+        if (aprilTagVisible()){
+        
+            // computing the angle
+            double theta = Units.degreesToRadians(LimelightConstants.limeLightAngleOffsetDegrees+limelight.getEntry("ty").getDouble(0.0));
+        
+            //computes distance
+            distance = Units.inchesToMeters(LimelightConstants.targetHeightoffFloorInches-LimelightConstants.limelightLensHeightoffFloorInches)/Math.tan(theta);}
+
+        else{
+            
+            //if robot does not have a lock onto april tag try to approximate distance from speaker with robot odometry
+            
+            //pulls robot pose and converts it to a translation
+            Pose2d pose = getPose();
+            Translation2d translation = new Translation2d(pose.getX(),pose.getY());
+            //compares it with the translation2d of the speaker,(determined through pathPlanner)
+             distance = translation.getDistance(new Translation2d(0,5.55));
+        }
+
+
+        
+        return distance;
     }
 
     public InstantCommand toggleAutoLockCommand() {

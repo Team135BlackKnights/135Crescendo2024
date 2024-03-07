@@ -28,8 +28,12 @@ public class IntakeS extends SubsystemBase {
     public static ColorMatch colorMatch = new ColorMatch();
     public static Color detected = new Color();
     public static ColorMatchResult colorMatchResult;
-    public static boolean isOrange;
+
+    public static Thread sensorThread;
+    public static int timesRan;
+  
     public IntakeS() {
+        timesRan = 0;
         //set note color to color match
         colorMatch.addColorMatch(Constants.IntakeConstants.noteColor);
         colorMatch.addColorMatch(Color.kBlue);
@@ -54,28 +58,51 @@ public class IntakeS extends SubsystemBase {
         primaryIntake.burnFlash();
         deployIntake.burnFlash();
         
-    }
 
+        //Color sensor thread
+        sensorThread = new Thread(()-> {
+        detected = colorSensorV3.getColor();
+        colorMatchResult = colorMatch.matchClosestColor(detected);
+        });
+
+    }
     @Override
     public void periodic() {
+
+        timesRan +=1;
+        timesRan %=5;
+        if (timesRan == 0){
+            updateSensorColor();
+        }
+
         //sets values to SmartDashboard periodically
         SmartDashboard.putNumber("Deploy Intake", deployIntakeEncoder.getPosition());
         SmartDashboard.putNumber("Deploy Intake Abs", getIntakePosition());
         SmartDashboard.putBoolean("Note Loaded?", noteIsLoaded());
+
     }
 
     public double getIntakePosition() {
         return absDeployIntakeEncoder.getAbsolutePosition()*Constants.IntakeConstants.absIntakeEncoderConversionFactor - Constants.IntakeConstants.absIntakeEncoderOffset;
     }
-
-    public static boolean noteIsLoaded() {
-        Thread sensorThread = new Thread(() -> {
-            detected = colorMatch.matchClosestColor(colorSensorV3.getColor()).color;
-            isOrange = (detected == IntakeConstants.noteColor);
-            });
+    
+    public void updateSensorColor(){
         sensorThread.setDaemon(true);
         sensorThread.run();
-        return isOrange;
+
+    }
+
+    public static boolean noteIsLoaded() {
+
+        //pulls data from color sensor
+        
+        
+        if (colorMatchResult.color == IntakeConstants.noteColor){
+            return true;
+        }
+        else{
+            return false;
+        
     }
     
 
