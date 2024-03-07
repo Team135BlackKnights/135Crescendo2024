@@ -36,16 +36,16 @@ public class SwerveC extends Command {
   @Override
   public void execute() {
     // Get desired ChassisSpeeds from controller
-    double xSpeed = RobotContainer.driveController.getLeftY();
-    double ySpeed = RobotContainer.driveController.getLeftX();
-    double turningSpeed = RobotContainer.driveController.getRightX();
+    double xSpeed = -RobotContainer.driveController.getLeftY();
+    double ySpeed = -RobotContainer.driveController.getLeftX();
+    double turningSpeed = -RobotContainer.driveController.getRightX();
 
     xSpeed = Math.pow(xSpeed, 2) * (xSpeed < 0 ? -1 : 1);
     ySpeed = Math.pow(ySpeed, 2) * (ySpeed < 0 ? -1 : 1);
     turningSpeed = Math.pow(turningSpeed, 3);
 
     if (SwerveS.autoLock == true) {
-      turningSpeed = autoLockController.calculate(swerveS.getXError(), 0.0)*-1;
+      turningSpeed = autoLockController.calculate(swerveS.getXError(), 0.0);
       SmartDashboard.putNumber("Spin", turningSpeed);
     }
     

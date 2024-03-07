@@ -114,7 +114,7 @@ public class IntakeS extends SubsystemBase {
         }
         //second set of conditionals (below) checks to see if the arm is within the hard limits, and stops it if it is
         if (power > 0) {
-            if (deployIntakeEncoder.getPosition() > 113) {
+            if (deployIntakeEncoder.getPosition() < 113) {
                 power = 0;
             } else if (deployIntakeEncoder.getPosition() > 79) {
                 power = power * 0.5;

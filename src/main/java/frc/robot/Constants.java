@@ -125,19 +125,19 @@ public final class Constants {
       kBackRightAbsEncoderPort = 1; //4
 
     public static boolean
-      kFrontLeftDriveReversed = false,
+      kFrontLeftDriveReversed = true,
       kFrontLeftTurningReversed = true,
       kFrontLeftAbsEncoderReversed = false,
 
-      kFrontRightDriveReversed = true,
+      kFrontRightDriveReversed = false,
       kFrontRightTurningReversed = true,
       kFrontRightAbsEncoderReversed = false,
 
-      kBackLeftDriveReversed = true,
+      kBackLeftDriveReversed = false,
       kBackLeftTurningReversed = true,
       kBackLeftAbsEncoderReversed = false,
 
-      kBackRightDriveReversed = true,
+      kBackRightDriveReversed = false,
       kBackRightTurningReversed = true,
       kBackRigthAbsEncoderReversed = false;
 

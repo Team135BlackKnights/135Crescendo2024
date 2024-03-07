@@ -33,7 +33,7 @@ public class LEDStripS extends SubsystemBase{
         //if there is a note stored in the intake, set it to a constant note color
         if (IntakeS.noteIsLoaded()){
             
-            setConstantColors(LEDConstants.greenH, LEDConstants.greenS, LEDConstants.greenV);
+            setConstantColors(LEDConstants.noteH, LEDConstants.noteS, LEDConstants.noteV);
         }
 
         // if it's disabled make it so LEDs are off
@@ -56,21 +56,19 @@ public class LEDStripS extends SubsystemBase{
                 else{ 
                     setConstantColors(LEDConstants.greenH, LEDConstants.greenS, LEDConstants.greenV-70);
                 }    
-            } else {
-                setConstantColors(0,0,0);
-            }
+            } 
         
-            /* else{
+             else{
 
                 //If none of the previous conditions are met do the wave pattern with our alliance color
                 if(SwerveS.redIsAlliance) {
-                    setConstantColors(LEDConstants.redH, LEDConstants.redS, LEDConstants.redV);
+                    setColorWave(LEDConstants.redH, LEDConstants.redS, LEDConstants.sinePeriod);
                 }
                     
                 else {
-                setConstantColors(LEDConstants.blueH, LEDConstants.blueS, LEDConstants.blueV);
+                setColorWave(LEDConstants.blueH, LEDConstants.blueS, LEDConstants.sinePeriod);
                 }
-                } */
+                } 
             }
         }
         
