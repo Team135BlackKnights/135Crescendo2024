@@ -22,7 +22,7 @@ public class LEDStripS extends SubsystemBase{
         leds.start(); //FOR THE LOVE OF GOD PLEASE REMEMBER THIS IF YOU'RE GONNA CODE YOUR OWN SUBSYSTEM I SPENT LIKE 6 HOURS TROUBLESHOOTING AND IT DIDNT WORK BECAUSE OF THIS
 
         for (var i= 0; i < LEDConstants.sinePeriod-1; i++){
-            LEDConstants.ledStates[i] = (int)Math.floor(Math.abs(Math.sin(((i*Math.PI/LEDConstants.sinePeriod)+InitialLoopValue)))*255); 
+            LEDConstants.ledStates[i] = (int)Math.floor(Math.abs(Math.sin(((i*Math.PI/LEDConstants.sinePeriod)+initialLoopValue)))*255); 
         }
     }
 
@@ -92,19 +92,15 @@ public class LEDStripS extends SubsystemBase{
             accepts integers (rounds down to prevent 256 from outputting). To get it to move, we use a loop value as a way to offset it.*/ 
             final int value = LEDConstants.ledStates[i];
              //Tweak sine period to make the gradient more gentle or sharp (more is more gentle)
+            ledBuffer.setHSV(i, h, s, value);
+            leds.setData(ledBuffer);
         }
-        
-        
-
-
-        
-        InitialLoopValue += 1;
+                
+        initialLoopValue += 1;
         // Increase the value computed in the sine function by pi/(the changable period) to make the gradient "move"
               
-        InitialLoopValue %= LEDConstants.sinePeriod;
+        initialLoopValue %= LEDConstants.sinePeriod;
         //offset by one "notch" each time
-
-        
         
         //Check bounds
         initialLoopValue %= LEDConstants.sinePeriod;
@@ -115,5 +111,4 @@ public class LEDStripS extends SubsystemBase{
     updateThread.setDaemon(true);
     updateThread.run();
     }
-
 }

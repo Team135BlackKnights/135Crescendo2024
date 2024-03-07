@@ -26,7 +26,7 @@ public class IntakeS extends SubsystemBase {
     public DutyCycleEncoder absDeployIntakeEncoder;
     public static ColorSensorV3 colorSensorV3 = new ColorSensorV3(Constants.IntakeConstants.colorSensorPort);
     public static ColorMatch colorMatch = new ColorMatch();
-    public static Color detected = new Color();
+    public static Color detected = Color.kBlack;
     public static ColorMatchResult colorMatchResult;
 
     public static Thread sensorThread;
@@ -69,12 +69,6 @@ public class IntakeS extends SubsystemBase {
     @Override
     public void periodic() {
 
-        timesRan +=1;
-        timesRan %=5;
-        if (timesRan == 0){
-            updateSensorColor();
-        }
-
         //sets values to SmartDashboard periodically
         SmartDashboard.putNumber("Deploy Intake", deployIntakeEncoder.getPosition());
         SmartDashboard.putNumber("Deploy Intake Abs", getIntakePosition());
@@ -86,23 +80,19 @@ public class IntakeS extends SubsystemBase {
         return absDeployIntakeEncoder.getAbsolutePosition()*Constants.IntakeConstants.absIntakeEncoderConversionFactor - Constants.IntakeConstants.absIntakeEncoderOffset;
     }
     
-    public void updateSensorColor(){
-        sensorThread.setDaemon(true);
-        sensorThread.run();
-
-    }
 
     public static boolean noteIsLoaded() {
 
         //pulls data from color sensor
-        
+        sensorThread.setDaemon(true);
+        sensorThread.run();
         
         if (colorMatchResult.color == IntakeConstants.noteColor){
             return true;
         }
         else{
             return false;
-        
+        }
     }
     
 
