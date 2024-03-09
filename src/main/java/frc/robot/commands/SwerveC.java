@@ -42,7 +42,7 @@ public class SwerveC extends Command {
 
     xSpeed = Math.pow(xSpeed, 2) * (xSpeed < 0 ? -1 : 1);
     ySpeed = Math.pow(ySpeed, 2) * (ySpeed < 0 ? -1 : 1);
-    turningSpeed = Math.pow(turningSpeed, 3);
+    turningSpeed = Math.pow(turningSpeed, 2) * (turningSpeed < 0 ? -1 : 1);
 
     if (SwerveS.autoLock == true) {
       turningSpeed = autoLockController.calculate(swerveS.getXError(), 0.0);

@@ -66,7 +66,7 @@ public class RobotContainer {
 
   private void configureBindings() {
     aButton.onTrue(swerveS.toggleAutoLockCommand());
-    yButton.onTrue(new VariableAngle(intakeS, 80));
+    yButton.onTrue(new VariableAngle(intakeS));
   }
 
   /**

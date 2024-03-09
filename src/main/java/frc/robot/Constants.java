@@ -37,10 +37,11 @@ public final class Constants {
       intakeLimitSwitchID = 9;
 
     public static double
-      absIntakeEncoderOffset = 10.855296,
+      absIntakeEncoderOffset = 20.356957,
       absIntakeEncoderConversionFactor = 360,
       primaryIntakeGearRatio = 1/4.5,
-      deployIntakeGearRatio = 0;
+      deployIntakeInnerBound = 0,
+      deployIntakeOuterBound = 91;
 
     public static boolean
       primaryIntakeReversed = true,
@@ -54,6 +55,7 @@ public final class Constants {
       bottomFlywheel = 31;
 
     public static double
+      limelightToShooter = Units.inchesToMeters(21),
       flywheelMaxRPM = 6600,
       flywheelGearRatio = 1.5,
       idealPercentTop = .034,
@@ -189,9 +191,18 @@ public final class Constants {
       rightHangReversed = false;
   }
   public static class LimelightConstants{
-    public static double limeLightAngleOffsetDegrees = 70,
-    limelightLensHeightoffFloorInches = 18,
-    targetHeightoffFloorInches = 84.6841;
+    public static double limeLightAngleOffsetDegrees = 20,
+    limelightLensHeightoffFloorInches = 18.5;
+  }
+
+  public static class FieldConstants {
+    public static double
+      targetHeightoffFloorInches = 57,
+      speakerLowerLipHeight = Units.inchesToMeters(78),
+      speakerUpperLipHeight = Units.inchesToMeters(83),
+      noteHeight = Units.inchesToMeters(2.5),
+      speakerOpeningDepth = Units.inchesToMeters(17);
+
   }
   
 }

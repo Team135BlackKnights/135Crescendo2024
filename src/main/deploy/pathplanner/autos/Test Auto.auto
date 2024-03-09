@@ -33,7 +33,7 @@
         {
           "type": "named",
           "data": {
-            "name": "ShootNote"
+            "name": "ShootNote 3600 RPM"
           }
         },
         {
@@ -64,7 +64,7 @@
         {
           "type": "named",
           "data": {
-            "name": "ShootNote"
+            "name": "ShootNote 3600 RPM"
           }
         },
         {
@@ -95,13 +95,7 @@
         {
           "type": "named",
           "data": {
-            "name": "Lock Onto April Tags"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "ShootNote"
+            "name": "ShootNote 3600 RPM"
           }
         }
       ]

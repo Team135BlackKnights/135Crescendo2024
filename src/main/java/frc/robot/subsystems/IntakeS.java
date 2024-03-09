@@ -51,7 +51,6 @@ public class IntakeS extends SubsystemBase {
         primaryIntakeEncoder.setVelocityConversionFactor(Constants.IntakeConstants.primaryIntakeGearRatio);
 
         deployIntakeEncoder = deployIntake.getEncoder();
-        deployIntakeEncoder.setPositionConversionFactor(Constants.IntakeConstants.deployIntakeGearRatio);
 
         absDeployIntakeEncoder = new DutyCycleEncoder(Constants.IntakeConstants.intakeAbsEncoderID);
         //sets changes to motor (resource intensive, ONLY CALL ON INITIALIZATION)
@@ -73,11 +72,21 @@ public class IntakeS extends SubsystemBase {
         SmartDashboard.putNumber("Deploy Intake", deployIntakeEncoder.getPosition());
         SmartDashboard.putNumber("Deploy Intake Abs", getIntakePosition());
         SmartDashboard.putBoolean("Note Loaded?", noteIsLoaded());
+        SmartDashboard.putNumber("Intake Angle", getIntakeAngle());
+        SmartDashboard.putBoolean("Intake Within Bounds", intakeWithinBounds());
 
     }
 
     public double getIntakePosition() {
         return absDeployIntakeEncoder.getAbsolutePosition()*Constants.IntakeConstants.absIntakeEncoderConversionFactor - Constants.IntakeConstants.absIntakeEncoderOffset;
+    }
+
+    public double getIntakeAngle() {
+        return getIntakePosition()-42;
+    }
+
+    public boolean intakeWithinBounds() {
+        return getIntakeAngle() > SwerveS.getDesiredShooterLowerBound() && getIntakeAngle() < SwerveS.getDesiredShooterUpperBound();
     }
     
 
@@ -106,17 +115,17 @@ public class IntakeS extends SubsystemBase {
         //release the ̶h̶o̶r̶d̶e̶ intake 
         //first set of conditionals checks to see whether the arm is within the soft limits, and slows it down if it isnt
         if (power < 0) {
-            if (deployIntakeEncoder.getPosition() < 0) {
+            if (getIntakePosition() < IntakeConstants.deployIntakeInnerBound) {
                 power = 0;
-            } else if (deployIntakeEncoder.getPosition() < 44.1) {
+            } else if (getIntakePosition() < IntakeConstants.deployIntakeOuterBound*0.33) {
                 power = power * 0.5;
             }
         }
         //second set of conditionals (below) checks to see if the arm is within the hard limits, and stops it if it is
         if (power > 0) {
-            if (deployIntakeEncoder.getPosition() < 113) {
+            if (getIntakePosition() > IntakeConstants.deployIntakeOuterBound) {
                 power = 0;
-            } else if (deployIntakeEncoder.getPosition() > 79) {
+            } else if (getIntakePosition() > IntakeConstants.deployIntakeOuterBound*0.67) {
                 power = power * 0.5;
             }
         }

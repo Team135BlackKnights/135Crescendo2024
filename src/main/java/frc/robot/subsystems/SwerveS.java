@@ -29,13 +29,12 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.LimelightHelpers;
+import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.LimelightConstants;
+import frc.robot.Constants.OutakeConstants;
 import frc.robot.LimelightHelpers.PoseEstimate;
 
 public class SwerveS extends SubsystemBase {
-    Thread limelightThread = new Thread(() -> {
-        updatePoseEstimatorWithVisionBotPose();
-    });
     private final SwerveModule frontLeft = new SwerveModule(
         Constants.DriveConstants.kFrontLeftDrivePort, 
         Constants.DriveConstants.kFrontLeftTurningPort, 
@@ -95,6 +94,7 @@ public class SwerveS extends SubsystemBase {
     public static boolean disabled = true;
     public static boolean autoLock = false;
     public static boolean redIsAlliance = true; //used to determine the alliance for LED systems
+    static double distance = 0;
     public SwerveS() {
         // Waits for the RIO to finishing booting
         new Thread(() -> {
@@ -178,6 +178,11 @@ public class SwerveS extends SubsystemBase {
         SmartDashboard.putNumber("Position X (getPose)", getPose().getX());
         SmartDashboard.putNumber("Position Y (getPose)", getPose().getY());
         SmartDashboard.putNumber("Robot Heading (getPose)", getPose().getRotation().getDegrees());
+        SmartDashboard.putNumber("April Tag Distance", getDistanceFromSpeakerInMeters());
+
+        SmartDashboard.putNumber("Desired Intake Lower Bound", getDesiredShooterLowerBound());
+        SmartDashboard.putNumber("Desired Intake Upper Bound", getDesiredShooterUpperBound());
+        SmartDashboard.putNumber("Desired Intake Angle", getDesiredShooterAngle());
 
         xError = tx.getDouble(0.0);
         aprilTagVisible = tv.getDouble(0.0);
@@ -223,8 +228,7 @@ public class SwerveS extends SubsystemBase {
     }
     
     public Pose2d getPose() {
-        Pose2d actualPosition = new Pose2d(-robotPosition.getY(), robotPosition.getX(), getRotation2d());
-        return actualPosition;
+        return robotPosition;
     }
 
     public ChassisSpeeds getChassisSpeeds() {
@@ -243,7 +247,6 @@ public class SwerveS extends SubsystemBase {
 
 
     public void resetPose(Pose2d pose) {
-        pose = new Pose2d(pose.getY(), -pose.getX(), getRotation2d());
         // LIST MODULES IN THE SAME EXACT ORDER USED WHEN DECLARING SwerveDriveKinematics
         poseEstimator.resetPosition(getRotation2d(), new SwerveModulePosition[]{frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()}, pose);
     }
@@ -318,35 +321,51 @@ public class SwerveS extends SubsystemBase {
 
 
 
-    public double getDistanceFromSpeakerInMeters(){
-
-        double distance = 0; //resets value so it doesn't output last value
+    public static double getDistanceFromSpeakerInMeters(){
+         //resets value so it doesn't output last value
 
         /* if apriltag is detected, uses formula given here https://docs.limelightvision.io/docs/docs-limelight/tutorials/tutorial-estimating-distance
         formula is d =(h2-h1)/tan(h2+h1)*/
 
-        if (LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight-swerve").tagCount != 0){
+        if (aprilTagVisible()){
         
             // computing the angle
-            double theta = Units.degreesToRadians(LimelightConstants.limeLightAngleOffsetDegrees+limelight.getEntry("ty").getDouble(0.0));
+        double theta = Units.degreesToRadians(LimelightConstants.limeLightAngleOffsetDegrees+limelight.getEntry("ty").getDouble(0.0));
         
             //computes distance
-            distance = Units.inchesToMeters(LimelightConstants.targetHeightoffFloorInches-LimelightConstants.limelightLensHeightoffFloorInches)/Math.tan(theta);}
-
-        else{
-            
-            //if robot does not have a lock onto april tag try to approximate distance from speaker with robot odometry
-            
-            //pulls robot pose and converts it to a translation
-            Pose2d pose = getPose();
-            Translation2d translation = new Translation2d(pose.getX(),pose.getY());
-            //compares it with the translation2d of the speaker,(determined through pathPlanner)
-             distance = translation.getDistance(new Translation2d(0,5.55));
+        distance = Units.inchesToMeters(FieldConstants.targetHeightoffFloorInches-LimelightConstants.limelightLensHeightoffFloorInches)/Math.tan(theta);
         }
-
-
-        
         return distance;
+    }
+
+    public static double getDesiredShooterUpperBound() {
+        double upperBoundHeight = 0;
+        double upperBoundDistance = 0;
+        if (getDistanceFromSpeakerInMeters() > 5) {
+            upperBoundHeight = 1.11*FieldConstants.speakerUpperLipHeight-FieldConstants.noteHeight-Units.inchesToMeters(LimelightConstants.limelightLensHeightoffFloorInches);
+            upperBoundDistance = 0.89*getDistanceFromSpeakerInMeters() - FieldConstants.speakerOpeningDepth + OutakeConstants.limelightToShooter;
+        } else {
+            upperBoundHeight = 1.12*FieldConstants.speakerUpperLipHeight-FieldConstants.noteHeight-Units.inchesToMeters(LimelightConstants.limelightLensHeightoffFloorInches);
+            upperBoundDistance = 0.88*getDistanceFromSpeakerInMeters() - FieldConstants.speakerOpeningDepth + OutakeConstants.limelightToShooter;
+        }
+        return Units.radiansToDegrees(Math.atan(upperBoundHeight/upperBoundDistance));
+    }
+
+    public static double getDesiredShooterLowerBound() {
+        double lowerBoundHeight = 0;
+        double lowerBoundDistance = 0;
+        if (getDistanceFromSpeakerInMeters() > 5) {
+            lowerBoundHeight = 1.11*FieldConstants.speakerLowerLipHeight+FieldConstants.noteHeight-Units.inchesToMeters(LimelightConstants.limelightLensHeightoffFloorInches);
+            lowerBoundDistance = 0.89*getDistanceFromSpeakerInMeters() + OutakeConstants.limelightToShooter;
+        } else {
+            lowerBoundHeight = 1.12*FieldConstants.speakerLowerLipHeight+FieldConstants.noteHeight-Units.inchesToMeters(LimelightConstants.limelightLensHeightoffFloorInches);
+            lowerBoundDistance = 0.88*getDistanceFromSpeakerInMeters() + OutakeConstants.limelightToShooter;
+        }
+        return Units.radiansToDegrees(Math.atan(lowerBoundHeight/lowerBoundDistance));
+    }
+
+    public static double getDesiredShooterAngle() {
+        return (getDesiredShooterUpperBound() + getDesiredShooterLowerBound())/2;
     }
 
     public InstantCommand toggleAutoLockCommand() {

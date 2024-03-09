@@ -5,17 +5,16 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.IntakeS;
+import frc.robot.subsystems.SwerveS;
 
 public class VariableAngle extends Command {
     private final IntakeS intakeS;
-    private double desAngle;
     private boolean isFinished = false;
 
-    private PIDController anglePidController = new PIDController(0.05, 0, 0);
+    private PIDController anglePidController = new PIDController(0.06, 0, 0);
 
-    public VariableAngle(IntakeS intakeS, double desAngle) {
+    public VariableAngle(IntakeS intakeS) {
         this.intakeS = intakeS;
-        this.desAngle = desAngle;
 
         addRequirements(intakeS);
     }
@@ -31,7 +30,7 @@ public class VariableAngle extends Command {
             isFinished = true;
         }
 
-        double output = anglePidController.calculate(intakeS.deployIntakeEncoder.getPosition(), desAngle);
+        double output = anglePidController.calculate(intakeS.getIntakeAngle(), SwerveS.getDesiredShooterAngle());
 
         SmartDashboard.putNumber("Angle Output", output);
         SmartDashboard.putNumber("Angle Error", anglePidController.getPositionError());

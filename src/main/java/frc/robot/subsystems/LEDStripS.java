@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.DriverStation;
 public class LEDStripS extends SubsystemBase{
+    double timesRan = 0;
     int initialLoopValue = 0;
     AddressableLEDBuffer ledBuffer;
     public static AddressableLED leds;
@@ -35,7 +36,7 @@ public class LEDStripS extends SubsystemBase{
        /*NOTE: This code does not have a designated indicator for when the AutoLock program is running*/
         schedulerCount +=1;
         //stops integer overflow (even though it'd take over a year of non-stop operation for that to happen)
-        schedulerCount = schedulerCount%(LEDConstants.sineWaveUpdateCycles*20);
+        schedulerCount = schedulerCount%(LEDConstants.sineWaveUpdateCycles);
         runSineWave = ( schedulerCount == 0);
         //if there is a note stored in the intake, set it to a constant note color
         if (IntakeS.noteIsLoaded()){
