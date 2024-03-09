@@ -55,7 +55,7 @@ public final class Constants {
       bottomFlywheel = 31;
 
     public static double
-      limelightToShooter = Units.inchesToMeters(21),
+      limelightToShooter = Units.inchesToMeters(-3),
       flywheelMaxRPM = 6600,
       flywheelGearRatio = 1.5,
       idealPercentTop = .034,
@@ -151,7 +151,7 @@ public final class Constants {
     //ledPort
     ledPort = 9, 
     // amount of LEDs in the light strip
-    ledBufferLength = 90,
+    ledBufferLength = 88,
     sineWaveUpdateCycles = 3;
     //all arrays below use the H,S,V format
     public static 
@@ -188,8 +188,8 @@ public final class Constants {
       rightHangReversed = false;
   }
   public static class LimelightConstants{
-    public static double limeLightAngleOffsetDegrees = 20,
-    limelightLensHeightoffFloorInches = 18.5;
+    public static double limeLightAngleOffsetDegrees = 15,
+    limelightLensHeightoffFloorInches = 22.5;
   }
 
   public static class FieldConstants {
