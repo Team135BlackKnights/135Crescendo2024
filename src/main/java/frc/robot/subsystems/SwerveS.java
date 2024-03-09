@@ -325,7 +325,7 @@ public class SwerveS extends SubsystemBase {
         /* if apriltag is detected, uses formula given here https://docs.limelightvision.io/docs/docs-limelight/tutorials/tutorial-estimating-distance
         formula is d =(h2-h1)/tan(h2+h1)*/
 
-        if (aprilTagVisible()){
+        if (LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight-swerve").tagCount != 0){
         
             // computing the angle
             double theta = Units.degreesToRadians(LimelightConstants.limeLightAngleOffsetDegrees+limelight.getEntry("ty").getDouble(0.0));

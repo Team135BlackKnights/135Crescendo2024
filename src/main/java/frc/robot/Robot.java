@@ -7,6 +7,8 @@ package frc.robot;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.subsystems.LEDStripS;
+import edu.wpi.first.wpilibj.simulation.AddressableLEDSim;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -95,7 +97,12 @@ public class Robot extends TimedRobot {
 
   /** This function is called once when the robot is first started up. */
   @Override
-  public void simulationInit() {}
+  public void simulationInit() {
+    AddressableLEDSim ledSim = new AddressableLEDSim(LEDStripS.leds);
+    ledSim.setLength(Constants.LEDConstants.ledBufferLength);
+    ledSim.setInitialized(true);
+    
+  }
 
   /** This function is called periodically whilst in simulation. */
   @Override
