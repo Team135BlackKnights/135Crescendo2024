@@ -38,7 +38,7 @@ public class RobotContainer {
   private final HangS hangS = new HangS();
   private final LEDStripS ledStripS = new LEDStripS();
   private final SendableChooser<Command> autoChooser;
-
+    
   public static XboxController driveController = new XboxController(0);
   public static XboxController manipController = new XboxController(1);
 

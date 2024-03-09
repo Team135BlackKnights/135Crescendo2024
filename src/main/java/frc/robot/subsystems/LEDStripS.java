@@ -11,8 +11,8 @@ public class LEDStripS extends SubsystemBase{
     AddressableLEDBuffer ledBuffer;
     public static AddressableLED leds;
     int schedulerCount = 0;
-    int debugThing = 0;
     boolean runSineWave = false;
+    int m_rainbowFirstPixelHue; 
     public LEDStripS(){
         
         //creates LED objects  
@@ -34,7 +34,9 @@ public class LEDStripS extends SubsystemBase{
     public void periodic() {
        /*NOTE: This code does not have a designated indicator for when the AutoLock program is running*/
         schedulerCount +=1;
-        runSineWave = (schedulerCount%(LEDConstants.sineWaveUpdateCycles*20) == 0);
+        //stops integer overflow (even though it'd take over a year of non-stop operation for that to happen)
+        schedulerCount = schedulerCount%(LEDConstants.sineWaveUpdateCycles*20);
+        runSineWave = ( schedulerCount == 0);
         //if there is a note stored in the intake, set it to a constant note color
         if (IntakeS.noteIsLoaded()){
             
@@ -44,7 +46,7 @@ public class LEDStripS extends SubsystemBase{
         // if it's disabled make it so LEDs are off
         else if (DriverStation.isDisabled()) {
             //setColorWave(LEDConstants.goldH, LEDConstants.goldS, LEDConstants.disabledSinePeriod);
-            setConstantColors(0, 0, 0);
+            setConstantColors(0,0,0);
         }
 
          else{
@@ -78,7 +80,26 @@ public class LEDStripS extends SubsystemBase{
                 } */
             }
         }
-        
+    public void rainbow() {
+        if (runSineWave){
+            // For every pixel
+            for (var i = 0; i < ledBuffer.getLength(); i++) {
+                // shape is a circle so only one value needs to precess
+                final var hue = (m_rainbowFirstPixelHue + (i * 180 / LEDConstants.ledBufferLength)) % 180;
+                // Set the value
+                ledBuffer.setHSV(i, hue, 255, 128);
+            }
+            // Increase by to make the rainbow "move"
+            m_rainbowFirstPixelHue += 3;
+            // Check bounds
+            m_rainbowFirstPixelHue %= 180;
+            leds.setData(ledBuffer);
+            return;
+        }
+        else{
+            return;
+        }
+      }
 
     public void setConstantColors(int h, int s, int v){//Essentially designed to make all the LEDs a constant color 
         for (var i = 0; i < ledBuffer.getLength(); i++) {
@@ -90,23 +111,22 @@ public class LEDStripS extends SubsystemBase{
     public void setColorWave(int h, int s, double sinePeriod, boolean run){//value is basically how dark it is, is controlled by the wave function
         if (run){
             for (var i = 0; i < (ledBuffer.getLength()); i++) {
-            
+
                 final int value = LEDConstants.ledStates[(i+initialLoopValue)%LEDConstants.sinePeriod];
-                
+                ledBuffer.setHSV(i, h, s, value);
+                leds.setData(ledBuffer);
+            }
 
-            ledBuffer.setHSV(i, h, s, value);
-            leds.setData(ledBuffer);
-        }
-        initialLoopValue += 1;
-        // Increase the value computed in the sine function by pi/(the changable period) to make the gradient "move"
-              
-        initialLoopValue %= LEDConstants.sinePeriod;
-        //offset by one "notch" each time
-        
+            
+            //offset by one "notch" each time
+            initialLoopValue += 1;
 
+            //Prevents any kind of integer overflow error happening (prob would take the robot running for a year straight or something like that to reach, )
+            initialLoopValue %= LEDConstants.sinePeriod;
     
         //sets data to buffer
         leds.setData(ledBuffer);
+        return;
         }
         else{
             return;
