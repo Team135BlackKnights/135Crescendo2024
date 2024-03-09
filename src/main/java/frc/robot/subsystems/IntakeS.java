@@ -67,7 +67,7 @@ public class IntakeS extends SubsystemBase {
     }
     @Override
     public void periodic() {
-
+        
         //sets values to SmartDashboard periodically
         SmartDashboard.putNumber("Deploy Intake", deployIntakeEncoder.getPosition());
         SmartDashboard.putNumber("Deploy Intake Abs", getIntakePosition());

@@ -75,6 +75,8 @@ public class SwerveS extends SubsystemBase {
     NetworkTableEntry pipeline;
     public PoseEstimate results;    
 
+    int periodicUpdateCycle;
+
     public static NetworkTable limelight = NetworkTableInstance.getDefault().getTable("limelight-swerve");
     NetworkTableEntry tx = limelight.getEntry("tx");
     static NetworkTableEntry tv = limelight.getEntry("tv");
@@ -155,6 +157,11 @@ public class SwerveS extends SubsystemBase {
     
     @Override
     public void periodic() {
+        periodicUpdateCycle +=1;
+
+        if(DriverStation.isAutonomous() && periodicUpdateCycle%50 == 0){
+            this.updatePoseEstimatorWithVisionBotPose();
+        }
         redIsAlliance = getAlliance();
         disabled = DriverStation.isDisabled();
         //puts values to smartDashboard

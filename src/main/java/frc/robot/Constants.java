@@ -151,11 +151,11 @@ public final class Constants {
     //ledPort
     ledPort = 9, 
     // amount of LEDs in the light strip
-    ledBufferLength = 88,
+    ledBufferLength = 90,
     sineWaveUpdateCycles = 3;
     //all arrays below use the H,S,V format
-    public static 
-    int[] noteHSV = new int[]{12, 255, 100},
+    public static int[] 
+    noteHSV = new int[]{12, 255, 100},
     redHSV = new int[]{0,255,100},
     blueHSV = new int[]{120,255,100},
     greenHSV = new int[]{50,255,100},
@@ -164,8 +164,7 @@ public final class Constants {
   
     
 
-    public static int sinePeriod = 16,
-    disabledSinePeriod = 32;
+    public static int sinePeriod = 32;
     public static int[] ledStates = new int[LEDConstants.sinePeriod];
    
     //Basically controls how different the waves are from one another when the setColorWave function is called. Due to how it is calculated , this value CANNOT be zero (divide by zero error). 
