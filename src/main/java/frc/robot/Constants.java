@@ -148,24 +148,21 @@ public final class Constants {
   public static class LEDConstants{
     //basically anything pertaining to the LEDs go in here
     public static int 
+    //ledPort
     ledPort = 9, 
-    ledBufferLength = 90, // amount of LEDs in the light strip
-    noteH = 12, //note HSV value
-    noteS = 255,
-    noteV = 100,
-    redH = 0, //red HSV valuess
-    redS = 255,
-    redV = 100,
-    blueH = 120, //blue HSV values
-    blueS = 255,
-    blueV = 100,
-    greenH = 50,//green hsv values
-    greenS = 255,
-    greenV = 100,
-    goldH = 23, //gold hsv values
-    goldS = 255,
-    goldV = 100,
+    // amount of LEDs in the light strip
+    ledBufferLength = 90,
     sineWaveUpdateCycles = 3;
+    //all arrays below use the H,S,V format
+    public static 
+    int[] noteHSV = new int[]{12, 255, 100},
+    redHSV = new int[]{0,255,100},
+    blueHSV = new int[]{120,255,100},
+    greenHSV = new int[]{50,255,100},
+    goldHSV = new int[]{23,255,100};
+  
+  
+    
 
     public static int sinePeriod = 16,
     disabledSinePeriod = 32;

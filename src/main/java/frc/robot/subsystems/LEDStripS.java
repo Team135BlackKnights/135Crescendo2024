@@ -43,7 +43,7 @@ public class LEDStripS extends SubsystemBase{
         // if it's disabled make it so LEDs are off
         if (DriverStation.isDisabled()) {
             //setColorWave(LEDConstants.goldH, LEDConstants.goldS, LEDConstants.disabledSinePeriod);
-            setConstantColors(0,0,0);
+            setConstantColors(new int[]{0,0,0});
         }
 
          else{
@@ -53,15 +53,15 @@ public class LEDStripS extends SubsystemBase{
                 
                 //if its locked on, set to constant green
                 if (SwerveS.aprilTagVisible()){
-                    setConstantColors(LEDConstants.greenH, LEDConstants.greenS, LEDConstants.greenV);
+                    setConstantColors(LEDConstants.greenHSV);
                 }
                 
                 //if its not locked on, set to flashing green
                 else{ 
-                    setColorWave(LEDConstants.greenH, LEDConstants.greenS, LEDConstants.sinePeriod, runSineWave);
+                    setColorWave(LEDConstants.greenHSV, runSineWave);
                 }    
             } else {
-                setColorWave(LEDConstants.blueH, LEDConstants.blueS, LEDConstants.sinePeriod, runSineWave); //this function cycles once every 20ms, so every 10 cycles (200ms) sineWave can run
+                setColorWave(LEDConstants.greenHSV, runSineWave); //this function cycles once every 20ms, so every 10 cycles (200ms) sineWave can run
             }
         
             /* else{
@@ -98,19 +98,20 @@ public class LEDStripS extends SubsystemBase{
         }
       }
 
-    public void setConstantColors(int h, int s, int v){//Essentially designed to make all the LEDs a constant color 
+    public void setConstantColors(int[] LEDColors){//Essentially designed to make all the LEDs a constant color 
         for (var i = 0; i < ledBuffer.getLength(); i++) {
             // Sets the specified LED to the RGB values for red
-            ledBuffer.setHSV(i, h, s, v);
+            ledBuffer.setHSV(i, LEDColors[0], LEDColors[1], LEDColors[2]);
         }
         leds.setData(ledBuffer);
     }
-    public void setColorWave(int h, int s, double sinePeriod, boolean run){//value is basically how dark it is, is controlled by the wave function
+    public void setColorWave(int[] LEDColors, boolean run){//value is basically how dark it is, is controlled by the wave function
         if (run){
-            for (var i = 0; i < (ledBuffer.getLength()); i++) {
+            Thread sineWaveThread = new Thread(() -> {
+                for (var i = 0; i < (ledBuffer.getLength()); i++) {
 
                 final int value = LEDConstants.ledStates[(i+initialLoopValue)%LEDConstants.sinePeriod];
-                ledBuffer.setHSV(i, h, s, value);
+                ledBuffer.setHSV(i, LEDColors[0], LEDColors[1], value);
                 leds.setData(ledBuffer);
             }
 
@@ -123,12 +124,12 @@ public class LEDStripS extends SubsystemBase{
     
         //sets data to buffer
         leds.setData(ledBuffer);
-        return;
-        }
-        else{
-            return;
-        }
+     
+        });
+        sineWaveThread.setDaemon(run);
+        sineWaveThread.run();    
         
 
     }
+}
 }
