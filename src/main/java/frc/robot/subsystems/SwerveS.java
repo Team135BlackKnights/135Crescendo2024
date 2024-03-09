@@ -341,12 +341,12 @@ public class SwerveS extends SubsystemBase {
     public static double getDesiredShooterUpperBound() {
         double upperBoundHeight = 0;
         double upperBoundDistance = 0;
-        if (getDistanceFromSpeakerInMeters() > 5) {
-            upperBoundHeight = 1.11*FieldConstants.speakerUpperLipHeight-FieldConstants.noteHeight-Units.inchesToMeters(LimelightConstants.limelightLensHeightoffFloorInches);
-            upperBoundDistance = 0.89*getDistanceFromSpeakerInMeters() - FieldConstants.speakerOpeningDepth + OutakeConstants.limelightToShooter;
+        if (getDistanceFromSpeakerInMeters() > 4.8) {
+            upperBoundHeight = 1.125*FieldConstants.speakerUpperLipHeight-FieldConstants.noteHeight-Units.inchesToMeters(LimelightConstants.limelightLensHeightoffFloorInches);
+            upperBoundDistance = 0.875*getDistanceFromSpeakerInMeters() - FieldConstants.speakerOpeningDepth + OutakeConstants.limelightToShooter;
         } else {
-            upperBoundHeight = 1.12*FieldConstants.speakerUpperLipHeight-FieldConstants.noteHeight-Units.inchesToMeters(LimelightConstants.limelightLensHeightoffFloorInches);
-            upperBoundDistance = 0.88*getDistanceFromSpeakerInMeters() - FieldConstants.speakerOpeningDepth + OutakeConstants.limelightToShooter;
+            upperBoundHeight = 1.108*FieldConstants.speakerUpperLipHeight-FieldConstants.noteHeight-Units.inchesToMeters(LimelightConstants.limelightLensHeightoffFloorInches);
+            upperBoundDistance = 0.892*getDistanceFromSpeakerInMeters() - FieldConstants.speakerOpeningDepth + OutakeConstants.limelightToShooter;
         }
         return Units.radiansToDegrees(Math.atan(upperBoundHeight/upperBoundDistance));
     }
@@ -354,12 +354,12 @@ public class SwerveS extends SubsystemBase {
     public static double getDesiredShooterLowerBound() {
         double lowerBoundHeight = 0;
         double lowerBoundDistance = 0;
-        if (getDistanceFromSpeakerInMeters() > 5) {
-            lowerBoundHeight = 1.11*FieldConstants.speakerLowerLipHeight+FieldConstants.noteHeight-Units.inchesToMeters(LimelightConstants.limelightLensHeightoffFloorInches);
-            lowerBoundDistance = 0.89*getDistanceFromSpeakerInMeters() + OutakeConstants.limelightToShooter;
+        if (getDistanceFromSpeakerInMeters() > 4.8) {
+            lowerBoundHeight = 1.125*FieldConstants.speakerLowerLipHeight+FieldConstants.noteHeight-Units.inchesToMeters(LimelightConstants.limelightLensHeightoffFloorInches);
+            lowerBoundDistance = 0.875*getDistanceFromSpeakerInMeters() + OutakeConstants.limelightToShooter;
         } else {
-            lowerBoundHeight = 1.12*FieldConstants.speakerLowerLipHeight+FieldConstants.noteHeight-Units.inchesToMeters(LimelightConstants.limelightLensHeightoffFloorInches);
-            lowerBoundDistance = 0.88*getDistanceFromSpeakerInMeters() + OutakeConstants.limelightToShooter;
+            lowerBoundHeight = 1.108*FieldConstants.speakerLowerLipHeight+FieldConstants.noteHeight-Units.inchesToMeters(LimelightConstants.limelightLensHeightoffFloorInches);
+            lowerBoundDistance = 0.892*getDistanceFromSpeakerInMeters() + OutakeConstants.limelightToShooter;
         }
         return Units.radiansToDegrees(Math.atan(lowerBoundHeight/lowerBoundDistance));
     }

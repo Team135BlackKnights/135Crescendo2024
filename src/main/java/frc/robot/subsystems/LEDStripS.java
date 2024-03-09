@@ -39,13 +39,9 @@ public class LEDStripS extends SubsystemBase{
         schedulerCount = schedulerCount%(LEDConstants.sineWaveUpdateCycles);
         runSineWave = ( schedulerCount == 0);
         //if there is a note stored in the intake, set it to a constant note color
-        if (IntakeS.noteIsLoaded()){
-            
-            setConstantColors(LEDConstants.greenH, LEDConstants.greenS, LEDConstants.greenV);
-        }
 
         // if it's disabled make it so LEDs are off
-        else if (DriverStation.isDisabled()) {
+        if (DriverStation.isDisabled()) {
             //setColorWave(LEDConstants.goldH, LEDConstants.goldS, LEDConstants.disabledSinePeriod);
             setConstantColors(0,0,0);
         }
@@ -62,7 +58,7 @@ public class LEDStripS extends SubsystemBase{
                 
                 //if its not locked on, set to flashing green
                 else{ 
-                    setConstantColors(LEDConstants.greenH, LEDConstants.greenS, LEDConstants.greenV-70);
+                    setColorWave(LEDConstants.greenH, LEDConstants.greenS, LEDConstants.sinePeriod, runSineWave);
                 }    
             } else {
                 setColorWave(LEDConstants.blueH, LEDConstants.blueS, LEDConstants.sinePeriod, runSineWave); //this function cycles once every 20ms, so every 10 cycles (200ms) sineWave can run

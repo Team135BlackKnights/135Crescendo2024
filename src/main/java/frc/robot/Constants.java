@@ -165,7 +165,7 @@ public final class Constants {
     goldH = 23, //gold hsv values
     goldS = 255,
     goldV = 100,
-    sineWaveUpdateCycles = 10;
+    sineWaveUpdateCycles = 3;
 
     public static int sinePeriod = 16,
     disabledSinePeriod = 32;
