@@ -47,9 +47,10 @@ public class LEDStripS extends SubsystemBase{
         }
 
          else{
+            rainbow();
 
             //if it is trying to autolock
-            if (SwerveS.autoLock){
+            /*if (SwerveS.autoLock){
                 
                 //if its locked on, set to constant green
                 if (SwerveS.aprilTagVisible()){

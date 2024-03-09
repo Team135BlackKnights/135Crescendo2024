@@ -151,7 +151,7 @@ public final class Constants {
     //ledPort
     ledPort = 9, 
     // amount of LEDs in the light strip
-    ledBufferLength = 88,
+    ledBufferLength = 90,
     sineWaveUpdateCycles = 3;
     //all arrays below use the H,S,V format
     public static 
