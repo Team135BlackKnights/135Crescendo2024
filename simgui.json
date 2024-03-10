@@ -31,17 +31,13 @@
     }
   },
   "NetworkTables Info": {
-    "Connections": {
-      "open": true
-    },
     "Server": {
       "Publishers": {
         "open": true
       },
       "Subscribers": {
         "open": true
-      },
-      "open": true
+      }
     },
     "visible": true
   },

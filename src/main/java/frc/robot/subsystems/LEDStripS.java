@@ -2,18 +2,19 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.LEDConstants;
-
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.DriverStation;
 public class LEDStripS extends SubsystemBase{
     double timesRan = 0;
-    int initialLoopValue = 0;
     AddressableLEDBuffer ledBuffer;
     public static AddressableLED leds;
-    int schedulerCount = 0;
     boolean runSineWave = false;
-    int m_rainbowFirstPixelHue; 
+    public static int 
+    initialLoopValue = 0,
+    schedulerCount = 0,
+     m_rainbowFirstPixelHue;
+    public static double breathingLoopValue = 0;
     public LEDStripS(){
         
         //creates LED objects  
@@ -43,13 +44,31 @@ public class LEDStripS extends SubsystemBase{
         // if it's disabled make it so LEDs are off
         if (DriverStation.isDisabled()) {
             //setColorWave(LEDConstants.goldH, LEDConstants.goldS, LEDConstants.disabledSinePeriod);
-            setColorWave(LEDConstants.noteHSV, runSineWave);
+            setConstantColors(LEDConstants.disabledHSV);
         }
-
-         else{
-            rainbow();
-
-            //if it is trying to autolock
+        else if (DriverStation.isAutonomous()){
+            if (SwerveS.redIsAlliance){
+                setColorWave(LEDConstants.redHSV, runSineWave);
+            }
+            else{
+                setColorWave(LEDConstants.redHSV, runSineWave);
+            }
+            }
+            //teleop
+        else{
+            if (SwerveS.autoLock){
+                if (SwerveS.aprilTagVisible()){
+                    setConstantColors(LEDConstants.greenHSV);
+                }
+                else{
+                    setConstantColors(LEDConstants.redHSV);
+                }
+            }
+            else{
+             rainbow();   
+            }
+        }
+           //if it is trying to autolock
             /*if (SwerveS.autoLock){
                 
                 //if its locked on, set to constant green
@@ -76,7 +95,7 @@ public class LEDStripS extends SubsystemBase{
                 setConstantColors(LEDConstants.blueH, LEDConstants.blueS, LEDConstants.blueV);
                 }
                 } */
-            }
+            
         }
     public void rainbow() {
         if (runSineWave){
@@ -113,7 +132,6 @@ public class LEDStripS extends SubsystemBase{
 
                 final int value = LEDConstants.ledStates[(i+initialLoopValue)%LEDConstants.sinePeriod];
                 ledBuffer.setHSV(i, LEDColors[0], LEDColors[1], value);
-                leds.setData(ledBuffer);
             }
 
             
@@ -125,9 +143,36 @@ public class LEDStripS extends SubsystemBase{
     
         //sets data to buffer
         leds.setData(ledBuffer);
+        }
 
         
 
     }
+    public void setLEDSBreathing(int[] LEDColors, boolean run){
+        breathingLoopValue +=.25;
+        breathingLoopValue %= LEDConstants.sinePeriod;
+        final int value = LEDConstants.ledStates[(int)Math.floor(breathingLoopValue)];
+
+        if (run){
+                
+                for (var i = 0; i < (ledBuffer.getLength()); i++) {
+
+                
+                ledBuffer.setHSV(i, LEDColors[0], LEDColors[1], value);
+                leds.setData(ledBuffer);
+            }
+
+            
+            //offset by one "notch" each time
+            System.out.println(breathingLoopValue);
+            //Prevents any kind of integer overflow error happening (prob would take the robot running for a year straight or something like that to reach, )
+    
+        //sets data to buffer
+        leds.setData(ledBuffer);
+
+        
+
+    }
+    
 }
 }
