@@ -108,7 +108,7 @@ public class LEDStripS extends SubsystemBase{
     }
     public void setColorWave(int[] LEDColors, boolean run){//value is basically how dark it is, is controlled by the wave function
         if (run){
-            Thread sineWaveThread = new Thread(() -> {
+            
                 for (var i = 0; i < (ledBuffer.getLength()); i++) {
 
                 final int value = LEDConstants.ledStates[(i+initialLoopValue)%LEDConstants.sinePeriod];
@@ -125,10 +125,7 @@ public class LEDStripS extends SubsystemBase{
     
         //sets data to buffer
         leds.setData(ledBuffer);
-     
-        });
-        sineWaveThread.setDaemon(run);
-        sineWaveThread.run();    
+
         
 
     }
