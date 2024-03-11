@@ -85,12 +85,11 @@ public class SwerveS extends SubsystemBase {
     Pose2d robotPosition = new Pose2d(0,0, getRotation2d());
 
     Field2d robotField = new Field2d();
-
+    static double zAccel = 0;
     // LIST MODULES IN THE SAME EXACT ORDER USED WHEN DECLARING SwerveDriveKinematics
     ChassisSpeeds m_ChassisSpeeds = Constants.DriveConstants.kDriveKinematics.toChassisSpeeds(new SwerveModuleState[]{frontLeft.getState(), frontRight.getState(), backLeft.getState(), backRight.getState()});
     SwerveDrivePoseEstimator poseEstimator = new SwerveDrivePoseEstimator(Constants.DriveConstants.kDriveKinematics, getRotation2d(), new SwerveModulePosition[]{frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()},robotPosition);
     SwerveModulePosition[] m_modulePositions = new SwerveModulePosition[]{frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()};
-
     public static boolean disabled = true;
     public static boolean autoLock = false;
     public static boolean redIsAlliance = true; //used to determine the alliance for LED systems
@@ -166,7 +165,7 @@ public class SwerveS extends SubsystemBase {
         SmartDashboard.putNumber("xError", xError);
         SmartDashboard.putBoolean("Auto Lock", autoLock);
         SmartDashboard.putBoolean("Red is Alliance", getAlliance());
-        
+        zAccel = gyro.getRawAccelZ();
         // SmartDashboard.putNumber("BackRight Position (SwerveModulePosition)", backRight.getPosition().distanceMeters);
         // SmartDashboard.putNumber("FrontRight Position (SwerveModulePosition)", frontRight.getPosition().distanceMeters);
         // SmartDashboard.putNumber("BackLeft Position (SwerveModulePosition)", backLeft.getPosition().distanceMeters);
@@ -217,6 +216,13 @@ public class SwerveS extends SubsystemBase {
             robotField.getObject("path").setPoses(poses);
         });
 
+    }
+
+    public static double getZAccel(){
+        return zAccel;
+    }
+    public static double getZDistance(){
+        return limelight.getEntry("ty").getDouble(0.0);
     }
 
     public double getXError() {
