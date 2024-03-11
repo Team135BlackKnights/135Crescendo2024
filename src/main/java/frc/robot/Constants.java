@@ -68,7 +68,7 @@ public final class Constants {
   public static class SwerveConstants {
     public static double
       kWheelDiameter = Units.inchesToMeters(3.873), 
-      kDriveMotorGearRatio = 1/8.14, 
+      kDriveMotorGearRatio = 1/6.75, 
       kTurningMotorGearRatio = (7/150),
       kDriveEncoderRot2Meter = kDriveMotorGearRatio * Math.PI * kWheelDiameter,
       kDriveEncoderRPM2MeterPerSec = kDriveEncoderRot2Meter / 60,
@@ -88,7 +88,7 @@ public final class Constants {
       kDriveBaseRadius = Units.inchesToMeters(Math.sqrt(kChassisLength*kChassisLength + kChassisWidth*kChassisWidth)/2),
       // Distance from center of robot to the fartshest module
 
-      kMaxSpeedMetersPerSecond = Units.feetToMeters(12.0),
+      kMaxSpeedMetersPerSecond = Units.feetToMeters(15.1),
       kMaxTurningSpeedRadPerSec = 4.414667 * 2 * Math.PI, // 1.33655 *2 *Math.PI
       kTeleDriveMaxAcceleration = Units.feetToMeters(5.66), //guess
       kTeleTurningMaxAcceleration = 5, //guess
