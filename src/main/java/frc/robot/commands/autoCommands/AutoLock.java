@@ -35,7 +35,7 @@ public class AutoLock extends Command{
             timer.start();
         }
         //takes x value of limelight as the distance nthat needs to be rotated, runs a chassisSpeedscommand to rotate until within an acceptable deadband
-        limelightTx = swerveS.getXError();
+        limelightTx = SwerveS.getXError();
         if (Math.abs(limelightTx)<limelightDeadBand){
             isFinished = true;
         }
