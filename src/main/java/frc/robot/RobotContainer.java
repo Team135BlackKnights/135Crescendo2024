@@ -57,6 +57,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("IntakeNote", new AutonIntake(intakeS));
     NamedCommands.registerCommand("ShootNote 3600 RPM", new FireShooter(outakeS, intakeS, 3600));
     NamedCommands.registerCommand("ShootNote 3000 RPM", new FireShooter(outakeS, intakeS, 3000));
+    NamedCommands.registerCommand("Shoot From Anywhere", new VariableAngle(intakeS, outakeS, true));
 
     autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auto Chooser",autoChooser);
@@ -66,7 +67,7 @@ public class RobotContainer {
 
   private void configureBindings() {
     aButton.onTrue(swerveS.toggleAutoLockCommand());
-    yButton.onTrue(new VariableAngle(intakeS, outakeS));
+    yButton.onTrue(new VariableAngle(intakeS, outakeS, false));
   }
 
   /**

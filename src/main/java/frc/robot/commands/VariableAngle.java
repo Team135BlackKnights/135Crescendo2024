@@ -12,7 +12,7 @@ import frc.robot.subsystems.SwerveS;
 public class VariableAngle extends Command {
     private final IntakeS intakeS;
     private final OutakeS outakeS;
-    private boolean isFinished = false;
+    private boolean isFinished = false, isAutonomous;
     Timer timer = new Timer();
     Timer delay = new Timer();
 
@@ -20,9 +20,10 @@ public class VariableAngle extends Command {
 
     private PIDController anglePidController = new PIDController(0.06, 0, 0);
 
-    public VariableAngle(IntakeS intakeS, OutakeS outakeS) {
+    public VariableAngle(IntakeS intakeS, OutakeS outakeS, boolean isAutonomous) {
         this.intakeS = intakeS;
         this.outakeS = outakeS;
+        this.isAutonomous = isAutonomous;
 
         addRequirements(intakeS, outakeS);
     }
@@ -40,9 +41,12 @@ public class VariableAngle extends Command {
         if (delay.get() >=0.5 || Math.abs(RobotContainer.manipController.getRightY()) > 0.2 || RobotContainer.driveController.getLeftTriggerAxis() > 0.1 || RobotContainer.manipController.getLeftTriggerAxis() > 0.1 || RobotContainer.driveController.getRightTriggerAxis() > 0.1 || RobotContainer.manipController.getRightTriggerAxis() > 0.1) {
             isFinished = true;
         }
-        if (timer.get() < 0.1) {
+
+        double output = anglePidController.calculate(intakeS.getIntakeAngle(), SwerveS.getDesiredShooterAngle());
+
+        if (timer.get() < 0.1 && !isAutonomous) {
             intakeS.setPrimaryIntake(0.5);
-        } else if (timer.get() >= 0.1) {
+        } else if (timer.get() >= 0.15) {
             intakeS.setPrimaryIntake(0);
             double outakeSpeed = 0.91 + shooterPID.calculate(outakeS.getAverageFlywheelSpeed(), 6000);
             outakeS.setIndividualFlywheelSpeeds(outakeSpeed, outakeSpeed);
@@ -51,13 +55,12 @@ public class VariableAngle extends Command {
             intakeS.setPrimaryIntake(-0.5);
             delay.start();
         }
-        if (intakeS.intakeWithinBounds() && shooterPID.getPositionError() < 150 && Math.abs(SwerveS.getXError()) < 5) {
+        if (intakeS.intakeWithinBounds() && shooterPID.getPositionError() < 150 && Math.abs(SwerveS.getXError()) < 3 && RobotContainer.manipController.getAButton() == false && Math.abs(output) < 0.1) {
             intakeS.setPrimaryIntake(-0.5);
             delay.start();
         }
 
-        double output = anglePidController.calculate(intakeS.getIntakeAngle(), SwerveS.getDesiredShooterAngle());
-
+        
         SmartDashboard.putNumber("Angle Output", output);
         SmartDashboard.putNumber("Angle Error", anglePidController.getPositionError());
 

@@ -58,7 +58,7 @@ public class IntakeS extends SubsystemBase {
         //sets values to SmartDashboard periodically
         SmartDashboard.putNumber("Deploy Intake", deployIntakeEncoder.getPosition());
         SmartDashboard.putNumber("Deploy Intake Abs", getIntakePosition());
-        //SmartDashboard.putBoolean("Note Loaded?", noteIsLoaded());
+        SmartDashboard.putBoolean("Note Loaded?", noteIsLoaded());
         SmartDashboard.putNumber("Intake Angle", getIntakeAngle());
         SmartDashboard.putBoolean("Intake Within Bounds", intakeWithinBounds());
 

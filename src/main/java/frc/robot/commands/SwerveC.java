@@ -64,7 +64,7 @@ public class SwerveC extends Command {
     turningSpeed = turningLimiter.calculate(turningSpeed) * Constants.DriveConstants.kMaxTurningSpeedRadPerSec;
     
 
-    if (swerveS.getAlliance()) {
+    if (SwerveS.getAlliance()) {
       xSpeed *= -1;
       ySpeed *= -1;
       turningSpeed *= 1;

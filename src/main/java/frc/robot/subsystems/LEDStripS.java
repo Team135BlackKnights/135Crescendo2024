@@ -27,7 +27,6 @@ public class LEDStripS extends SubsystemBase{
 
         for (var i= 0; i < LEDConstants.sinePeriod; i++){
             LEDConstants.ledStates[i] = (int)Math.floor(Math.abs(Math.sin(((i*Math.PI/LEDConstants.sinePeriod)+initialLoopValue)))*255); 
-            System.out.println(LEDConstants.ledStates[i]);
         }
     }
 

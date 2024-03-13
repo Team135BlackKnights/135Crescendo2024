@@ -68,7 +68,7 @@ public final class Constants {
   public static class SwerveConstants {
     public static double
       kWheelDiameter = Units.inchesToMeters(3.873), 
-      kDriveMotorGearRatio = 1/6.75, 
+      kDriveMotorGearRatio = 1/8.14, 
       kTurningMotorGearRatio = (7/150),
       kDriveEncoderRot2Meter = kDriveMotorGearRatio * Math.PI * kWheelDiameter,
       kDriveEncoderRPM2MeterPerSec = kDriveEncoderRot2Meter / 60,
@@ -86,9 +86,9 @@ public final class Constants {
       kChassisLength = Units.inchesToMeters(24.25), // Distance betwwen Front and Back wheels
 
       kDriveBaseRadius = Units.inchesToMeters(Math.sqrt(kChassisLength*kChassisLength + kChassisWidth*kChassisWidth)/2),
-      // Distance from center of robot to the fartshest module
+      // Distance from center of robot to the farthest module
 
-      kMaxSpeedMetersPerSecond = Units.feetToMeters(15.1),
+      kMaxSpeedMetersPerSecond = Units.feetToMeters(12.1),
       kMaxTurningSpeedRadPerSec = 4.414667 * 2 * Math.PI, // 1.33655 *2 *Math.PI
       kTeleDriveMaxAcceleration = Units.feetToMeters(5.66), //guess
       kTeleTurningMaxAcceleration = 5, //guess
@@ -96,7 +96,7 @@ public final class Constants {
       // To find these set them to zero, then turn the robot on and manually set the wheels straight.
       // The encoder values being read are then your new Offset values
       kFrontLeftAbsEncoderOffsetRad = 0.562867,
-      kFrontRightAbsEncoderOffsetRad = 2.610261,
+      kFrontRightAbsEncoderOffsetRad = 0.548137,
       kBackLeftAbsEncoderOffsetRad = 2*Math.PI - 2.891372,
       kBackRightAbsEncoderOffsetRad = 2*Math.PI - 0.116861; 
     
@@ -196,6 +196,10 @@ public final class Constants {
       speakerUpperLipHeight = Units.inchesToMeters(83),
       noteHeight = Units.inchesToMeters(2.5),
       speakerOpeningDepth = Units.inchesToMeters(17);
+
+    public static Translation2d
+      blueSpeaker = new Translation2d(0, 5.56),
+      redSpeaker = new Translation2d(16.59128, 5.56);
 
   }
   

@@ -71,20 +71,18 @@ public class SwerveS extends SubsystemBase {
         Constants.DriveConstants.kBackRightAbsEncoderOffsetRad, 
         Constants.DriveConstants.kBackRightDriveReversed);
 
-    private AHRS gyro = new AHRS(Port.kUSB1);
+    private static AHRS gyro = new AHRS(Port.kUSB1);
     NetworkTableEntry pipeline;
-    public PoseEstimate results;    
+    public PoseEstimate poseEstimate;    
 
     int periodicUpdateCycle;
 
     public static NetworkTable limelight = NetworkTableInstance.getDefault().getTable("limelight-swerve");
     static NetworkTableEntry tx = limelight.getEntry("tx");
-    static NetworkTableEntry tv = limelight.getEntry("tv");
 
     static double xError = tx.getDouble(0.0);
-    static double aprilTagVisible = tv.getDouble(0.0);
 
-    Pose2d robotPosition = new Pose2d(0,0, getRotation2d());
+    static Pose2d robotPosition = new Pose2d(0,0, getRotation2d());
 
     Field2d robotField = new Field2d();
 
@@ -106,24 +104,26 @@ public class SwerveS extends SubsystemBase {
                 frontLeft.resetEncoders();
                 frontRight.resetEncoders();
                 backLeft.resetEncoders();
-                backRight.resetEncoders();                
+                backRight.resetEncoders();
             } catch (Exception e) {
             }
         }).start();
 
+        limelight.getEntry("pipeline").setNumber(1);
+
         AutoBuilder.configureHolonomic(
-        this::getPose, // Robot pose supplier
+        SwerveS::getPose, // Robot pose supplier
         this::resetPose, // Method to reset odometry (will be called if your auto has a starting pose)
         this::getChassisSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
         this::setChassisSpeeds, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
         new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
-            new PIDConstants(0.35, 0.0, 0.0), // Translation PID constants // We didn't have the chance to optimize PID constants so there will be some error in autonomous until these values are fixed
-            new PIDConstants(2, 0.0, 0.0), // Rotation PID constants
+            new PIDConstants(5, 0.0, 0.0), // Translation PID constants // We didn't have the chance to optimize PID constants so there will be some error in autonomous until these values are fixed
+            new PIDConstants(5, 0.0, 0.0), // Rotation PID constants
             Constants.DriveConstants.kMaxSpeedMetersPerSecond, // Max module speed, in m/s
             Constants.DriveConstants.kDriveBaseRadius, // Drive base radius in meters. Distance from robot center to furthest module.
             new ReplanningConfig() // Default path replanning config. See the API for the options here
         ),
-        this::getAlliance,
+        SwerveS::getAlliance,
         this // Reference to this subsystem to set requirements
         );
 
@@ -134,11 +134,11 @@ public class SwerveS extends SubsystemBase {
         gyro.reset();
     }
     
-    public double getHeading() {
+    public static double getHeading() {
         return -1*Math.IEEEremainder(gyro.getAngle() + (getAlliance() ? 180 : 0),360); //modulus
     }
     
-    public Rotation2d getRotation2d() {
+    public static Rotation2d getRotation2d() {
         return Rotation2d.fromDegrees(getHeading());
     }
     public void switchLimeLightPath() { 
@@ -159,8 +159,15 @@ public class SwerveS extends SubsystemBase {
     public void periodic() {
         periodicUpdateCycle +=1;
 
-        if(DriverStation.isAutonomous() && periodicUpdateCycle%50 == 0){
-            this.updatePoseEstimatorWithVisionBotPose();
+        if (getAlliance() && limelight.getEntry("priorityid").getDouble(0.0) != 4.0) {
+            limelight.getEntry("priorityid").setNumber(4);
+        } else if (!getAlliance() && limelight.getEntry("priorityid").getDouble(0.0) != 7.0) {
+            limelight.getEntry("priorityid").setNumber(7);
+        }
+        
+
+        if(periodicUpdateCycle%5 == 0){
+            updatePoseEstimatorWithVisionBotPose();
         }
         redIsAlliance = getAlliance();
         disabled = DriverStation.isDisabled();
@@ -171,28 +178,21 @@ public class SwerveS extends SubsystemBase {
         SmartDashboard.putNumber("BackLeft Abs Encoder", backLeft.getAbsoluteEncoderRad());
         SmartDashboard.putNumber("BackRight Abs Encoder", backRight.getAbsoluteEncoderRad());
         SmartDashboard.putNumber("xError", xError);
+        SmartDashboard.putNumber("Odometry xError", getRobotPoseXError());
         SmartDashboard.putBoolean("Auto Lock", autoLock);
         SmartDashboard.putBoolean("Red is Alliance", getAlliance());
         
-        // SmartDashboard.putNumber("BackRight Position (SwerveModulePosition)", backRight.getPosition().distanceMeters);
-        // SmartDashboard.putNumber("FrontRight Position (SwerveModulePosition)", frontRight.getPosition().distanceMeters);
-        // SmartDashboard.putNumber("BackLeft Position (SwerveModulePosition)", backLeft.getPosition().distanceMeters);
-        // SmartDashboard.putNumber("FrontLeft Position (SwerveModulePosition)", frontLeft.getPosition().distanceMeters);
-        // SmartDashboard.putNumber("BackRight Angle (SwerveModulePosition)", backRight.getPosition().angle.getDegrees());
-        // SmartDashboard.putNumber("FrontRight Angle (SwerveModulePosition)", frontRight.getPosition().angle.getDegrees());
-        // SmartDashboard.putNumber("BackLeft Angle (SwerveModulePosition)", backLeft.getPosition().angle.getDegrees());
-        // SmartDashboard.putNumber("FrontLeft Angle (SwerveModulePosition)", frontLeft.getPosition().angle.getDegrees());
         SmartDashboard.putNumber("Position X (getPose)", getPose().getX());
         SmartDashboard.putNumber("Position Y (getPose)", getPose().getY());
-        SmartDashboard.putNumber("Robot Heading (getPose)", getPose().getRotation().getDegrees());
         SmartDashboard.putNumber("April Tag Distance", getDistanceFromSpeakerInMeters());
+        SmartDashboard.putNumber("Odometry Distance", getDistanceFromSpeakerUsingRobotPose());
 
         SmartDashboard.putNumber("Desired Intake Lower Bound", getDesiredShooterLowerBound());
         SmartDashboard.putNumber("Desired Intake Upper Bound", getDesiredShooterUpperBound());
         SmartDashboard.putNumber("Desired Intake Angle", getDesiredShooterAngle());
 
+
         xError = tx.getDouble(0.0);
-        aprilTagVisible = tv.getDouble(0.0);
 
         m_modulePositions[0] = frontRight.getPosition();
         m_modulePositions[1] = backRight.getPosition();
@@ -201,7 +201,7 @@ public class SwerveS extends SubsystemBase {
 
         // LIST MODULES IN THE SAME EXACT ORDER USED WHEN DECLARING SwerveDriveKinematics
         m_ChassisSpeeds = Constants.DriveConstants.kDriveKinematics.toChassisSpeeds(new SwerveModuleState[]{frontLeft.getState(), frontRight.getState(), backLeft.getState(), backRight.getState()});
-
+        
         robotPosition = poseEstimator.update(getRotation2d(), m_modulePositions);
 
         robotField.setRobotPose(getPose());
@@ -230,18 +230,32 @@ public class SwerveS extends SubsystemBase {
         return xError;
     }
 
+    public static double getRobotPoseXError() {
+        double x;
+        double y;
+        if (getAlliance()) {
+            x = FieldConstants.redSpeaker.getX() - getPose().getX();
+            y = -(FieldConstants.redSpeaker.getY() - getPose().getY());
+            return Units.radiansToDegrees(Math.atan(y/x)) - getHeading();
+        } else {
+            x = getPose().getX() - FieldConstants.blueSpeaker.getX();
+            y = -(getPose().getY() - FieldConstants.blueSpeaker.getY());
+            return Units.radiansToDegrees(Math.atan(y/x)) + getHeading();
+        }
+    }
+
     public static boolean aprilTagVisible() {
-        return aprilTagVisible == 1;
+        return xError != 0.0;
     }
     
-    public Pose2d getPose() {
+    public static Pose2d getPose() {
         return robotPosition;
     }
 
     public ChassisSpeeds getChassisSpeeds() {
         return m_ChassisSpeeds;
     }
-    public boolean getAlliance(){
+    public static boolean getAlliance(){
         // Boolean supplier that controls when the path will be mirrored for the red alliance
             // This will flip the path being followed to the red side of the field.
             // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
@@ -255,7 +269,7 @@ public class SwerveS extends SubsystemBase {
 
     public void resetPose(Pose2d pose) {
         // LIST MODULES IN THE SAME EXACT ORDER USED WHEN DECLARING SwerveDriveKinematics
-        poseEstimator.resetPosition(getRotation2d(), new SwerveModulePosition[]{frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()}, pose);
+        poseEstimator.resetPosition(getRotation2d(), m_modulePositions, pose);
     }
 
     public void stopModules() {
@@ -273,11 +287,13 @@ public class SwerveS extends SubsystemBase {
         
         //computes latency
         
-        results = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight-swerve");
-        int count = results.tagCount;
-        Pose2d poseLimelight = results.pose;
+        poseEstimate = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight-swerve");
+        int count = poseEstimate.tagCount;
+        Pose2d poseLimelight = poseEstimate.pose;
         double latency = Timer.getFPGATimestamp() - (limelight.getEntry("tl").getDouble(0.0)/1000.0) - (limelight.getEntry("cl").getDouble(0.0)/1000.0);
         Pose2d odomPose = getPose();
+        SmartDashboard.putNumber("limelightx", poseLimelight.getX());
+        SmartDashboard.putNumber("limelight y", poseLimelight.getY());
         Translation2d transOdom = new Translation2d(odomPose.getX(),odomPose.getY());
         Translation2d transLim = new Translation2d(poseLimelight.getX(),poseLimelight.getY());
         double poseDifference = transOdom.getDistance(transLim);
@@ -286,22 +302,29 @@ public class SwerveS extends SubsystemBase {
             return;
         }
         if (count != 0){
-            double xyStds = 0;
-            double degStds = 0;
+            double xyStds;
+            double degStds;
             if (count>=2){
-                xyStds = .5;
-                degStds = 6;
+                if (periodicUpdateCycle % 50 == 0 && !DriverStation.isAutonomous()) {
+                    resetPose(poseLimelight);
+                    return;
+                } else {
+                    xyStds = 0.05;
+                    degStds = 6;
+                }
             }
-            if (results.avgTagArea > .8 && poseDifference <.5){
+            if (poseEstimate.avgTagArea > .8 && poseDifference <.5){
                 xyStds = 1.0;
                 degStds = 12;
             }
-            else if (results.avgTagArea > 0.1 && poseDifference < 0.3) {
+            else if (poseEstimate.avgTagArea > 0.1 && poseDifference < 0.3) {
                 xyStds = 2.0;
                 degStds = 30;
+            } else {
+                return;
             }
             poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(xyStds, xyStds, Units.degreesToRadians(degStds)));
-            poseEstimator.addVisionMeasurement(odomPose, latency);
+            poseEstimator.addVisionMeasurement(poseLimelight, latency);
         }
         else{
             return;
@@ -319,7 +342,13 @@ public class SwerveS extends SubsystemBase {
         
     
 
-        
+        public static double getDistanceFromSpeakerUsingRobotPose() {
+            if (getAlliance()) {
+                return robotPosition.getTranslation().getDistance(FieldConstants.redSpeaker);
+            } else {
+                return robotPosition.getTranslation().getDistance(FieldConstants.blueSpeaker);
+            }
+        }
         
     
 
@@ -348,23 +377,27 @@ public class SwerveS extends SubsystemBase {
     public static double getDesiredShooterUpperBound() {
         double upperBoundHeight = 0;
         double upperBoundDistance = 0;
-        if (getDistanceFromSpeakerInMeters() > 6) {
+        upperBoundHeight = FieldConstants.speakerUpperLipHeight-FieldConstants.noteHeight-Units.inchesToMeters(LimelightConstants.limelightLensHeightoffFloorInches);
+        upperBoundDistance = getDistanceFromSpeakerUsingRobotPose() - FieldConstants.speakerOpeningDepth;
+        /* if (getDistanceFromSpeakerInMeters() > 6.5) {
             upperBoundHeight = 1.236*FieldConstants.speakerUpperLipHeight-FieldConstants.noteHeight-Units.inchesToMeters(LimelightConstants.limelightLensHeightoffFloorInches);
             upperBoundDistance = 0.764*getDistanceFromSpeakerInMeters() - FieldConstants.speakerOpeningDepth + OutakeConstants.limelightToShooter;
-        } else if (getDistanceFromSpeakerInMeters() > 4) {
+        } else if (getDistanceFromSpeakerInMeters() > 5) {
             upperBoundHeight = 1.2*FieldConstants.speakerUpperLipHeight-FieldConstants.noteHeight-Units.inchesToMeters(LimelightConstants.limelightLensHeightoffFloorInches);
             upperBoundDistance = 0.8*getDistanceFromSpeakerInMeters() - FieldConstants.speakerOpeningDepth + OutakeConstants.limelightToShooter;
         } else {
             upperBoundHeight = 1.12*FieldConstants.speakerUpperLipHeight-FieldConstants.noteHeight-Units.inchesToMeters(LimelightConstants.limelightLensHeightoffFloorInches);
             upperBoundDistance = 0.87*getDistanceFromSpeakerInMeters() - FieldConstants.speakerOpeningDepth + OutakeConstants.limelightToShooter;
-        }
+        } */
         return Units.radiansToDegrees(Math.atan(upperBoundHeight/upperBoundDistance));
     }
 
     public static double getDesiredShooterLowerBound() {
         double lowerBoundHeight = 0;
         double lowerBoundDistance = 0;
-        if (getDistanceFromSpeakerInMeters() > 6) {
+        lowerBoundHeight = FieldConstants.speakerLowerLipHeight+FieldConstants.noteHeight-Units.inchesToMeters(LimelightConstants.limelightLensHeightoffFloorInches);
+        lowerBoundDistance = getDistanceFromSpeakerUsingRobotPose();
+        /* if (getDistanceFromSpeakerInMeters() > 6) {
             lowerBoundHeight = 1.242*FieldConstants.speakerLowerLipHeight+FieldConstants.noteHeight-Units.inchesToMeters(LimelightConstants.limelightLensHeightoffFloorInches);
             lowerBoundDistance = 0.758*getDistanceFromSpeakerInMeters() + OutakeConstants.limelightToShooter;
         } else if (getDistanceFromSpeakerInMeters() > 4) {
@@ -373,7 +406,7 @@ public class SwerveS extends SubsystemBase {
         } else {
             lowerBoundHeight = 1.12*FieldConstants.speakerLowerLipHeight+FieldConstants.noteHeight-Units.inchesToMeters(LimelightConstants.limelightLensHeightoffFloorInches);
             lowerBoundDistance = 0.87*getDistanceFromSpeakerInMeters() + OutakeConstants.limelightToShooter;
-        }
+        } */
         return Units.radiansToDegrees(Math.atan(lowerBoundHeight/lowerBoundDistance));
     }
 
@@ -386,8 +419,6 @@ public class SwerveS extends SubsystemBase {
     }
 
     public void setChassisSpeeds(ChassisSpeeds speed) {
-        speed.omegaRadiansPerSecond = speed.omegaRadiansPerSecond * -1;
-        speed = new ChassisSpeeds(speed.vyMetersPerSecond, -speed.vxMetersPerSecond, speed.omegaRadiansPerSecond);
         SwerveModuleState[] moduleStates = Constants.DriveConstants.kDriveKinematics.toSwerveModuleStates(speed);
         frontLeft.setDesiredState(moduleStates[0]);
         frontRight.setDesiredState(moduleStates[1]);
