@@ -73,7 +73,7 @@ public class IntakeS extends SubsystemBase {
     }
 
     public boolean intakeWithinBounds() {
-        return getIntakeAngle() > SwerveS.getDesiredShooterLowerBound() && getIntakeAngle() < SwerveS.getDesiredShooterUpperBound();
+        return getIntakeAngle() > SwerveS.getDesiredShooterLowerBound() && getIntakeAngle() < SwerveS.getDesiredShooterUpperBound() || (Math.abs(getIntakeAngle()-SwerveS.getDesiredShooterAngle()) < 0.75);
     }
     
 

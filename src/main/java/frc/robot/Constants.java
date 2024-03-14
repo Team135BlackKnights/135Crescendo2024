@@ -68,7 +68,7 @@ public final class Constants {
   public static class SwerveConstants {
     public static double
       kWheelDiameter = Units.inchesToMeters(3.873), 
-      kDriveMotorGearRatio = 1/8.14, 
+      kDriveMotorGearRatio = 1/6.75, 
       kTurningMotorGearRatio = (7/150),
       kDriveEncoderRot2Meter = kDriveMotorGearRatio * Math.PI * kWheelDiameter,
       kDriveEncoderRPM2MeterPerSec = kDriveEncoderRot2Meter / 60,
@@ -88,7 +88,7 @@ public final class Constants {
       kDriveBaseRadius = Units.inchesToMeters(Math.sqrt(kChassisLength*kChassisLength + kChassisWidth*kChassisWidth)/2),
       // Distance from center of robot to the farthest module
 
-      kMaxSpeedMetersPerSecond = Units.feetToMeters(12.1),
+      kMaxSpeedMetersPerSecond = Units.feetToMeters(15.1),
       kMaxTurningSpeedRadPerSec = 4.414667 * 2 * Math.PI, // 1.33655 *2 *Math.PI
       kTeleDriveMaxAcceleration = Units.feetToMeters(5.66), //guess
       kTeleTurningMaxAcceleration = 5, //guess
@@ -192,10 +192,10 @@ public final class Constants {
   public static class FieldConstants {
     public static double
       targetHeightoffFloorInches = 57,
-      speakerLowerLipHeight = Units.inchesToMeters(78),
-      speakerUpperLipHeight = Units.inchesToMeters(83),
+      speakerLowerLipHeight = Units.inchesToMeters(78.13),
+      speakerUpperLipHeight = Units.inchesToMeters(80.9),
       noteHeight = Units.inchesToMeters(2.5),
-      speakerOpeningDepth = Units.inchesToMeters(17);
+      speakerOpeningDepth = Units.inchesToMeters(18.11);
 
     public static Translation2d
       blueSpeaker = new Translation2d(0, 5.56),
