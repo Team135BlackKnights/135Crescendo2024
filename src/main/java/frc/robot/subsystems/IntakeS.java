@@ -4,8 +4,8 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
-
-
+import java.util.function.BooleanSupplier;
+import java.util.function.DoubleSupplier;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -26,7 +26,12 @@ public class IntakeS extends SubsystemBase {
     public static DigitalInput colorSensorInput = new DigitalInput(IntakeConstants.colorSensorPort);
     public static Thread sensorThread;
     public static int timesRan;
-  
+    //Note: See if we can do block declaration on these
+    public static DoubleSupplier deployIntakeSupplier = () -> deployIntakeEncoder.getPosition();
+    public static DoubleSupplier getIntakePositionSupplier = () -> getIntakePosition();
+    public static BooleanSupplier noteIsLoadedSupplier = () -> noteIsLoaded();
+    public static DoubleSupplier intakeAngleSupplier = () -> getIntakeAngle();
+    public static BooleanSupplier intakeWithinBoundsSupplier = () -> intakeWithinBounds();
     public IntakeS() {
         timesRan = 0;
 
