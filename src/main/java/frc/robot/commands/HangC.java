@@ -35,15 +35,15 @@ public class HangC extends Command {
         double leftOutput = output + hangAdjustment;
         double rightOutput = output - hangAdjustment;
 
-        if (leftOutput < 0 && hangS.leftHangEncoder.getPosition() < Constants.HangConstants.hangLowerSoftStop) {
+        if (leftOutput < 0 && HangS.leftHangEncoder.getPosition() < Constants.HangConstants.hangLowerSoftStop) {
             leftOutput = 0;
-        } else if (leftOutput > 0 && hangS.leftHangEncoder.getPosition() > Constants.HangConstants.hangUpperSoftStop) {
+        } else if (leftOutput > 0 && HangS.leftHangEncoder.getPosition() > Constants.HangConstants.hangUpperSoftStop) {
             leftOutput = 0;
         }
 
-        if (rightOutput < 0 && hangS.rightHangEncoder.getPosition() < Constants.HangConstants.hangLowerSoftStop) {
+        if (rightOutput < 0 && HangS.rightHangEncoder.getPosition() < Constants.HangConstants.hangLowerSoftStop) {
             rightOutput = 0;
-        } else if (rightOutput > 0 && hangS.rightHangEncoder.getPosition() > Constants.HangConstants.hangUpperSoftStop) {
+        } else if (rightOutput > 0 && HangS.rightHangEncoder.getPosition() > Constants.HangConstants.hangUpperSoftStop) {
             rightOutput = 0;
         }
 

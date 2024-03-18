@@ -9,7 +9,7 @@ import java.util.function.DoubleSupplier;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
+import frc.robot.sendables.IntakeSendable;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.IntakeConstants;
@@ -21,21 +21,29 @@ public class IntakeS extends SubsystemBase {
     //declarations of motors/encoders and limit switch
     public CANSparkMax primaryIntake = new CANSparkMax(Constants.IntakeConstants.primaryIntakeID, MotorType.kBrushless);
     public CANSparkMax deployIntake = new CANSparkMax(Constants.IntakeConstants.deployIntakeID, MotorType.kBrushless);
-    public RelativeEncoder deployIntakeEncoder, primaryIntakeEncoder;
-    public DutyCycleEncoder absDeployIntakeEncoder;
+    public static RelativeEncoder deployIntakeEncoder;
+    public RelativeEncoder primaryIntakeEncoder;
+    public static DutyCycleEncoder absDeployIntakeEncoder;
     public static DigitalInput colorSensorInput = new DigitalInput(IntakeConstants.colorSensorPort);
     public static Thread sensorThread;
     public static int timesRan;
-    //Note: See if we can do block declaration on these
-    public static DoubleSupplier deployIntakeSupplier = () -> deployIntakeEncoder.getPosition();
-    public static DoubleSupplier getIntakePositionSupplier = () -> getIntakePosition();
-    public static BooleanSupplier noteIsLoadedSupplier = () -> noteIsLoaded();
-    public static DoubleSupplier intakeAngleSupplier = () -> getIntakeAngle();
-    public static BooleanSupplier intakeWithinBoundsSupplier = () -> intakeWithinBounds();
+
+   
+    public static DoubleSupplier 
+    deployIntakeSupplier = () -> deployIntakeEncoder.getPosition(),
+    getIntakePositionSupplier = () -> getIntakePosition(),
+    intakeAngleSupplier = () -> getIntakeAngle();
+
+    public static BooleanSupplier 
+    noteIsLoadedSupplier = () -> noteIsLoaded(),
+    intakeWithinBoundsSupplier = () -> intakeWithinBounds();
+
+    public static IntakeSendable intakeSendable;
+    
     public IntakeS() {
         timesRan = 0;
 
-
+        SmartDashboard.putData(intakeSendable);
         //sets intake motors to reversed, sets idleMode to brake
         primaryIntake.setInverted(Constants.IntakeConstants.primaryIntakeReversed);
         deployIntake.setInverted(Constants.IntakeConstants.deployIntakeReversed);
@@ -61,23 +69,23 @@ public class IntakeS extends SubsystemBase {
     public void periodic() {
         
         //sets values to SmartDashboard periodically
-        SmartDashboard.putNumber("Deploy Intake", deployIntakeEncoder.getPosition());
+        /*SmartDashboard.putNumber("Deploy Intake", deployIntakeEncoder.getPosition());
         SmartDashboard.putNumber("Deploy Intake Abs", getIntakePosition());
         SmartDashboard.putBoolean("Note Loaded?", noteIsLoaded());
         SmartDashboard.putNumber("Intake Angle", getIntakeAngle());
-        SmartDashboard.putBoolean("Intake Within Bounds", intakeWithinBounds());
+        SmartDashboard.putBoolean("Intake Within Bounds", intakeWithinBounds());*/
 
     }
 
-    public double getIntakePosition() {
+    public static double getIntakePosition() {
         return absDeployIntakeEncoder.getAbsolutePosition()*Constants.IntakeConstants.absIntakeEncoderConversionFactor - Constants.IntakeConstants.absIntakeEncoderOffset;
     }
 
-    public double getIntakeAngle() {
+    public static double getIntakeAngle() {
         return getIntakePosition()-42;
     }
 
-    public boolean intakeWithinBounds() {
+    public static boolean intakeWithinBounds() {
         return getIntakeAngle() > SwerveS.getDesiredShooterLowerBound() && getIntakeAngle() < SwerveS.getDesiredShooterUpperBound() || (Math.abs(getIntakeAngle()-SwerveS.getDesiredShooterAngle()) < 0.75);
     }
     

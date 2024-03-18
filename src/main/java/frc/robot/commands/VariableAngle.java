@@ -42,20 +42,20 @@ public class VariableAngle extends Command {
             isFinished = true;
         }
 
-        double output = anglePidController.calculate(intakeS.getIntakeAngle(), SwerveS.getDesiredShooterAngle());
+        double output = anglePidController.calculate(IntakeS.getIntakeAngle(), SwerveS.getDesiredShooterAngle());
 
         if (timer.get() < 0.1 && !isAutonomous) {
             intakeS.setPrimaryIntake(0.5);
         } else if (timer.get() >= 0.15) {
             intakeS.setPrimaryIntake(0);
-            double outakeSpeed = 0.91 + shooterPID.calculate(outakeS.getAverageFlywheelSpeed(), 6000);
+            double outakeSpeed = 0.91 + shooterPID.calculate(OutakeS.getAverageFlywheelSpeed(), 6000);
             outakeS.setIndividualFlywheelSpeeds(outakeSpeed, outakeSpeed);
         }
         if (RobotContainer.manipController.getLeftBumper() == true) {
             intakeS.setPrimaryIntake(-0.5);
             delay.start();
         }
-        if (intakeS.intakeWithinBounds() && shooterPID.getPositionError() < 150 && Math.abs(SwerveS.getXError()) < 3 && RobotContainer.manipController.getAButton() == false && Math.abs(output) < 0.1) {
+        if (IntakeS.intakeWithinBounds() && shooterPID.getPositionError() < 150 && Math.abs(SwerveS.getXError()) < 3 && RobotContainer.manipController.getAButton() == false && Math.abs(output) < 0.1) {
             intakeS.setPrimaryIntake(-0.5);
             delay.start();
         }

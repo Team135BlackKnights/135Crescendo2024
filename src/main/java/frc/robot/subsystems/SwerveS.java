@@ -6,7 +6,7 @@ import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.PathPlannerLogging;
 import com.pathplanner.lib.util.ReplanningConfig;
-
+import frc.robot.sendables.SwerveSendable;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -33,9 +33,13 @@ import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.LimelightConstants;
 import frc.robot.LimelightHelpers.PoseEstimate;
+import frc.robot.sendables.LimelightSendable;
+import java.util.function.BooleanSupplier;
+import java.util.function.DoubleSupplier;
 
 public class SwerveS extends SubsystemBase {
-    private final SwerveModule frontLeft = new SwerveModule(
+    
+    private final static SwerveModule frontLeft = new SwerveModule(
         Constants.DriveConstants.kFrontLeftDrivePort, 
         Constants.DriveConstants.kFrontLeftTurningPort, 
         Constants.DriveConstants.kFrontLeftDriveReversed, 
@@ -44,7 +48,7 @@ public class SwerveS extends SubsystemBase {
         Constants.DriveConstants.kFrontLeftAbsEncoderOffsetRad, 
         Constants.DriveConstants.kFrontLeftAbsEncoderReversed);
 
-    private final SwerveModule frontRight = new SwerveModule(
+    private final static SwerveModule frontRight = new SwerveModule(
         Constants.DriveConstants.kFrontRightDrivePort, 
         Constants.DriveConstants.kFrontRightTurningPort, 
         Constants.DriveConstants.kFrontRightDriveReversed, 
@@ -53,7 +57,7 @@ public class SwerveS extends SubsystemBase {
         Constants.DriveConstants.kFrontRightAbsEncoderOffsetRad, 
         Constants.DriveConstants.kFrontRightAbsEncoderReversed);
 
-    private final SwerveModule backLeft = new SwerveModule(
+    private final static SwerveModule backLeft = new SwerveModule(
         Constants.DriveConstants.kBackLeftDrivePort, 
         Constants.DriveConstants.kBackLeftTurningPort, 
         Constants.DriveConstants.kBackLeftDriveReversed, 
@@ -62,7 +66,7 @@ public class SwerveS extends SubsystemBase {
         Constants.DriveConstants.kBackLeftAbsEncoderOffsetRad, 
         Constants.DriveConstants.kBackLeftAbsEncoderReversed);
 
-    private final SwerveModule backRight = new SwerveModule(
+    private final static SwerveModule backRight = new SwerveModule(
         Constants.DriveConstants.kBackRightDrivePort, 
         Constants.DriveConstants.kBackRightTurningPort, 
         Constants.DriveConstants.kBackRightDriveReversed, 
@@ -95,6 +99,28 @@ public class SwerveS extends SubsystemBase {
     public static boolean autoLock = false;
     public static boolean redIsAlliance = true; //used to determine the alliance for LED systems
     static double distance = 0;
+
+    public static DoubleSupplier 
+    robotHeadingSupplier = () -> getRotation2d().getDegrees(),
+    frontLeftAbsEncoderSupplier = () -> frontLeft.getAbsoluteEncoderRad(),
+    frontRightAbsEncoderSupplier = () -> frontRight.getAbsoluteEncoderRad(),
+    backLeftAbsEncoderSupplier = () -> backLeft.getAbsoluteEncoderRad(),
+    backRightAbsEncoderSupplier = () -> backRight.getAbsoluteEncoderRad(),
+    xErrorSupplier = () -> getXError(),
+    poseYSupplier = () -> getPose().getX(),
+    poseXSupplier = () -> getPose().getY(),
+    getPoseHeadingSupplier = () -> getPose().getRotation().getDegrees(),
+    aprilTagDistanceSupplier = () -> getDistanceFromSpeakerInMeters(),
+    odometryDistanceSupplier = () -> getDistanceFromSpeakerUsingRobotPose(),
+    lowerBoundSupplier = () -> getDesiredShooterLowerBound(),
+    upperBoundSupplier = () -> getDesiredShooterUpperBound(),
+    desiredAngleSupplier = () -> getDesiredShooterAngle();
+
+    public static BooleanSupplier
+    autoLockSupplier = () -> getAutoLock(),
+    redisAllianceSupplier = () -> getAlliance();
+    SwerveSendable swerveSendable = new SwerveSendable();
+    LimelightSendable limelightSendable = new LimelightSendable();
     public SwerveS() {
         // Waits for the RIO to finishing booting
         new Thread(() -> {
@@ -128,6 +154,9 @@ public class SwerveS extends SubsystemBase {
         );
 
         SmartDashboard.putData("Field", robotField);
+        SmartDashboard.putData(swerveSendable);
+        SmartDashboard.putData(limelightSendable);
+    
     }
     
     public void zeroHeading() {
@@ -154,6 +183,9 @@ public class SwerveS extends SubsystemBase {
         return new InstantCommand(this::switchLimeLightPath,this);
     }
 
+    public static boolean getAutoLock() {
+        return autoLock;
+    }
     
     @Override
     public void periodic() {
