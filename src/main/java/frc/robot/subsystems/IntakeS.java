@@ -73,7 +73,7 @@ public class IntakeS extends SubsystemBase {
     }
 
     public double getIntakeAngle() {
-        return getIntakePosition()-IntakeConstants.intakeMaxDegreesWhenIn;
+        return getIntakePosition()-IntakeConstants.intakeOffset;
     }
 
     public boolean intakeWithinBounds() {
