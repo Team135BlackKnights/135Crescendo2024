@@ -38,6 +38,8 @@ public class IntakeS extends SubsystemBase {
         deployIntake.setInverted(Constants.IntakeConstants.deployIntakeReversed);
 
         primaryIntake.setIdleMode(IdleMode.kBrake);
+        deployIntake.setIdleMode(IdleMode.kBrake);
+
         //creates encoders and makes them work with the gear ratios
         primaryIntakeEncoder = primaryIntake.getEncoder();
         primaryIntakeEncoder.setPositionConversionFactor(Constants.IntakeConstants.primaryIntakeGearRatio);
@@ -70,12 +72,12 @@ public class IntakeS extends SubsystemBase {
         return absDeployIntakeEncoder.getAbsolutePosition()*Constants.IntakeConstants.absIntakeEncoderConversionFactor - Constants.IntakeConstants.absIntakeEncoderOffset;
     }
 
-    public static double getIntakeAngle() {
-        return getIntakePosition()-42;
+    public double getIntakeAngle() {
+        return getIntakePosition()-47;
     }
 
-    public static boolean intakeWithinBounds() {
-        return getIntakeAngle() > SwerveS.getDesiredShooterLowerBound() && getIntakeAngle() < SwerveS.getDesiredShooterUpperBound() || (Math.abs(getIntakeAngle()-SwerveS.getDesiredShooterAngle()) < 0.75);
+    public boolean intakeWithinBounds() {
+        return getIntakeAngle() > SwerveS.getDesiredShooterLowerBound() && getIntakeAngle() < SwerveS.getDesiredShooterUpperBound() || (getIntakeAngle() > 42 && SwerveS.getDesiredShooterAngle() > 42);
     }
     
 

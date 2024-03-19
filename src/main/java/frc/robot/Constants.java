@@ -35,7 +35,7 @@ public final class Constants {
       intakeLimitSwitchID = 9;
 
     public static double
-      absIntakeEncoderOffset = 20.356957,
+      absIntakeEncoderOffset = 60.151574,
       absIntakeEncoderConversionFactor = 360,
       primaryIntakeGearRatio = 1/4.5,
       deployIntakeInnerBound = 0,
@@ -60,8 +60,8 @@ public final class Constants {
       idealPercentBottom = .31;
 
     public static boolean
-      topFlywheelReversed = true,
-      bottomFlywheelReversed = true;
+      topFlywheelReversed = false,
+      bottomFlywheelReversed = false;
     
   }
 
@@ -90,7 +90,7 @@ public final class Constants {
 
       kMaxSpeedMetersPerSecond = Units.feetToMeters(15.1),
       kMaxTurningSpeedRadPerSec = 4.414667 * 2 * Math.PI, // 1.33655 *2 *Math.PI
-      kTeleDriveMaxAcceleration = Units.feetToMeters(5.66), //guess
+      kTeleDriveMaxAcceleration = Units.feetToMeters(8.66), //guess
       kTeleTurningMaxAcceleration = 5, //guess
       
       // To find these set them to zero, then turn the robot on and manually set the wheels straight.

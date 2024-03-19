@@ -9,10 +9,11 @@ import frc.robot.subsystems.IntakeS;
 import frc.robot.subsystems.OutakeS;
 import frc.robot.subsystems.SwerveS;
 
-public class VariableAngle extends Command {
+public class SetAngle extends Command {
     private final IntakeS intakeS;
     private final OutakeS outakeS;
-    private boolean isFinished = false, isAutonomous;
+    private boolean isFinished = false;
+    private double desAngle;
     Timer timer = new Timer();
     Timer delay = new Timer();
 
@@ -20,10 +21,10 @@ public class VariableAngle extends Command {
 
     private PIDController anglePidController = new PIDController(0.06, 0, 0);
 
-    public VariableAngle(IntakeS intakeS, OutakeS outakeS, boolean isAutonomous) {
+    public SetAngle(IntakeS intakeS, OutakeS outakeS, double desAngle) {
         this.intakeS = intakeS;
         this.outakeS = outakeS;
-        this.isAutonomous = isAutonomous;
+        this.desAngle = desAngle;
 
         addRequirements(intakeS, outakeS);
     }
@@ -38,24 +39,24 @@ public class VariableAngle extends Command {
 
     @Override
     public void execute() {
-        if (delay.get() >=0.75 || Math.abs(RobotContainer.manipController.getRightY()) > 0.2 || RobotContainer.driveController.getLeftTriggerAxis() > 0.1 || RobotContainer.manipController.getLeftTriggerAxis() > 0.1 || RobotContainer.driveController.getRightTriggerAxis() > 0.1 || RobotContainer.manipController.getRightTriggerAxis() > 0.1) {
+        if (delay.get() >=1 || Math.abs(RobotContainer.manipController.getRightY()) > 0.2 || RobotContainer.driveController.getLeftTriggerAxis() > 0.1 || RobotContainer.manipController.getLeftTriggerAxis() > 0.1 || RobotContainer.driveController.getRightTriggerAxis() > 0.1 || RobotContainer.manipController.getRightTriggerAxis() > 0.1) {
             isFinished = true;
         }
 
-        double output = anglePidController.calculate(intakeS.getIntakeAngle(), SwerveS.getDesiredShooterAngle());
+        double output = anglePidController.calculate(intakeS.getIntakeAngle(), desAngle);
 
-        if (timer.get() < 0.15 && !isAutonomous) {
+        if (timer.get() < 0.15) {
             intakeS.setPrimaryIntake(0.35);
-        } else if (timer.get() >= 0.25 && Math.abs(anglePidController.getPositionError()) < 10) {
+        } else if (timer.get() >= 0.25  && Math.abs(anglePidController.getPositionError()) < 10) {
             intakeS.setPrimaryIntake(0);
-            double outakeSpeed = 0.91 + shooterPID.calculate(OutakeS.getAverageFlywheelSpeed(), 6000);
+            double outakeSpeed = 0.91 + shooterPID.calculate(OutakeS.getAverageFlywheelSpeed(), 5000);
             outakeS.setIndividualFlywheelSpeeds(outakeSpeed, outakeSpeed);
         }
         if (RobotContainer.manipController.getLeftBumper() == true) {
             intakeS.setPrimaryIntake(-0.5);
             delay.start();
         }
-        if ((intakeS.intakeWithinBounds() || Math.abs(anglePidController.getPositionError()) < 0.7) && shooterPID.getPositionError() < 150 && Math.abs(SwerveS.getXError()) < 3 && RobotContainer.manipController.getAButton() == false && Math.abs(output) < 0.1) {
+        if (shooterPID.getPositionError() < 150 && Math.abs(SwerveS.getXError()) < 3 && RobotContainer.manipController.getAButton() == false && Math.abs(output) < 0.1) {
             intakeS.setPrimaryIntake(-0.5);
             delay.start();
         }

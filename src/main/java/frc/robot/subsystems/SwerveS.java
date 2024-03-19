@@ -109,11 +109,10 @@ public class SwerveS extends SubsystemBase {
                 frontRight.resetEncoders();
                 backLeft.resetEncoders();
                 backRight.resetEncoders();
+                limelight.getEntry("pipeline").setNumber(1);
             } catch (Exception e) {
             }
         }).start();
-
-        limelight.getEntry("pipeline").setNumber(1);
 
         AutoBuilder.configureHolonomic(
         SwerveS::getPose, // Robot pose supplier
@@ -167,6 +166,10 @@ public class SwerveS extends SubsystemBase {
     @Override
     public void periodic() {
         periodicUpdateCycle +=1;
+
+        if (limelight.getEntry("pipeline").getDouble(0) != 1) {
+            limelight.getEntry("pipeline").setNumber(1);
+        }
 
         if (getAlliance() && limelight.getEntry("priorityid").getDouble(0.0) != 4.0) {
             limelight.getEntry("priorityid").setNumber(4);
@@ -374,9 +377,9 @@ public class SwerveS extends SubsystemBase {
         double upperBoundDistance = 0;
         if (getDistanceFromSpeakerUsingRobotPose() > 5) {
             upperBoundHeight = 0.99*FieldConstants.speakerUpperLipHeight-FieldConstants.noteHeight;
-            upperBoundDistance = 0.95*getDistanceFromSpeakerUsingRobotPose() - FieldConstants.speakerOpeningDepth - DriveConstants.kChassisLength;
+            upperBoundDistance = 0.97*getDistanceFromSpeakerUsingRobotPose() - FieldConstants.speakerOpeningDepth - DriveConstants.kChassisLength;
         } else {
-            upperBoundHeight = 0.99*FieldConstants.speakerUpperLipHeight-FieldConstants.noteHeight;
+            upperBoundHeight = 0.98*FieldConstants.speakerUpperLipHeight-FieldConstants.noteHeight;
             upperBoundDistance = 1.15*getDistanceFromSpeakerUsingRobotPose() - FieldConstants.speakerOpeningDepth - DriveConstants.kChassisLength;
         
         }
@@ -398,7 +401,7 @@ public class SwerveS extends SubsystemBase {
         double lowerBoundDistance = 0;
         if (getDistanceFromSpeakerUsingRobotPose() > 5) {
             lowerBoundHeight = 1.01*FieldConstants.speakerLowerLipHeight + FieldConstants.noteHeight;
-            lowerBoundDistance = 0.95*getDistanceFromSpeakerUsingRobotPose() - DriveConstants.kChassisLength;
+            lowerBoundDistance = 0.97*getDistanceFromSpeakerUsingRobotPose() - DriveConstants.kChassisLength;
         } else {
             lowerBoundHeight = 1.01*FieldConstants.speakerLowerLipHeight + FieldConstants.noteHeight;
             lowerBoundDistance = 1.15*getDistanceFromSpeakerUsingRobotPose() - DriveConstants.kChassisLength;
@@ -417,7 +420,9 @@ public class SwerveS extends SubsystemBase {
     }
 
     public static double getDesiredShooterAngle() {
-        return (getDesiredShooterUpperBound() + getDesiredShooterLowerBound())/2;
+        double angle = (getDesiredShooterUpperBound() + getDesiredShooterLowerBound())/2;
+        if (angle > 42) angle = 43;
+        return angle;
     }
 
     public InstantCommand toggleAutoLockCommand() {

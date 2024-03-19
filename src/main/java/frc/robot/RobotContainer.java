@@ -7,6 +7,7 @@ package frc.robot;
 import frc.robot.commands.HangC;
 import frc.robot.commands.IntakeC;
 import frc.robot.commands.OutakeC;
+import frc.robot.commands.SetAngle;
 import frc.robot.commands.SwerveC;
 import frc.robot.commands.VariableAngle;
 import frc.robot.commands.autoCommands.AutoLock;
@@ -44,6 +45,7 @@ public class RobotContainer {
 
   JoystickButton aButton = new JoystickButton(driveController, 1);
   JoystickButton yButton = new JoystickButton(manipController, 4);
+  JoystickButton bButton = new JoystickButton(manipController, 2);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -68,6 +70,8 @@ public class RobotContainer {
   private void configureBindings() {
     aButton.onTrue(swerveS.toggleAutoLockCommand());
     yButton.onTrue(new VariableAngle(intakeS, outakeS, false));
+    bButton.onTrue(new SetAngle(intakeS, outakeS, 28));
+    
   }
 
   /**
