@@ -32,7 +32,8 @@ public final class Constants {
       primaryIntakeID = 20,
       deployIntakeID = 21,
       intakeAbsEncoderID = 1,
-      intakeLimitSwitchID = 9;
+      intakeLimitSwitchID = 9,
+      intakeMaxDegreesWhenIn = 47;
 
     public static double
       absIntakeEncoderOffset = 60.151574,
