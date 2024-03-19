@@ -43,7 +43,7 @@ public class OutakeS extends SubsystemBase {
 
     @Override
     public void periodic() {
-        SmartDashboard.putNumberArray(getName(), getFlywheelSpeeds());
+        SmartDashboard.putNumberArray("FlywheelSpeeds", getFlywheelSpeeds());
     }
 
     public static double getAverageFlywheelSpeed() {
