@@ -4,9 +4,8 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkBase.IdleMode;
-import java.util.function.DoubleSupplier;
-import java.util.function.Supplier;
-import frc.robot.sendables.OutakeSendable;
+
+
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -21,11 +20,10 @@ public class OutakeS extends SubsystemBase {
     topFlywheelEncoder,
     bottomFlywheelEncoder;
 
-    public static DoubleSupplier averageFlyWheelSpeedSupplier = () -> getAverageFlywheelSpeed();
-    public static Supplier<double[]> flyWheelSpeedsSupplier = () -> getFlywheelSpeeds();
-    OutakeSendable outakeSendable = new OutakeSendable();
+
+
     public OutakeS() {
-        SmartDashboard.putData(outakeSendable);
+
         //checks to see if motors are inverted
         topFlywheel.setInverted(Constants.OutakeConstants.topFlywheelReversed);
         bottomFlywheel.setInverted(Constants.OutakeConstants.bottomFlywheelReversed);
@@ -45,7 +43,7 @@ public class OutakeS extends SubsystemBase {
 
     @Override
     public void periodic() {
-        
+        SmartDashboard.putNumberArray(getName(), getFlywheelSpeeds());
     }
 
     public static double getAverageFlywheelSpeed() {

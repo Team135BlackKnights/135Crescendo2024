@@ -4,12 +4,9 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
-import java.util.function.BooleanSupplier;
-import java.util.function.DoubleSupplier;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.sendables.IntakeSendable;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.IntakeConstants;
@@ -29,21 +26,13 @@ public class IntakeS extends SubsystemBase {
     public static int timesRan;
 
    
-    public static DoubleSupplier 
-    deployIntakeSupplier = () -> deployIntakeEncoder.getPosition(),
-    getIntakePositionSupplier = () -> getIntakePosition(),
-    intakeAngleSupplier = () -> getIntakeAngle();
 
-    public static BooleanSupplier 
-    noteIsLoadedSupplier = () -> noteIsLoaded(),
-    intakeWithinBoundsSupplier = () -> intakeWithinBounds();
 
-    public static IntakeSendable intakeSendable;
     
     public IntakeS() {
         timesRan = 0;
 
-        SmartDashboard.putData(intakeSendable);
+
         //sets intake motors to reversed, sets idleMode to brake
         primaryIntake.setInverted(Constants.IntakeConstants.primaryIntakeReversed);
         deployIntake.setInverted(Constants.IntakeConstants.deployIntakeReversed);
@@ -69,11 +58,11 @@ public class IntakeS extends SubsystemBase {
     public void periodic() {
         
         //sets values to SmartDashboard periodically
-        /*SmartDashboard.putNumber("Deploy Intake", deployIntakeEncoder.getPosition());
+        SmartDashboard.putNumber("Deploy Intake", deployIntakeEncoder.getPosition());
         SmartDashboard.putNumber("Deploy Intake Abs", getIntakePosition());
         SmartDashboard.putBoolean("Note Loaded?", noteIsLoaded());
         SmartDashboard.putNumber("Intake Angle", getIntakeAngle());
-        SmartDashboard.putBoolean("Intake Within Bounds", intakeWithinBounds());*/
+        SmartDashboard.putBoolean("Intake Within Bounds", intakeWithinBounds());
 
     }
 

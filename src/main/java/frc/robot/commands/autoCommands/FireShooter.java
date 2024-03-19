@@ -41,7 +41,7 @@ public class FireShooter extends Command {
         if (timer.get() >= time) {
             isFinished = true;
         }
-        double output = feedforward + shooterPID.calculate(outakeS.getAverageFlywheelSpeed(), desSpeed);
+        double output = feedforward + shooterPID.calculate(OutakeS.getAverageFlywheelSpeed(), desSpeed);
         //output velocity and error to smartDashboard
         SmartDashboard.putNumber("Auto Shooter Output", output);
         SmartDashboard.putNumber("Auto Velocity Error", shooterPID.getPositionError());
