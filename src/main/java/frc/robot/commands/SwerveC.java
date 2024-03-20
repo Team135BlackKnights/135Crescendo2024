@@ -56,16 +56,14 @@ public class SwerveC extends Command {
         DataLog.variableAngleLog[1][arrayIndex] = DataLog.variableAngleDistance;
       } catch (Exception e) {
         System.out.println("Array Full!");
+        printData();
       }
     }
 
     if (RobotContainer.driveController.getPOV() == 180){
       //prints array
-      System.out.println("X            Y");
-      for (var i = 0; i < arrayIndex; i++){
-        String output = Double.toString(DataLog.variableAngleLog[0][i]).concat("    "+Double.toString(DataLog.variableAngleLog[1][i]));
-        System.out.println(output);
-      }
+     printData();
+      
     }
     // If the desired ChassisSpeeds are really small (ie from controller drift) make them even smaller so that the robot doesn't move
     xSpeed = Math.abs(xSpeed) > Constants.SwerveConstants.kDeadband ? xSpeed : 0.0001;
@@ -100,6 +98,14 @@ public class SwerveC extends Command {
     
     // Set our module states to our desired module states
     swerveS.setModuleStates(moduleStates);
+  }
+  public void printData() {
+    System.out.println("X            Y");
+      for (var i = 0; i < arrayIndex; i++){
+        String output = Double.toString(DataLog.variableAngleLog[0][i]).concat("    "+Double.toString(DataLog.variableAngleLog[1][i]));
+        System.out.println(output);
+      }
+      DataLog.variableAngleLog = new double[2][20];
   }
   
   @Override
