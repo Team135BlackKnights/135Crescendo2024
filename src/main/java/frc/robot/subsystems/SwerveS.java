@@ -379,8 +379,8 @@ public class SwerveS extends SubsystemBase {
         double upperBoundHeight = 0;
         double upperBoundDistance = 0;
         if (getDistanceFromSpeakerUsingRobotPose() > 5) {
-            upperBoundHeight = 0.99*FieldConstants.speakerUpperLipHeight-FieldConstants.noteHeight-OutakeConstants.shooterHeight;
-            upperBoundDistance = 0.975*getDistanceFromSpeakerUsingRobotPose() - FieldConstants.speakerOpeningDepth - DriveConstants.kChassisLength;
+            upperBoundHeight = 1.1*FieldConstants.speakerUpperLipHeight-FieldConstants.noteHeight-OutakeConstants.shooterHeight;
+            upperBoundDistance = getDistanceFromSpeakerUsingRobotPose() - FieldConstants.speakerOpeningDepth - DriveConstants.kChassisLength;
         } else if (getDistanceFromSpeakerUsingRobotPose() > 4) {
             upperBoundHeight = 1.02*FieldConstants.speakerUpperLipHeight-FieldConstants.noteHeight-OutakeConstants.shooterHeight;
             upperBoundDistance = getDistanceFromSpeakerUsingRobotPose() - FieldConstants.speakerOpeningDepth - DriveConstants.kChassisLength;
@@ -410,8 +410,8 @@ public class SwerveS extends SubsystemBase {
         double lowerBoundHeight = 0;
         double lowerBoundDistance = 0;
         if (getDistanceFromSpeakerUsingRobotPose() > 5) {
-            lowerBoundHeight = 1.01*FieldConstants.speakerLowerLipHeight + FieldConstants.noteHeight-OutakeConstants.shooterHeight;
-            lowerBoundDistance = 0.975*getDistanceFromSpeakerUsingRobotPose() - DriveConstants.kChassisLength;
+            lowerBoundHeight = 1.1*FieldConstants.speakerLowerLipHeight + FieldConstants.noteHeight-OutakeConstants.shooterHeight;
+            lowerBoundDistance = getDistanceFromSpeakerUsingRobotPose() - DriveConstants.kChassisLength;
         } else if (getDistanceFromSpeakerUsingRobotPose() > 4) {
             lowerBoundHeight = 1.035*FieldConstants.speakerLowerLipHeight + FieldConstants.noteHeight-OutakeConstants.shooterHeight;
             lowerBoundDistance = getDistanceFromSpeakerUsingRobotPose() - DriveConstants.kChassisLength;

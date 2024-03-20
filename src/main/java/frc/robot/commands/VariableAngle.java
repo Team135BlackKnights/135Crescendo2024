@@ -50,7 +50,7 @@ public class VariableAngle extends Command {
         } else if (timer.get() >= 0.25 && Math.abs(anglePidController.getPositionError()) < 10) {
             intakeS.setPrimaryIntake(0);
             double outakeSpeed;
-            if (SwerveS.getDistanceFromSpeakerUsingRobotPose() > 5) {
+            if (SwerveS.getDistanceFromSpeakerUsingRobotPose() > 4.5) {
                 outakeSpeed = 0.91 + shooterPID.calculate(OutakeS.getAverageFlywheelSpeed(), 6000);
             } else if (SwerveS.getDistanceFromSpeakerUsingRobotPose() > 2.4) {
                 outakeSpeed = 0.72 + shooterPID.calculate(OutakeS.getAverageFlywheelSpeed(), 4750);
