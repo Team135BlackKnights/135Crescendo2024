@@ -102,6 +102,8 @@ public class SwerveC extends Command {
     // Set our module states to our desired module states
     swerveS.setModuleStates(moduleStates);
   }
+  /*Use this link to compute the regression model:https://planetcalc.com/5992/#google_vignette 
+    Each of the files has an x and y output so put those in the respective lists, or use a ti-84 stats bar*/
   public void printData() {
     System.out.println("Distance (X)                              Angle (Y)");
       for (var i = 0; i < arrayIndex; i++){
