@@ -9,6 +9,8 @@ import java.util.HashMap;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.I2C;
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 
 /**
@@ -26,7 +28,8 @@ public final class Constants {
 
   public static class IntakeConstants {
 
-    public static int colorSensorPort = 0;
+    public static I2C.Port colorSensorPort = I2C.Port.kOnboard;
+    public static Color noteColor = new Color(0.55, 0.36, .08);
 
     public static int
       primaryIntakeID = 20,

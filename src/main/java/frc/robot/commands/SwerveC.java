@@ -15,7 +15,7 @@ public class SwerveC extends Command {
   public ChassisSpeeds chassisSpeeds;
   private final SwerveS swerveS;
   private final boolean fieldOriented = true;
-  private final PIDController autoLockController = new PIDController(0.00425, 0.0001, 0.00001);
+  private final PIDController autoLockController = new PIDController(0.0044, 0, 0.00001);
   private final SlewRateLimiter xLimiter, yLimiter, turningLimiter;
   
   public SwerveC(SwerveS swerveS) {

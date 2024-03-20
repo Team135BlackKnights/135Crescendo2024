@@ -1,12 +1,15 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.ColorMatch;
+import com.revrobotics.ColorMatchResult;
+import com.revrobotics.ColorSensorV3;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.IntakeConstants;
@@ -21,7 +24,10 @@ public class IntakeS extends SubsystemBase {
     public static RelativeEncoder deployIntakeEncoder;
     public RelativeEncoder primaryIntakeEncoder;
     public static DutyCycleEncoder absDeployIntakeEncoder;
-    public static DigitalInput colorSensorInput = new DigitalInput(IntakeConstants.colorSensorPort);
+    public static ColorSensorV3 colorSensorV3 = new ColorSensorV3(Constants.IntakeConstants.colorSensorPort);
+    public static ColorMatch colorMatch = new ColorMatch();
+    public static Color detected = Color.kBlack;
+    public static ColorMatchResult colorMatchResult;
     public static Thread sensorThread;
     public static int timesRan;
 
@@ -32,6 +38,11 @@ public class IntakeS extends SubsystemBase {
     public IntakeS() {
         timesRan = 0;
 
+        colorMatch.addColorMatch(Constants.IntakeConstants.noteColor);
+        colorMatch.addColorMatch(Color.kBlue);
+        colorMatch.addColorMatch(Color.kRed);
+        colorMatch.addColorMatch(Color.kGray);
+        colorMatch.addColorMatch(Color.kWhite);
 
         //sets intake motors to reversed, sets idleMode to brake
         primaryIntake.setInverted(Constants.IntakeConstants.primaryIntakeReversed);
@@ -62,7 +73,6 @@ public class IntakeS extends SubsystemBase {
         //sets values to SmartDashboard periodically
         SmartDashboard.putNumber("Deploy Intake", deployIntakeEncoder.getPosition());
         SmartDashboard.putNumber("Deploy Intake Abs", getIntakePosition());
-        SmartDashboard.putBoolean("Note Loaded?", noteIsLoaded());
         SmartDashboard.putNumber("Intake Angle", getIntakeAngle());
         SmartDashboard.putBoolean("Intake Within Bounds", intakeWithinBounds());
 
@@ -82,8 +92,13 @@ public class IntakeS extends SubsystemBase {
     
 
     public static boolean noteIsLoaded() {
-        //pulls data from beam break sensor
-        return colorSensorInput.get();
+        if (colorMatchResult.color == IntakeConstants.noteColor){
+            return true;
+        }
+        else{
+            return false;
+        }
+
     }
     
 

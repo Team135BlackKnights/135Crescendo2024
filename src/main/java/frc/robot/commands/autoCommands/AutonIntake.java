@@ -24,6 +24,9 @@ public class AutonIntake extends Command {
 
     @Override
     public void execute() {
+        IntakeS.detected = IntakeS.colorSensorV3.getColor();
+        IntakeS.colorMatchResult = IntakeS.colorMatch.matchClosestColor(IntakeS.detected);
+
         if (timer.get() > 0.125) {
             isFinished = true;
         }

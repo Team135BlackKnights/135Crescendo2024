@@ -45,17 +45,22 @@ public class VariableAngle extends Command {
         double output = anglePidController.calculate(intakeS.getIntakeAngle(), SwerveS.getDesiredShooterAngle());
 
         if (timer.get() < 0.15 && !isAutonomous) {
-            intakeS.setPrimaryIntake(0.35);
+            intakeS.setPrimaryIntake(0.2);
         } else if (timer.get() >= 0.25 && Math.abs(anglePidController.getPositionError()) < 10) {
             intakeS.setPrimaryIntake(0);
-            double outakeSpeed = 0.91 + shooterPID.calculate(OutakeS.getAverageFlywheelSpeed(), 6000);
+            double outakeSpeed;
+            if (SwerveS.getDistanceFromSpeakerUsingRobotPose() > 5) {
+                outakeSpeed = 0.91 + shooterPID.calculate(OutakeS.getAverageFlywheelSpeed(), 6000);
+            } else {
+                outakeSpeed = 0.72 + shooterPID.calculate(OutakeS.getAverageFlywheelSpeed(), 4750);
+            }
             outakeS.setIndividualFlywheelSpeeds(outakeSpeed, outakeSpeed);
         }
         if (RobotContainer.manipController.getLeftBumper() == true) {
             intakeS.setPrimaryIntake(-0.5);
             delay.start();
         }
-        if ((intakeS.intakeWithinBounds() || Math.abs(anglePidController.getPositionError()) < 0.7) && shooterPID.getPositionError() < 150 && Math.abs(SwerveS.getXError()) < 3 && RobotContainer.manipController.getAButton() == false && Math.abs(output) < 0.1) {
+        if ((intakeS.intakeWithinBounds() || Math.abs(anglePidController.getPositionError()) < 0.5) && shooterPID.getPositionError() < 150 && Math.abs(SwerveS.getXError()) < 3 && RobotContainer.manipController.getAButton() == false && Math.abs(output) < 0.1) {
             intakeS.setPrimaryIntake(-0.5);
             delay.start();
         }
