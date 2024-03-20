@@ -109,6 +109,18 @@ public class SwerveC extends Command {
         System.out.println(output);
         
       }
+      System.out.println("Distance (X)");
+      for (var i = 0; i < arrayIndex; i++){
+        String output = Double.toString(DataLog.variableAngleLog[0][i]) +" ";
+        System.out.println(output);
+      }
+      System.out.println("Angle (Y)");
+      for (var i = 0; i < arrayIndex; i++){
+        String output = Double.toString(DataLog.variableAngleLog[1][i]) +" ";
+        System.out.println(output);
+        
+      }
+
       DataLog.variableAngleLog = new double[2][20];
       arrayIndex = 0;
   }
