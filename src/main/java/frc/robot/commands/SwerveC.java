@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
+import frc.robot.Constants.DataLog;
 import frc.robot.subsystems.SwerveS;
 
 public class SwerveC extends Command {
@@ -17,7 +18,7 @@ public class SwerveC extends Command {
   private final boolean fieldOriented = true;
   private final PIDController autoLockController = new PIDController(0.0044, 0.0015, 0.00001);
   private final SlewRateLimiter xLimiter, yLimiter, turningLimiter;
-  
+  private int arrayIndex = 0;
   public SwerveC(SwerveS swerveS) {
     this.swerveS = swerveS;
 
@@ -48,7 +49,24 @@ public class SwerveC extends Command {
       turningSpeed = autoLockController.calculate(SwerveS.getXError(), 0.0);
       SmartDashboard.putNumber("Spin", turningSpeed);
     }
-    
+    if (RobotContainer.driveController.getPOV() == 0){
+      //angle is y, distance is x
+      try {
+        DataLog.variableAngleLog[0][arrayIndex] = DataLog.angleOutputDegrees;
+        DataLog.variableAngleLog[1][arrayIndex] = DataLog.variableAngleDistance;
+      } catch (Exception e) {
+        System.out.println("Array Full!");
+      }
+    }
+
+    if (RobotContainer.driveController.getPOV() == 180){
+      //prints array
+      System.out.println("X            Y");
+      for (var i = 0; i < arrayIndex; i++){
+        String output = Double.toString(DataLog.variableAngleLog[0][i]).concat("    "+Double.toString(DataLog.variableAngleLog[1][i]));
+        System.out.println(output);
+      }
+    }
     // If the desired ChassisSpeeds are really small (ie from controller drift) make them even smaller so that the robot doesn't move
     xSpeed = Math.abs(xSpeed) > Constants.SwerveConstants.kDeadband ? xSpeed : 0.0001;
     ySpeed = Math.abs(ySpeed) > Constants.SwerveConstants.kDeadband ? ySpeed : 0.0001;

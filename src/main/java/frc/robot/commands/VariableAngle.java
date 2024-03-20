@@ -8,6 +8,7 @@ import frc.robot.RobotContainer;
 import frc.robot.subsystems.IntakeS;
 import frc.robot.subsystems.OutakeS;
 import frc.robot.subsystems.SwerveS;
+import frc.robot.Constants.DataLog;
 
 public class VariableAngle extends Command {
     private final IntakeS intakeS;
@@ -69,8 +70,10 @@ public class VariableAngle extends Command {
         SmartDashboard.putNumber("Angle Output", output);
         SmartDashboard.putNumber("Angle Error", anglePidController.getPositionError());
         SmartDashboard.putNumber("Flywheel Error", shooterPID.getPositionError());
-
+        DataLog.angleOutputDegrees = output;
+        DataLog.variableAngleDistance = SwerveS.getDistanceFromSpeakerUsingRobotPose();
         intakeS.deployIntake(output);
+
     }
 
     @Override

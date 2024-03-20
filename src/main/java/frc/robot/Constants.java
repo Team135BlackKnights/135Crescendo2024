@@ -206,5 +206,11 @@ public final class Constants {
       redSpeaker = new Translation2d(16.59128, 5.56);
 
   }
+  public static class DataLog{
+ 
+    public static double[][] variableAngleLog = new double[2][20];
+    public static double variableAngleDistance = 0;
+    public static double angleOutputDegrees = 0;
+  }
   
 }
