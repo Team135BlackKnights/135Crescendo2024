@@ -49,18 +49,20 @@ public class SwerveC extends Command {
       turningSpeed = autoLockController.calculate(SwerveS.getXError(), 0.0);
       SmartDashboard.putNumber("Spin", turningSpeed);
     }
-    if (RobotContainer.driveController.getPOV() == 0){
+    if (RobotContainer.driveController.getXButtonPressed() == true){
       //angle is y, distance is x
       try {
         DataLog.variableAngleLog[0][arrayIndex] = DataLog.angleOutputDegrees;
         DataLog.variableAngleLog[1][arrayIndex] = DataLog.variableAngleDistance;
+        arrayIndex +=1;
       } catch (Exception e) {
         System.out.println("Array Full!");
+        arrayIndex = 20;
         printData();
       }
     }
 
-    if (RobotContainer.driveController.getPOV() == 180){
+    if (RobotContainer.driveController.getBButtonPressed() == true){
       //prints array
      printData();
       
@@ -104,6 +106,7 @@ public class SwerveC extends Command {
       for (var i = 0; i < arrayIndex; i++){
         String output = Double.toString(DataLog.variableAngleLog[0][i]).concat("    "+Double.toString(DataLog.variableAngleLog[1][i]));
         System.out.println(output);
+        arrayIndex = 0;
       }
       DataLog.variableAngleLog = new double[2][20];
   }

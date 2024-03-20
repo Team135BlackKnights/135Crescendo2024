@@ -58,6 +58,7 @@ public final class Constants {
 
     public static double
       limelightToShooter = Units.inchesToMeters(-3),
+      shooterHeight = Units.inchesToMeters(15),
       flywheelMaxRPM = 6600,
       flywheelGearRatio = 1.5,
       idealPercentTop = .034,

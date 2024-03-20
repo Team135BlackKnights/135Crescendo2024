@@ -56,7 +56,7 @@ public class SetAngle extends Command {
             intakeS.setPrimaryIntake(-0.5);
             delay.start();
         }
-        if (shooterPID.getPositionError() < 150 && Math.abs(SwerveS.getXError()) < 3 && RobotContainer.manipController.getAButton() == false && Math.abs(output) < 0.1) {
+        if (OutakeS.getFlywheelSpeedDifference() < 75 && timer.get() >= 0.3 && shooterPID.getPositionError() < 150 && Math.abs(SwerveS.getXError()) < 3 && RobotContainer.manipController.getAButton() == false && Math.abs(output) < 0.1) {
             intakeS.setPrimaryIntake(-0.5);
             delay.start();
         }

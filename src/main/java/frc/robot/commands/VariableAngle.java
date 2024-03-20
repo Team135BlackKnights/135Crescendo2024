@@ -17,7 +17,7 @@ public class VariableAngle extends Command {
     Timer timer = new Timer();
     Timer delay = new Timer();
 
-    private final PIDController shooterPID = new PIDController(0.00015, 0, 0);
+    private final PIDController shooterPID = new PIDController(0.0002, 0, 0);
 
     private PIDController anglePidController = new PIDController(0.06, 0, 0);
 
@@ -52,8 +52,10 @@ public class VariableAngle extends Command {
             double outakeSpeed;
             if (SwerveS.getDistanceFromSpeakerUsingRobotPose() > 5) {
                 outakeSpeed = 0.91 + shooterPID.calculate(OutakeS.getAverageFlywheelSpeed(), 6000);
-            } else {
+            } else if (SwerveS.getDistanceFromSpeakerUsingRobotPose() > 2.4) {
                 outakeSpeed = 0.72 + shooterPID.calculate(OutakeS.getAverageFlywheelSpeed(), 4750);
+            } else {
+                outakeSpeed  = 0.5 + shooterPID.calculate(OutakeS.getAverageFlywheelSpeed(), 3300);
             }
             outakeS.setIndividualFlywheelSpeeds(outakeSpeed, outakeSpeed);
         }
@@ -61,7 +63,7 @@ public class VariableAngle extends Command {
             intakeS.setPrimaryIntake(-0.5);
             delay.start();
         }
-        if ((intakeS.intakeWithinBounds() || Math.abs(anglePidController.getPositionError()) < 0.5) && shooterPID.getPositionError() < 150 && Math.abs(SwerveS.getXError()) < 3 && RobotContainer.manipController.getAButton() == false && Math.abs(output) < 0.1) {
+        if (OutakeS.getFlywheelSpeedDifference() < 75 && timer.get() >= 0.3 && (intakeS.intakeWithinBounds() || Math.abs(anglePidController.getPositionError()) < 0.5) && shooterPID.getPositionError() < 150 && Math.abs(SwerveS.getXError()) < 3 && RobotContainer.manipController.getAButton() == false && Math.abs(output) < 0.1) {
             intakeS.setPrimaryIntake(-0.5);
             delay.start();
         }
@@ -70,8 +72,10 @@ public class VariableAngle extends Command {
         SmartDashboard.putNumber("Angle Output", output);
         SmartDashboard.putNumber("Angle Error", anglePidController.getPositionError());
         SmartDashboard.putNumber("Flywheel Error", shooterPID.getPositionError());
-        DataLog.angleOutputDegrees = output;
-        DataLog.variableAngleDistance = SwerveS.getDistanceFromSpeakerUsingRobotPose();
+        if (delay.get() < 0.2) {
+            DataLog.angleOutputDegrees = intakeS.getIntakeAngle();
+            DataLog.variableAngleDistance = SwerveS.getDistanceFromSpeakerUsingRobotPose();
+        }
         intakeS.deployIntake(output);
 
     }

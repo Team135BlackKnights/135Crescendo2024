@@ -32,6 +32,7 @@ import frc.robot.LimelightHelpers;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.LimelightConstants;
+import frc.robot.Constants.OutakeConstants;
 import frc.robot.LimelightHelpers.PoseEstimate;
 
 
@@ -378,17 +379,19 @@ public class SwerveS extends SubsystemBase {
         double upperBoundHeight = 0;
         double upperBoundDistance = 0;
         if (getDistanceFromSpeakerUsingRobotPose() > 5) {
-            upperBoundHeight = 0.99*FieldConstants.speakerUpperLipHeight-FieldConstants.noteHeight;
+            upperBoundHeight = 0.99*FieldConstants.speakerUpperLipHeight-FieldConstants.noteHeight-OutakeConstants.shooterHeight;
             upperBoundDistance = 0.975*getDistanceFromSpeakerUsingRobotPose() - FieldConstants.speakerOpeningDepth - DriveConstants.kChassisLength;
         } else if (getDistanceFromSpeakerUsingRobotPose() > 4) {
-            upperBoundHeight = 0.98*FieldConstants.speakerUpperLipHeight-FieldConstants.noteHeight;
-            upperBoundDistance = 1.15*getDistanceFromSpeakerUsingRobotPose() - FieldConstants.speakerOpeningDepth - DriveConstants.kChassisLength;
+            upperBoundHeight = 1.02*FieldConstants.speakerUpperLipHeight-FieldConstants.noteHeight-OutakeConstants.shooterHeight;
+            upperBoundDistance = getDistanceFromSpeakerUsingRobotPose() - FieldConstants.speakerOpeningDepth - DriveConstants.kChassisLength;
         } else if (getDistanceFromSpeakerUsingRobotPose() > 3) {
-            upperBoundHeight = 0.96*FieldConstants.speakerUpperLipHeight-FieldConstants.noteHeight;
-            upperBoundDistance = 1.18*getDistanceFromSpeakerUsingRobotPose() - FieldConstants.speakerOpeningDepth - DriveConstants.kChassisLength;
+            upperBoundHeight = 0.916*FieldConstants.speakerUpperLipHeight-FieldConstants.noteHeight-OutakeConstants.shooterHeight;
+            upperBoundDistance = getDistanceFromSpeakerUsingRobotPose() - FieldConstants.speakerOpeningDepth - DriveConstants.kChassisLength;
+        } else if (getDistanceFromSpeakerUsingRobotPose() > 2.4) {
+            upperBoundHeight = 0.82*FieldConstants.speakerUpperLipHeight-FieldConstants.noteHeight-OutakeConstants.shooterHeight;
+            upperBoundDistance = getDistanceFromSpeakerUsingRobotPose() - FieldConstants.speakerOpeningDepth - DriveConstants.kChassisLength;
         } else {
-            upperBoundHeight = 0.98*FieldConstants.speakerUpperLipHeight-FieldConstants.noteHeight;
-            upperBoundDistance = 1.15*getDistanceFromSpeakerUsingRobotPose() - FieldConstants.speakerOpeningDepth - DriveConstants.kChassisLength;
+            return 44;
         }
         /* if (getDistanceFromSpeakerInMeters() > 6.5) {
             upperBoundHeight = 1.236*FieldConstants.speakerUpperLipHeight-FieldConstants.noteHeight-Units.inchesToMeters(LimelightConstants.limelightLensHeightoffFloorInches);
@@ -407,17 +410,19 @@ public class SwerveS extends SubsystemBase {
         double lowerBoundHeight = 0;
         double lowerBoundDistance = 0;
         if (getDistanceFromSpeakerUsingRobotPose() > 5) {
-            lowerBoundHeight = 1.01*FieldConstants.speakerLowerLipHeight + FieldConstants.noteHeight;
+            lowerBoundHeight = 1.01*FieldConstants.speakerLowerLipHeight + FieldConstants.noteHeight-OutakeConstants.shooterHeight;
             lowerBoundDistance = 0.975*getDistanceFromSpeakerUsingRobotPose() - DriveConstants.kChassisLength;
         } else if (getDistanceFromSpeakerUsingRobotPose() > 4) {
-            lowerBoundHeight = 1.02*FieldConstants.speakerLowerLipHeight + FieldConstants.noteHeight;
-            lowerBoundDistance = 1.15*getDistanceFromSpeakerUsingRobotPose() - DriveConstants.kChassisLength;
+            lowerBoundHeight = 1.035*FieldConstants.speakerLowerLipHeight + FieldConstants.noteHeight-OutakeConstants.shooterHeight;
+            lowerBoundDistance = getDistanceFromSpeakerUsingRobotPose() - DriveConstants.kChassisLength;
         } else if (getDistanceFromSpeakerUsingRobotPose() > 3) {
-            lowerBoundHeight = FieldConstants.speakerLowerLipHeight + FieldConstants.noteHeight;
-            lowerBoundDistance = 1.15*getDistanceFromSpeakerUsingRobotPose() - DriveConstants.kChassisLength;
+            lowerBoundHeight = 0.96*FieldConstants.speakerLowerLipHeight + FieldConstants.noteHeight-OutakeConstants.shooterHeight;
+            lowerBoundDistance = getDistanceFromSpeakerUsingRobotPose() - DriveConstants.kChassisLength;
+        } else if (getDistanceFromSpeakerUsingRobotPose() > 2.4) {
+            lowerBoundHeight = 0.95*FieldConstants.speakerLowerLipHeight + FieldConstants.noteHeight-OutakeConstants.shooterHeight;
+            lowerBoundDistance = getDistanceFromSpeakerUsingRobotPose() - DriveConstants.kChassisLength;
         } else {
-            lowerBoundHeight = FieldConstants.speakerLowerLipHeight + FieldConstants.noteHeight;
-            lowerBoundDistance = 1.1*getDistanceFromSpeakerUsingRobotPose() - DriveConstants.kChassisLength;
+            return 42;
         }
         /* if (getDistanceFromSpeakerInMeters() > 6) {
             lowerBoundHeight = 1.242*FieldConstants.speakerLowerLipHeight+FieldConstants.noteHeight-Units.inchesToMeters(LimelightConstants.limelightLensHeightoffFloorInches);

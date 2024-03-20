@@ -25,16 +25,15 @@ public class OutakeC extends Command {
     public void execute() {
         //for amp
         if (RobotContainer.manipController.getRightBumper()){
-            double[] flywheelSpeeds = OutakeS.getFlywheelSpeeds();
-            double topWheelSpeed = OutakeConstants.idealPercentTop + shooterPID.calculate(flywheelSpeeds[0], OutakeConstants.flywheelMaxRPM*OutakeConstants.idealPercentTop);
-            double bottomWheelSpeed = OutakeConstants.idealPercentBottom + shooterPID.calculate(flywheelSpeeds[1],OutakeConstants.flywheelMaxRPM*OutakeConstants.idealPercentBottom);
+            double topWheelSpeed = OutakeConstants.idealPercentTop + shooterPID.calculate(OutakeS.topFlywheelEncoder.getVelocity(), OutakeConstants.flywheelMaxRPM*OutakeConstants.idealPercentTop);
+            double bottomWheelSpeed = OutakeConstants.idealPercentBottom + shooterPID.calculate(OutakeS.bottomFlywheelEncoder.getVelocity(),OutakeConstants.flywheelMaxRPM*OutakeConstants.idealPercentBottom);
             outakeS.setIndividualFlywheelSpeeds(topWheelSpeed, bottomWheelSpeed);
         }
         //for speaker
         else{
             double outakeSpeed = 0;
             if (RobotContainer.driveController.getLeftBumper() == true) {
-            outakeSpeed = -0.5;
+            outakeSpeed = -0.25;
         }
         if (RobotContainer.manipController.getAButton() == true) {
             outakeSpeed = 0.5 + shooterPID.calculate(OutakeS.getAverageFlywheelSpeed(), 4000);
