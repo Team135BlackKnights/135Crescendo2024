@@ -106,9 +106,10 @@ public class SwerveC extends Command {
       for (var i = 0; i < arrayIndex; i++){
         String output = Double.toString(DataLog.variableAngleLog[0][i]).concat("    "+Double.toString(DataLog.variableAngleLog[1][i]));
         System.out.println(output);
-        arrayIndex = 0;
+        
       }
       DataLog.variableAngleLog = new double[2][20];
+      arrayIndex = 0;
   }
   
   @Override
