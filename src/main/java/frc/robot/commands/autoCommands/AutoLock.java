@@ -11,7 +11,7 @@ public class AutoLock extends Command{
     SwerveS swerveS;
     boolean isFinished = false;
     double limelightDeadBand = 1, limelightTx = 0, maxTimeTargetting = 0.1;
-    PIDController pidController = new PIDController(0.0044, 0.0015, 0.00001);
+    PIDController pidController = new PIDController(0.0044, 0.00135, 0.00001);
     Timer timer = new Timer();
     ChassisSpeeds speeds;
     public AutoLock(SwerveS swerveS){

@@ -36,7 +36,8 @@ public class HangS extends SubsystemBase {
     }
     @Override
     public void periodic(){
-        SmartDashboard.putNumberArray("HangStates (Left is left)", new double[]{leftHangEncoder.getPosition(),rightHangEncoder.getPosition()});
+        SmartDashboard.putNumber("Left Hang", leftHangEncoder.getPosition());
+        SmartDashboard.putNumber("Right Hang", rightHangEncoder.getPosition());
     }
 
 }
