@@ -179,9 +179,10 @@ public final class Constants {
   public static class HangConstants{
     public static double
       hangLowerSoftStop = 5,
-      hangUpperSoftStop = 102; //Note: for some reason left and right encoders output different values, MAYBE change them to have left and right max?
-
-    public static int
+      hangUpperSoftStop = 101; //Note: for some reason left and right encoders output different values, MAYBE change them to have left and right max?
+      //left side is left, right side is right
+      public static double[][] hangMacroStates = {{hangLowerSoftStop+3, hangLowerSoftStop+3},{59.5723,66.406},{}};
+      public static int
       leftHangID = 41,
       rightHangID = 40;
 

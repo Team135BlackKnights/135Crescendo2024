@@ -18,15 +18,15 @@ import frc.robot.subsystems.HangS;
 import frc.robot.subsystems.IntakeS;
 import frc.robot.subsystems.OutakeS;
 import frc.robot.subsystems.SwerveS;
-
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
-
+import frc.robot.commands.HangMacroC;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.POVButton;
 import frc.robot.subsystems.LEDStripS;
 /**
  * THIS CODE REQUIRES WPILIB 2024 AND PATHPLANNER 2024 IT WILL NOT WORK OTHERWISE
@@ -39,14 +39,14 @@ public class RobotContainer {
   private final HangS hangS = new HangS();
   private final LEDStripS ledStripS = new LEDStripS();
   private final SendableChooser<Command> autoChooser;
-    
+
   public static XboxController driveController = new XboxController(0);
   public static XboxController manipController = new XboxController(1);
 
   JoystickButton aButton = new JoystickButton(driveController, 1);
   JoystickButton yButton = new JoystickButton(manipController, 4);
   JoystickButton bButton = new JoystickButton(manipController, 2);
-
+  POVButton povTwoSeventy = new POVButton(driveController, 0);
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     swerveS.setDefaultCommand(new SwerveC(swerveS));
@@ -71,7 +71,7 @@ public class RobotContainer {
     aButton.onTrue(swerveS.toggleAutoLockCommand());
     yButton.onTrue(new VariableAngle(intakeS, outakeS, false));
     bButton.onTrue(new SetAngle(intakeS, outakeS, 28));
-    
+    povTwoSeventy.onTrue(new HangMacroC(hangS, 1));
   }
 
   /**

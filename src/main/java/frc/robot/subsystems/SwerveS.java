@@ -1,12 +1,12 @@
 package frc.robot.subsystems;
 
+
 import com.kauailabs.navx.frc.AHRS;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.PathPlannerLogging;
 import com.pathplanner.lib.util.ReplanningConfig;
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -29,6 +29,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.LimelightHelpers;
+
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.LimelightConstants;
@@ -79,7 +80,6 @@ public class SwerveS extends SubsystemBase {
     public PoseEstimate poseEstimate;    
 
     int periodicUpdateCycle;
-
     public static NetworkTable limelight = NetworkTableInstance.getDefault().getTable("limelight-swerve");
     static NetworkTableEntry tx = limelight.getEntry("tx");
 
@@ -163,7 +163,7 @@ public class SwerveS extends SubsystemBase {
     public static boolean getAutoLock() {
         return autoLock;
     }
-    
+ 
     @Override
     public void periodic() {
         periodicUpdateCycle +=1;
