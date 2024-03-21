@@ -4,6 +4,7 @@ import frc.robot.subsystems.HangS;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.HangConstants;
+import frc.robot.RobotContainer;
 public class HangMacroC extends Command{
     private final HangS subsystem;
     public static boolean isFinished;
@@ -32,7 +33,7 @@ public class HangMacroC extends Command{
     @Override
     public void execute(){
         SmartDashboard.setDefaultNumber("Hang State", hangState);
-        if (Math.abs(leftHangController.getPositionError()) < deadband && Math.abs(rightHangController.getPositionError()) < deadband){
+        if ((Math.abs(leftHangController.getPositionError()) < deadband && Math.abs(rightHangController.getPositionError()) < deadband) || (Math.abs(RobotContainer.manipController.getLeftY())) >.1 ){
             isFinished = true;
         }
         else{

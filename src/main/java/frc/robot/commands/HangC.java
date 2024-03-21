@@ -9,7 +9,7 @@ import frc.robot.subsystems.HangS;
 
 public class HangC extends Command {
     private final HangS hangS;
-
+    
     //private PIDController hangPidController = new PIDController(0.01, 0, 0);
     
     public HangC(HangS hangS){
