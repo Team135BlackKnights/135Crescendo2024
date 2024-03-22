@@ -11,6 +11,7 @@ import frc.robot.Constants;
 import frc.robot.RobotContainer;
 import frc.robot.Constants.DataLog;
 import frc.robot.subsystems.SwerveS;
+import frc.robot.TxtWriter;
 
 public class SwerveC extends Command {
   public ChassisSpeeds chassisSpeeds;
@@ -107,22 +108,23 @@ public class SwerveC extends Command {
   public void printData() {
     System.out.println("Distance (X)                              Angle (Y)");
       for (var i = 0; i < arrayIndex; i++){
-        String output = Double.toString(DataLog.variableAngleLog[0][i]).concat("    "+Double.toString(DataLog.variableAngleLog[1][i]));
+        String output = " "+ Double.toString(DataLog.variableAngleLog[0][i])+"    "+Double.toString(DataLog.variableAngleLog[1][i]);
         System.out.println(output);
-        
+        TxtWriter.writeFile("shooterData.txt", output);
       }
       System.out.println("Distance (X)");
       for (var i = 0; i < arrayIndex; i++){
         String output = Double.toString(DataLog.variableAngleLog[0][i]) +" ";
         System.out.println(output);
+        TxtWriter.writeFile("shooterDataDistance.txt", output);
       }
       System.out.println("Angle (Y)");
       for (var i = 0; i < arrayIndex; i++){
         String output = Double.toString(DataLog.variableAngleLog[1][i]) +" ";
         System.out.println(output);
+        TxtWriter.writeFile("shooterDataAngle.txt", output);
         
       }
-
       DataLog.variableAngleLog = new double[2][20];
       arrayIndex = 0;
   }
