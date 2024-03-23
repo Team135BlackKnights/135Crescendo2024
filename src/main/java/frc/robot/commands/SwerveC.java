@@ -15,7 +15,9 @@ import edu.wpi.first.util.datalog.DataLog;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.util.datalog.StringLogEntry;
 
-
+/*Use this as explanation on how to pull DataLogs: https://docs.wpilib.org/en/stable/docs/software/telemetry/datalog-download.html
+Should theoretically output a csv file, see if we can convert it into a txt file and upload it to smth
+*/
 public class SwerveC extends Command {
   public ChassisSpeeds chassisSpeeds;
   DataLog log  = DataLogManager.getLog();
