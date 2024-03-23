@@ -9,16 +9,22 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
-import frc.robot.Constants.DataLog;
+import frc.robot.Constants.DataLogStorage;
 import frc.robot.subsystems.SwerveS;
-import frc.robot.TxtWriter;
+import edu.wpi.first.util.datalog.DataLog;
+import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.util.datalog.StringLogEntry;
+
 
 public class SwerveC extends Command {
   public ChassisSpeeds chassisSpeeds;
+  DataLog log  = DataLogManager.getLog();
   private final SwerveS swerveS;
   private final boolean fieldOriented = true;
   private final PIDController autoLockController = new PIDController(0.0044, 0.00135, 0.00001);
   private final SlewRateLimiter xLimiter, yLimiter, turningLimiter;
+  StringLogEntry distanceRegressionX = new StringLogEntry(log, "Distance (X)");
+  StringLogEntry angleRegressionY = new StringLogEntry(log, "Angle (Y)");
   private int arrayIndex = 0;
   public SwerveC(SwerveS swerveS) {
     this.swerveS = swerveS;
@@ -53,8 +59,8 @@ public class SwerveC extends Command {
     if (RobotContainer.driveController.getXButtonPressed() == true){
       //angle is y, distance is x
       try {
-        DataLog.variableAngleLog[1][arrayIndex] = DataLog.angleOutputDegrees;
-        DataLog.variableAngleLog[0][arrayIndex] = DataLog.variableAngleDistance;
+        DataLogStorage.variableAngleLog[1][arrayIndex] = DataLogStorage.angleOutputDegrees;
+        DataLogStorage.variableAngleLog[0][arrayIndex] = DataLogStorage.variableAngleDistance;
         System.out.println("Logged!");
         arrayIndex +=1;
       } catch (Exception e) {
@@ -108,24 +114,23 @@ public class SwerveC extends Command {
   public void printData() {
     System.out.println("Distance (X)                              Angle (Y)");
       for (var i = 0; i < arrayIndex; i++){
-        String output = " "+ Double.toString(DataLog.variableAngleLog[0][i])+"    "+Double.toString(DataLog.variableAngleLog[1][i]);
+        String output = " "+ Double.toString(DataLogStorage.variableAngleLog[0][i])+"    "+Double.toString(DataLogStorage.variableAngleLog[1][i]);
         System.out.println(output);
-        TxtWriter.writeFile("shooterData.txt", output);
       }
       System.out.println("Distance (X)");
       for (var i = 0; i < arrayIndex; i++){
-        String output = Double.toString(DataLog.variableAngleLog[0][i]) +" ";
+        String output = Double.toString(DataLogStorage.variableAngleLog[0][i]) +" ";
         System.out.println(output);
-        TxtWriter.writeFile("shooterDataDistance.txt", output);
+        distanceRegressionX.append(output);
       }
       System.out.println("Angle (Y)");
       for (var i = 0; i < arrayIndex; i++){
-        String output = Double.toString(DataLog.variableAngleLog[1][i]) +" ";
+        String output = Double.toString(DataLogStorage.variableAngleLog[1][i]) +" ";
         System.out.println(output);
-        TxtWriter.writeFile("shooterDataAngle.txt", output);
+        angleRegressionY.append(output);
         
       }
-      DataLog.variableAngleLog = new double[2][20];
+      DataLogStorage.variableAngleLog = new double[2][20];
       arrayIndex = 0;
   }
   

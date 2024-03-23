@@ -208,7 +208,7 @@ public final class Constants {
       redSpeaker = new Translation2d(16.59128, 5.56);
 
   }
-  public static class DataLog{
+  public static class DataLogStorage{
  
     public static double[][] variableAngleLog = new double[2][20];
     public static double variableAngleDistance = 0;
