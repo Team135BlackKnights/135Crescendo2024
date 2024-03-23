@@ -56,6 +56,7 @@ public class SwerveC extends Command {
       turningSpeed = autoLockController.calculate(SwerveS.getXError(), 0.0);
       SmartDashboard.putNumber("Spin", turningSpeed);
     }
+    //every time the array isn't full and the logging button is pressed, save another value to the array. 
     if (RobotContainer.driveController.getXButtonPressed() == true){
       //angle is y, distance is x
       try {
@@ -71,8 +72,8 @@ public class SwerveC extends Command {
     }
 
     if (RobotContainer.driveController.getBButtonPressed() == true){
-      //prints array
-     printData();
+      //prints array and logs it in dataLog
+      printData();
       
     }
     // If the desired ChassisSpeeds are really small (ie from controller drift) make them even smaller so that the robot doesn't move
@@ -112,6 +113,7 @@ public class SwerveC extends Command {
   /*Use this link to compute the regression model:https://planetcalc.com/5992/#google_vignette 
     Each of the files has an x and y output so put those in the respective lists, or use a ti-84 stats bar*/
   public void printData() {
+    //outputs collected distance vs angle graph to console and also sends it to the data logging file. 
     System.out.println("Distance (X)                              Angle (Y)");
       for (var i = 0; i < arrayIndex; i++){
         String output = " "+ Double.toString(DataLogStorage.variableAngleLog[0][i])+"    "+Double.toString(DataLogStorage.variableAngleLog[1][i]);

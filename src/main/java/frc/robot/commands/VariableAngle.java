@@ -73,6 +73,7 @@ public class VariableAngle extends Command {
         SmartDashboard.putNumber("Angle Error", anglePidController.getPositionError());
         SmartDashboard.putNumber("Flywheel Error", shooterPID.getPositionError());
         if (delay.get() < 0.2) {
+            //stores values of the intake and distance. Updates every time command is called
             DataLogStorage.angleOutputDegrees = intakeS.getIntakeAngle();
             DataLogStorage.variableAngleDistance = SwerveS.getDistanceFromSpeakerUsingRobotPose();
         }
