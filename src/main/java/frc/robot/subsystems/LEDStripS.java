@@ -70,7 +70,13 @@ public class LEDStripS extends SubsystemBase{
                 }    
             } 
                 if (!SwerveS.fieldOriented){
-                    setColorWave(LEDConstants.blueHSV, runSineWave);
+                    if (SwerveS.getAlliance()){
+                        setColorWave(LEDConstants.redHSV, runSineWave);
+                    }
+                    else{
+                        setColorWave(LEDConstants.blueHSV, runSineWave);
+                    }
+                    
                 }
                 else{
                     rainbow();

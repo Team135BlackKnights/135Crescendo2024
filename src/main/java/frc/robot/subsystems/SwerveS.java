@@ -249,6 +249,9 @@ public class SwerveS extends SubsystemBase {
     public ChassisSpeeds getChassisSpeeds() {
         return m_ChassisSpeeds;
     }
+    /**
+     *Returns whether the alliance is red.
+     */
     public static boolean getAlliance(){
         // Boolean supplier that controls when the path will be mirrored for the red alliance
             // This will flip the path being followed to the red side of the field.
@@ -458,6 +461,9 @@ public class SwerveS extends SubsystemBase {
         backLeft.setDesiredState(desiredStates[2]);
         backRight.setDesiredState(desiredStates[3]);
     }
+    /**
+     * Function that sets the robot to robot relative (and then sets the leds to a pattern showing that the navx has disconnected) if the navx has disconnected
+     */
     public void navXDisconnectProtocol(){
         if (gyro.isConnected()){
             return;
