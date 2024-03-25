@@ -14,7 +14,6 @@ import frc.robot.subsystems.SwerveS;
 public class SwerveC extends Command {
   public ChassisSpeeds chassisSpeeds;
   private final SwerveS swerveS;
-  private final boolean fieldOriented = true;
   private final SlewRateLimiter xLimiter, yLimiter, turningLimiter;
   private int arrayIndex = 0;
   public SwerveC(SwerveS swerveS) {
@@ -88,7 +87,7 @@ public class SwerveC extends Command {
     }
 
     // Convert ChassisSpeeds into the ChassisSpeeds type
-    if (fieldOriented) {
+    if (SwerveS.fieldOriented) {
       chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, turningSpeed, SwerveS.getRotation2d());
     } else {
       chassisSpeeds = new ChassisSpeeds(xSpeed, ySpeed, turningSpeed);

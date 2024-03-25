@@ -155,7 +155,8 @@ public final class Constants {
     ledPort = 9, 
     // amount of LEDs in the light strip
     ledBufferLength = 90,
-    sineWaveUpdateCycles = 3;
+    sineWaveUpdateCycles = 3,
+    overrideLEDPatternTime = 4;
     //all arrays below use the H,S,V format
     public static int[] 
     noteHSV = new int[]{12, 255, 100},
@@ -163,6 +164,7 @@ public final class Constants {
     blueHSV = new int[]{120,255,100},
     greenHSV = new int[]{50,255,100},
     goldHSV = new int[]{23,255,100};
+
   
   
     

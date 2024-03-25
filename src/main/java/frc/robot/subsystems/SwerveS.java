@@ -33,6 +33,7 @@ import frc.robot.LimelightHelpers;
 
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.FieldConstants;
+import frc.robot.Constants.LEDConstants;
 import frc.robot.Constants.LimelightConstants;
 import frc.robot.Constants.OutakeConstants;
 import frc.robot.LimelightHelpers.PoseEstimate;
@@ -79,13 +80,12 @@ public class SwerveS extends SubsystemBase {
     private static AHRS gyro = new AHRS(Port.kUSB1);
     NetworkTableEntry pipeline;
     public PoseEstimate poseEstimate;    
-
+    public static boolean fieldOriented = true;
     int periodicUpdateCycle;
     public static NetworkTable limelight = NetworkTableInstance.getDefault().getTable("limelight-swerve");
     static NetworkTableEntry tx = limelight.getEntry("tx");
-
     static double xError = tx.getDouble(0.0);
-
+    public static Timer navXDisconnectTimer = new Timer();
     static Pose2d robotPosition = new Pose2d(0,0, getRotation2d());
 
     Field2d robotField = new Field2d();
@@ -94,7 +94,7 @@ public class SwerveS extends SubsystemBase {
     ChassisSpeeds m_ChassisSpeeds = Constants.DriveConstants.kDriveKinematics.toChassisSpeeds(new SwerveModuleState[]{frontLeft.getState(), frontRight.getState(), backLeft.getState(), backRight.getState()});
     SwerveDrivePoseEstimator poseEstimator = new SwerveDrivePoseEstimator(Constants.DriveConstants.kDriveKinematics, getRotation2d(), new SwerveModulePosition[]{frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()},robotPosition);
     SwerveModulePosition[] m_modulePositions = new SwerveModulePosition[]{frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()};
-
+    public static boolean overrideLEDPatterns = false;
     public static boolean disabled = true;
     public static boolean autoLock = false;
     public static boolean redIsAlliance = true; //used to determine the alliance for LED systems
@@ -102,7 +102,8 @@ public class SwerveS extends SubsystemBase {
 
     public PIDController autoLockController = new PIDController(0.0044, 0.00135, 0.00001);
 
-
+    //so that the navXDisconnect command doesn't start twice
+    int debounce = 0;
     
     public SwerveS() {
         // Waits for the RIO to finishing booting
@@ -136,7 +137,7 @@ public class SwerveS extends SubsystemBase {
         );
 
         SmartDashboard.putData("Field", robotField);
-
+        navXDisconnectTimer.reset();
     
     }
     
@@ -228,6 +229,7 @@ public class SwerveS extends SubsystemBase {
             // Do whatever you want with the poses here
             robotField.getObject("path").setPoses(poses);
         });
+        navXDisconnectProtocol();
     }
 
     public static double getXError() {
@@ -456,4 +458,26 @@ public class SwerveS extends SubsystemBase {
         backLeft.setDesiredState(desiredStates[2]);
         backRight.setDesiredState(desiredStates[3]);
     }
+    public void navXDisconnectProtocol(){
+        if (gyro.isConnected()){
+            return;
+        }
+        else{
+            if (debounce == 0){
+                navXDisconnectTimer.start();
+            }
+            debounce = -1;
+            fieldOriented = false;
+            if (navXDisconnectTimer.get() < LEDConstants.overrideLEDPatternTime){
+                overrideLEDPatterns = true;
+            }
+            else{
+                navXDisconnectTimer.stop();
+                overrideLEDPatterns = false;
+            }
+            
+            
+        }
+    }
+
 }

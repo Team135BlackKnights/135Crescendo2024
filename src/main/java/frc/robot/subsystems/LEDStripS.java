@@ -2,7 +2,7 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.LEDConstants;
-
+import frc.robot.subsystems.SwerveS;
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -39,16 +39,25 @@ public class LEDStripS extends SubsystemBase{
         runSineWave = ( schedulerCount == 0);
         //if there is a note stored in the intake, set it to a constant note color
 
-        // if it's disabled make it so LEDs are off
+        // if it's disabled make it so LEDs are off unless navx is disconnected. If navx is disconnected run colorwave
         if (DriverStation.isDisabled()) {
-            //setColorWave(LEDConstants.goldH, LEDConstants.goldS, LEDConstants.disabledSinePeriod);
-            setConstantColors(new int[]{0,0,0});
+            if (!SwerveS.fieldOriented){
+                setColorWave(LEDConstants.goldHSV, runSineWave);
+            }
+            else{
+                setConstantColors(new int[]{0,0,0});
+            }
+            
+            
         }
-
+        //if its enabled
          else{
-
+            if (SwerveS.overrideLEDPatterns){
+                setColorWave(LEDConstants.goldHSV, runSineWave);
+            }
+            else{
             //if it is trying to autolock
-            if (SwerveS.autoLock){
+                if (SwerveS.autoLock){
                 
                 //if its locked on, set to constant green
                 if (SwerveS.aprilTagVisible()){
@@ -60,7 +69,13 @@ public class LEDStripS extends SubsystemBase{
                     setConstantColors(LEDConstants.redHSV);
                 }    
             } 
-            rainbow();
+                if (!SwerveS.fieldOriented){
+                    setColorWave(LEDConstants.blueHSV, runSineWave);
+                }
+                else{
+                    rainbow();
+                }
+            
             /* else{
 
                 //If none of the previous conditions are met do the wave pattern with our alliance color
@@ -73,6 +88,7 @@ public class LEDStripS extends SubsystemBase{
                 }
                 } */
             }
+        }
         }
     public void rainbow() {
         if (runSineWave){
@@ -102,4 +118,29 @@ public class LEDStripS extends SubsystemBase{
         }
         leds.setData(ledBuffer);
     }
+
+    public void setColorWave(int[] LEDColors, boolean run){//value is basically how dark it is, is controlled by the wave function
+        if (run){
+            
+                for (var i = 0; i < (ledBuffer.getLength()); i++) {
+
+                final int value = LEDConstants.ledStates[(i+initialLoopValue)%LEDConstants.sinePeriod];
+                ledBuffer.setHSV(i, LEDColors[0], LEDColors[1], value);
+            }
+
+            
+            //offset by one "notch" each time
+            initialLoopValue += 1;
+
+            //Prevents any kind of integer overflow error happening (prob would take the robot running for a year straight or something like that to reach, )
+            initialLoopValue %= LEDConstants.sinePeriod;
+    
+        //sets data to buffer
+        leds.setData(ledBuffer);
+        }
+
+        
+
+    }
+    
 }
