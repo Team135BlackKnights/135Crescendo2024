@@ -20,6 +20,7 @@ public class IntakeC extends Command {
 
     @Override
     public void execute() {
+
         double intakeSpeed = 0;
 
         // Both driver and manip can control intake, driver takes prescendence when intaking, manip takes prescendence when outaking

@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.38,
-      "y": 7.0
+      "x": 1.27,
+      "y": 5.54
     },
-    "rotation": 0.0
+    "rotation": 0
   },
   "command": {
     "type": "sequential",
@@ -18,7 +18,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Top Drive to Initial Scoring Position"
+                  "pathName": "Middle Drive to Scoring Position"
                 }
               },
               {
@@ -31,9 +31,22 @@
           }
         },
         {
-          "type": "named",
+          "type": "deadline",
           "data": {
-            "name": "ShootNote 3600 RPM"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Shoot From Anywhere"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Lock Onto April Tags"
+                }
+              }
+            ]
           }
         },
         {
@@ -43,7 +56,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Top Drive to First Ground Note"
+                  "pathName": "Middle Drive Bypass First"
                 }
               },
               {
@@ -58,13 +71,26 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Top Drive to Initial Scoring Position"
+            "pathName": "Top Drive into Team Wing"
           }
         },
         {
-          "type": "named",
+          "type": "deadline",
           "data": {
-            "name": "ShootNote 3600 RPM"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Shoot From Anywhere"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Lock Onto April Tags"
+                }
+              }
+            ]
           }
         },
         {
@@ -74,7 +100,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Top Drive to Center Ground Note (Upper)"
+                  "pathName": "Top Drive to Center Ground Note (Lower)"
                 }
               },
               {
@@ -89,18 +115,31 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Top Drive to Initial Scoring Position"
+            "pathName": "Top Drive into Team Wing"
           }
         },
         {
-          "type": "named",
+          "type": "deadline",
           "data": {
-            "name": "ShootNote 3600 RPM"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Shoot From Anywhere"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Lock Onto April Tags"
+                }
+              }
+            ]
           }
         }
       ]
     }
   },
-  "folder": null,
+  "folder": "Middle Autos",
   "choreoAuto": false
 }

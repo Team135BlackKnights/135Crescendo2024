@@ -13,6 +13,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -99,6 +100,9 @@ public class SwerveS extends SubsystemBase {
     public static boolean redIsAlliance = true; //used to determine the alliance for LED systems
     static double distance = 0;
 
+    public PIDController autoLockController = new PIDController(0.0044, 0.00135, 0.00001);
+
+
     
     public SwerveS() {
         // Waits for the RIO to finishing booting
@@ -121,7 +125,7 @@ public class SwerveS extends SubsystemBase {
         this::getChassisSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
         this::setChassisSpeeds, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
         new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
-            new PIDConstants(5, 0.0, 0.0), // Translation PID constants // We didn't have the chance to optimize PID constants so there will be some error in autonomous until these values are fixed
+            new PIDConstants(10, 0.0, 0.0), // Translation PID constants // We didn't have the chance to optimize PID constants so there will be some error in autonomous until these values are fixed
             new PIDConstants(5, 0.0, 0.0), // Rotation PID constants
             Constants.DriveConstants.kMaxSpeedMetersPerSecond, // Max module speed, in m/s
             Constants.DriveConstants.kDriveBaseRadius, // Drive base radius in meters. Distance from robot center to furthest module.
@@ -146,18 +150,6 @@ public class SwerveS extends SubsystemBase {
     
     public static Rotation2d getRotation2d() {
         return Rotation2d.fromDegrees(getHeading());
-    }
-    public void switchLimeLightPath() { 
-        //basically has 2 paths: target red and blue speakers and targets everything else 
-        pipeline = limelight.getEntry("pipeline");
-        if ((int)pipeline.getNumber(0)==0){
-            pipeline.setNumber(1);
-        }else{
-            pipeline.setNumber(0);
-        }
-    }
-    public InstantCommand switchLimeLightPathCommand(){
-        return new InstantCommand(this::switchLimeLightPath,this);
     }
 
     public static boolean getAutoLock() {
@@ -236,7 +228,6 @@ public class SwerveS extends SubsystemBase {
             // Do whatever you want with the poses here
             robotField.getObject("path").setPoses(poses);
         });
-
     }
 
     public static double getXError() {
@@ -379,7 +370,7 @@ public class SwerveS extends SubsystemBase {
         double upperBoundHeight = 0;
         double upperBoundDistance = 0;
         if (getDistanceFromSpeakerUsingRobotPose() > 5) {
-            upperBoundHeight = 1.1*FieldConstants.speakerUpperLipHeight-FieldConstants.noteHeight-OutakeConstants.shooterHeight;
+            upperBoundHeight = 1.09*FieldConstants.speakerUpperLipHeight-FieldConstants.noteHeight-OutakeConstants.shooterHeight;
             upperBoundDistance = getDistanceFromSpeakerUsingRobotPose() - FieldConstants.speakerOpeningDepth - DriveConstants.kChassisLength;
         } else if (getDistanceFromSpeakerUsingRobotPose() > 4) {
             upperBoundHeight = 1.02*FieldConstants.speakerUpperLipHeight-FieldConstants.noteHeight-OutakeConstants.shooterHeight;
@@ -413,7 +404,7 @@ public class SwerveS extends SubsystemBase {
             lowerBoundHeight = 1.1*FieldConstants.speakerLowerLipHeight + FieldConstants.noteHeight-OutakeConstants.shooterHeight;
             lowerBoundDistance = getDistanceFromSpeakerUsingRobotPose() - DriveConstants.kChassisLength;
         } else if (getDistanceFromSpeakerUsingRobotPose() > 4) {
-            lowerBoundHeight = 1.035*FieldConstants.speakerLowerLipHeight + FieldConstants.noteHeight-OutakeConstants.shooterHeight;
+            lowerBoundHeight = 1.036*FieldConstants.speakerLowerLipHeight + FieldConstants.noteHeight-OutakeConstants.shooterHeight;
             lowerBoundDistance = getDistanceFromSpeakerUsingRobotPose() - DriveConstants.kChassisLength;
         } else if (getDistanceFromSpeakerUsingRobotPose() > 3) {
             lowerBoundHeight = 0.96*FieldConstants.speakerLowerLipHeight + FieldConstants.noteHeight-OutakeConstants.shooterHeight;

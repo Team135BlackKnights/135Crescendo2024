@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.38,
-      "y": 4.1
+      "x": 0.46002314226850705,
+      "y": 2.0523241046482092
     },
-    "rotation": 0.0
+    "rotation": 0
   },
   "command": {
     "type": "sequential",
@@ -31,9 +31,22 @@
           }
         },
         {
-          "type": "named",
+          "type": "deadline",
           "data": {
-            "name": "ShootNote 3600 RPM"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Shoot From Anywhere"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Lock Onto April Tags"
+                }
+              }
+            ]
           }
         },
         {
@@ -58,13 +71,26 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Bottom Drive to Initial Scoring Position"
+            "pathName": "Bottom Move Away From Stage"
           }
         },
         {
-          "type": "named",
+          "type": "deadline",
           "data": {
-            "name": "ShootNote 3600 RPM"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Shoot From Anywhere"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Lock Onto April Tags"
+                }
+              }
+            ]
           }
         },
         {
@@ -72,15 +98,15 @@
           "data": {
             "commands": [
               {
-                "type": "named",
+                "type": "path",
                 "data": {
-                  "name": "IntakeNote"
+                  "pathName": "Bottom Drive to Center Note (Upper)"
                 }
               },
               {
-                "type": "path",
+                "type": "named",
                 "data": {
-                  "pathName": "Bottom Drive to Center Note (Lower)"
+                  "name": "IntakeNote"
                 }
               }
             ]
@@ -89,13 +115,26 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Bottom Drive into Team Wing (Lower)"
+            "pathName": "Bottom Drive into Team Wing (Upper)"
           }
         },
         {
-          "type": "named",
+          "type": "deadline",
           "data": {
-            "name": "ShootNote 3600 RPM"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Shoot From Anywhere"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Lock Onto April Tags"
+                }
+              }
+            ]
           }
         }
       ]

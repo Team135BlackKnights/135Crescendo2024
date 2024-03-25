@@ -7,6 +7,8 @@ import com.revrobotics.ColorSensorV3;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
+
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
@@ -30,7 +32,7 @@ public class IntakeS extends SubsystemBase {
     public static ColorMatchResult colorMatchResult;
     public static Thread sensorThread;
     public static int timesRan;
-
+    public PIDController anglePidController = new PIDController(0.06, 0, 0);
    
 
 
@@ -75,6 +77,7 @@ public class IntakeS extends SubsystemBase {
         SmartDashboard.putNumber("Deploy Intake Abs", getIntakePosition());
         SmartDashboard.putNumber("Intake Angle", getIntakeAngle());
         SmartDashboard.putBoolean("Intake Within Bounds", intakeWithinBounds());
+        SmartDashboard.putNumber("Intake Offset", IntakeConstants.intakeOffset);
 
     }
 

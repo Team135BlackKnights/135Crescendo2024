@@ -3,7 +3,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.SwerveS;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.math.controller.PIDController;
 import frc.robot.Constants;
 
 public class AutoLock extends Command{
@@ -11,7 +10,6 @@ public class AutoLock extends Command{
     SwerveS swerveS;
     boolean isFinished = false;
     double limelightDeadBand = 1, limelightTx = 0, maxTimeTargetting = 0.1;
-    PIDController pidController = new PIDController(0.0044, 0.00135, 0.00001);
     Timer timer = new Timer();
     ChassisSpeeds speeds;
     public AutoLock(SwerveS swerveS){
@@ -39,7 +37,7 @@ public class AutoLock extends Command{
         if (Math.abs(limelightTx)<limelightDeadBand){
             isFinished = true;
         }
-        speeds = new ChassisSpeeds(0,0,pidController.calculate(limelightTx,0)*Constants.DriveConstants.kMaxTurningSpeedRadPerSec);
+        speeds = new ChassisSpeeds(0,0,swerveS.autoLockController.calculate(limelightTx,0)*Constants.DriveConstants.kMaxTurningSpeedRadPerSec);
         swerveS.setChassisSpeeds(speeds);
     }
 

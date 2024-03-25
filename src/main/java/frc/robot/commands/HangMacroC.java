@@ -3,49 +3,46 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.HangS;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.Constants.HangConstants;
 import frc.robot.RobotContainer;
 public class HangMacroC extends Command{
-    private final HangS subsystem;
+    private final HangS hangS;
     public static boolean isFinished;
     public double 
-    leftHangSetpoint,
-    rightHangSetpoint,
-    deadband;
-    public int hangState;
+    deadband,
+    desHeight;
     public static PIDController
-    leftHangController = new PIDController(.00005, 0, 0),
-    rightHangController = new PIDController(.00005, 0, 0);
+    leftHangController = new PIDController(.04, 0, 0),
+    rightHangController = new PIDController(.04, 0, 0);
     
-    public HangMacroC(HangS hang, int hangState){
-        this.subsystem = hang;
-        this.hangState = hangState;
-        addRequirements(subsystem);
+    public HangMacroC(HangS hang, double desHeight){
+        this.hangS = hang;
+        this.desHeight = desHeight;
+        addRequirements(hangS);
         
         deadband = 1;
     }
     @Override
     public void initialize(){
         isFinished = false;
-        leftHangSetpoint = HangConstants.hangMacroStates[hangState][0];
-        rightHangSetpoint = HangConstants.hangMacroStates[hangState][1];
     }
     @Override
     public void execute(){
-        SmartDashboard.setDefaultNumber("Hang State", hangState);
         if ((Math.abs(leftHangController.getPositionError()) < deadband && Math.abs(rightHangController.getPositionError()) < deadband) || (Math.abs(RobotContainer.manipController.getLeftY())) >.1 ){
             isFinished = true;
         }
-        else{
-           
-            HangS.setHangMotors(leftHangController.calculate(HangS.leftHangEncoder.getPosition(), leftHangSetpoint), rightHangController.calculate(HangS.rightHangEncoder.getPosition(), rightHangSetpoint));
-        }
+        double leftOutput = leftHangController.calculate(HangS.leftHangEncoder.getPosition(), desHeight);
+        double rightOutput = rightHangController.calculate(HangS.rightHangEncoder.getPosition(), desHeight);
+        if (leftOutput > 1) leftOutput = 1;
+        if (rightOutput > 1) rightOutput = 1;
+        hangS.setHangMotors(leftOutput, rightOutput);
+        
+        SmartDashboard.putNumber("Left Hang Output", leftOutput);
+        SmartDashboard.putNumber("Right Hang Output", rightOutput);
        
     }
     @Override
     public void end(boolean interrupted){
-        HangS.leftHang.set(0);
-        HangS.rightHang.set(0);
+        hangS.setHangMotors(0, 0);
     }
     @Override
     public boolean isFinished(){

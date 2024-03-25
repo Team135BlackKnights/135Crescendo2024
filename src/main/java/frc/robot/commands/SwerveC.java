@@ -1,7 +1,6 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -16,7 +15,6 @@ public class SwerveC extends Command {
   public ChassisSpeeds chassisSpeeds;
   private final SwerveS swerveS;
   private final boolean fieldOriented = true;
-  private final PIDController autoLockController = new PIDController(0.0044, 0.00135, 0.00001);
   private final SlewRateLimiter xLimiter, yLimiter, turningLimiter;
   private int arrayIndex = 0;
   public SwerveC(SwerveS swerveS) {
@@ -46,7 +44,7 @@ public class SwerveC extends Command {
     //turningSpeed = Math.pow(turningSpeed, 2) * (turningSpeed < 0 ? -1 : 1);
 
     if (SwerveS.autoLock == true && SwerveS.aprilTagVisible() == true) {
-      turningSpeed = autoLockController.calculate(SwerveS.getXError(), 0.0);
+      turningSpeed = swerveS.autoLockController.calculate(SwerveS.getXError(), 0.0);
       SmartDashboard.putNumber("Spin", turningSpeed);
     }
     if (RobotContainer.driveController.getXButtonPressed() == true){

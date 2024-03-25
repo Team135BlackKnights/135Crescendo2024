@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import frc.robot.Constants.HangConstants;
+import frc.robot.Constants.IntakeConstants;
 import frc.robot.commands.HangC;
 import frc.robot.commands.IntakeC;
 import frc.robot.commands.OutakeC;
@@ -25,6 +27,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import frc.robot.subsystems.LEDStripS;
@@ -46,7 +49,9 @@ public class RobotContainer {
   JoystickButton aButton = new JoystickButton(driveController, 1);
   JoystickButton yButton = new JoystickButton(manipController, 4);
   JoystickButton bButton = new JoystickButton(manipController, 2);
-  POVButton povTwoSeventy = new POVButton(driveController, 0);
+  POVButton povZero = new POVButton(driveController, 0);
+  POVButton manipPOVZero = new POVButton(manipController, 0);
+  POVButton manipPOV180 = new POVButton(manipController, 180);
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     swerveS.setDefaultCommand(new SwerveC(swerveS));
@@ -54,7 +59,7 @@ public class RobotContainer {
     outakeS.setDefaultCommand(new OutakeC(outakeS));
     hangS.setDefaultCommand(new HangC(hangS));
     
-    NamedCommands.registerCommand("DeployIntake", new MoveIntake(intakeS, 1.5));
+    NamedCommands.registerCommand("DeployIntake", new MoveIntake(intakeS));
     NamedCommands.registerCommand("Lock Onto April Tags", new AutoLock(swerveS));
     NamedCommands.registerCommand("IntakeNote", new AutonIntake(intakeS));
     NamedCommands.registerCommand("ShootNote 3600 RPM", new FireShooter(outakeS, intakeS, 3600));
@@ -70,8 +75,10 @@ public class RobotContainer {
   private void configureBindings() {
     aButton.onTrue(swerveS.toggleAutoLockCommand());
     yButton.onTrue(new VariableAngle(intakeS, outakeS, false));
-    bButton.onTrue(new SetAngle(intakeS, outakeS, 28));
-    povTwoSeventy.onTrue(new HangMacroC(hangS, 1));
+    bButton.onTrue(new SetAngle(intakeS, outakeS, 13));
+    povZero.onTrue(new HangMacroC(hangS, HangConstants.upperHookHeight));
+    manipPOVZero.onTrue(new InstantCommand(() -> IntakeConstants.intakeOffset += 1));
+    manipPOV180.onTrue(new InstantCommand(() -> IntakeConstants.intakeOffset -= 2));
   }
 
   /**

@@ -41,7 +41,7 @@ public class HangS extends SubsystemBase {
         SmartDashboard.putNumber("Left Hang", leftHangEncoder.getPosition());
         SmartDashboard.putNumber("Right Hang", rightHangEncoder.getPosition());
     }
-    public static void setHangMotors(double leftOutput, double rightOutput){
+    public void setHangMotors(double leftOutput, double rightOutput){
         if (leftOutput < 0 && HangS.leftHangEncoder.getPosition() < Constants.HangConstants.hangLowerSoftStop) {
             leftOutput = 0;
         } else if (leftOutput > 0 && HangS.leftHangEncoder.getPosition() > Constants.HangConstants.hangUpperSoftStop) {

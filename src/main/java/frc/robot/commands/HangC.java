@@ -35,7 +35,7 @@ public class HangC extends Command {
         double leftOutput = output + hangAdjustment;
         double rightOutput = output - hangAdjustment;
 
-        HangS.setHangMotors(leftOutput, rightOutput);
+        hangS.setHangMotors(leftOutput, rightOutput);
     }
 
     @Override

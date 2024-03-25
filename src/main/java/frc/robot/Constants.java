@@ -36,14 +36,14 @@ public final class Constants {
       deployIntakeID = 21,
       intakeAbsEncoderID = 1,
       intakeLimitSwitchID = 9,
-      intakeOffset = 47;
+      intakeOffset = 40;
 
     public static double
-      absIntakeEncoderOffset = 60.151574,
+      absIntakeEncoderOffset = 60.370652,
       absIntakeEncoderConversionFactor = 360,
       primaryIntakeGearRatio = 1/4.5,
       deployIntakeInnerBound = 0,
-      deployIntakeOuterBound = 91;
+      deployIntakeOuterBound = 84;
 
     public static boolean
       primaryIntakeReversed = true,
@@ -178,10 +178,11 @@ public final class Constants {
   }
   public static class HangConstants{
     public static double
+      upperHookHeight = 63,
       hangLowerSoftStop = 5,
       hangUpperSoftStop = 101; //Note: for some reason left and right encoders output different values, MAYBE change them to have left and right max?
       //left side is left, right side is right
-      public static double[][] hangMacroStates = {{hangLowerSoftStop+3, hangLowerSoftStop+3},{59.5723,66.406},{}};
+
       public static int
       leftHangID = 41,
       rightHangID = 40;
