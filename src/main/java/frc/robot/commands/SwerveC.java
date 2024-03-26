@@ -46,25 +46,7 @@ public class SwerveC extends Command {
       turningSpeed = swerveS.autoLockController.calculate(SwerveS.getXError(), 0.0);
       SmartDashboard.putNumber("Spin", turningSpeed);
     }
-    if (RobotContainer.driveController.getXButtonPressed() == true){
-      //angle is y, distance is x
-      try {
-        DataLog.variableAngleLog[1][arrayIndex] = DataLog.angleOutputDegrees;
-        DataLog.variableAngleLog[0][arrayIndex] = DataLog.variableAngleDistance;
-        System.out.println("Logged!");
-        arrayIndex +=1;
-      } catch (Exception e) {
-        System.out.println("Array Full!");
-        arrayIndex = 20;
-        printData();
-      }
-    }
-
-    if (RobotContainer.driveController.getBButtonPressed() == true){
-      //prints array
-     printData();
-      
-    }
+    
     // If the desired ChassisSpeeds are really small (ie from controller drift) make them even smaller so that the robot doesn't move
     xSpeed = Math.abs(xSpeed) > Constants.SwerveConstants.kDeadband ? xSpeed : 0.0001;
     ySpeed = Math.abs(ySpeed) > Constants.SwerveConstants.kDeadband ? ySpeed : 0.0001;

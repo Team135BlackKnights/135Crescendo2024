@@ -47,6 +47,7 @@ public class RobotContainer {
   public static XboxController manipController = new XboxController(1);
 
   JoystickButton aButton = new JoystickButton(driveController, 1);
+  JoystickButton xButton = new JoystickButton(driveController, 3);
   JoystickButton yButton = new JoystickButton(manipController, 4);
   JoystickButton bButton = new JoystickButton(manipController, 2);
   POVButton povZero = new POVButton(driveController, 0);
@@ -74,6 +75,7 @@ public class RobotContainer {
 
   private void configureBindings() {
     aButton.onTrue(swerveS.toggleAutoLockCommand());
+    xButton.onTrue(new InstantCommand(() -> swerveS.zeroHeading()));
     yButton.onTrue(new VariableAngle(intakeS, outakeS, false));
     bButton.onTrue(new SetAngle(intakeS, outakeS, 13));
     povZero.onTrue(new HangMacroC(hangS, HangConstants.upperHookHeight));

@@ -33,7 +33,6 @@ import frc.robot.LimelightHelpers;
 
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.FieldConstants;
-import frc.robot.Constants.LEDConstants;
 import frc.robot.Constants.LimelightConstants;
 import frc.robot.Constants.OutakeConstants;
 import frc.robot.LimelightHelpers.PoseEstimate;
@@ -82,10 +81,11 @@ public class SwerveS extends SubsystemBase {
     public PoseEstimate poseEstimate;    
     public static boolean fieldOriented = true;
     int periodicUpdateCycle;
+
     public static NetworkTable limelight = NetworkTableInstance.getDefault().getTable("limelight-swerve");
     static NetworkTableEntry tx = limelight.getEntry("tx");
     static double xError = tx.getDouble(0.0);
-    public static Timer navXDisconnectTimer = new Timer();
+
     static Pose2d robotPosition = new Pose2d(0,0, getRotation2d());
 
     Field2d robotField = new Field2d();
@@ -94,8 +94,6 @@ public class SwerveS extends SubsystemBase {
     ChassisSpeeds m_ChassisSpeeds = Constants.DriveConstants.kDriveKinematics.toChassisSpeeds(new SwerveModuleState[]{frontLeft.getState(), frontRight.getState(), backLeft.getState(), backRight.getState()});
     SwerveDrivePoseEstimator poseEstimator = new SwerveDrivePoseEstimator(Constants.DriveConstants.kDriveKinematics, getRotation2d(), new SwerveModulePosition[]{frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()},robotPosition);
     SwerveModulePosition[] m_modulePositions = new SwerveModulePosition[]{frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()};
-    public static boolean overrideLEDPatterns = false;
-    public static boolean disabled = true;
     public static boolean autoLock = false;
     public static boolean redIsAlliance = true; //used to determine the alliance for LED systems
     static double distance = 0;
@@ -137,11 +135,11 @@ public class SwerveS extends SubsystemBase {
         );
 
         SmartDashboard.putData("Field", robotField);
-        navXDisconnectTimer.reset();
     
     }
     
     public void zeroHeading() {
+        debounce = 0;
         gyro.reset();
     }
     
@@ -176,7 +174,6 @@ public class SwerveS extends SubsystemBase {
             updatePoseEstimatorWithVisionBotPose();
         }
         redIsAlliance = getAlliance();
-        disabled = DriverStation.isDisabled();
         //puts values to smartDashboard
         SmartDashboard.putNumber("Robot Heading", getRotation2d().getDegrees());
         SmartDashboard.putNumber("FrontLeft Abs Encoder", frontLeft.getAbsoluteEncoderRad());
@@ -465,28 +462,13 @@ public class SwerveS extends SubsystemBase {
      * Function that sets the robot to robot relative (and then sets the leds to a pattern showing that the navx has disconnected) if the navx has disconnected
      */
     public void navXDisconnectProtocol(){
-        if (gyro.isConnected()){
-            overrideLEDPatterns = false;
+        if (gyro.isConnected() && debounce == 0){
             fieldOriented = true;
             return;
         }
         else{
-            if (debounce == 0){
-                navXDisconnectTimer.start();
-            }
             debounce = -1;
             fieldOriented = false;
-            if (navXDisconnectTimer.get() < LEDConstants.overrideLEDPatternTime){
-                overrideLEDPatterns = true;
-                System.out.print("J");
-            }
-            else{
-                
-                overrideLEDPatterns = false;
-            }
-            
-            
         }
     }
-
 }

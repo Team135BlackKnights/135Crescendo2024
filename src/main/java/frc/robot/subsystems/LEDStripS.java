@@ -2,7 +2,6 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.LEDConstants;
-import frc.robot.subsystems.SwerveS;
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -41,66 +40,37 @@ public class LEDStripS extends SubsystemBase{
 
         // if it's disabled make it so LEDs are off unless navx is disconnected. If navx is disconnected run colorwave
         if (DriverStation.isDisabled()) {
-            if (!SwerveS.fieldOriented){
+
+            if (!SwerveS.fieldOriented) {
+                setConstantColors(new int[]{0,0,0});
+            } else {
                 setColorWave(LEDConstants.goldHSV, runSineWave);
             }
-            else{
-                setConstantColors(new int[]{0,0,0});
-            }
             
             
-        }
-        //if its enabled
-         else{
-            if (SwerveS.overrideLEDPatterns){
-                if (SwerveS.getAlliance()){
-                        setColorWave(LEDConstants.redHSV, runSineWave);
-                    }
-                    else{
-                        setColorWave(LEDConstants.blueHSV, runSineWave);
-                    }
-            }
-            else{
+        } else { //if its enabled
             //if it is trying to autolock
-                if (SwerveS.autoLock){
+            if (SwerveS.autoLock) {
                 
                 //if its locked on, set to constant green
-                if (SwerveS.aprilTagVisible()){
+                if (SwerveS.aprilTagVisible()) {
                     setConstantColors(LEDConstants.greenHSV);
-                }
-                
-                //if its not locked on, set to flashing green
-                else{ 
+                } else { 
                     setConstantColors(LEDConstants.redHSV);
-                }    
-            } 
-                if (!SwerveS.fieldOriented){
-                    if (SwerveS.getAlliance()){
-                        setColorWave(LEDConstants.redHSV, runSineWave);
-                    }
-                    else{
-                        setColorWave(LEDConstants.blueHSV, runSineWave);
-                    }
-                    
-                }
-                else{
-                    rainbow();
-                }
-            
-            /* else{
+                } 
 
-                //If none of the previous conditions are met do the wave pattern with our alliance color
-                if(SwerveS.redIsAlliance) {
-                    setConstantColors(LEDConstants.redH, LEDConstants.redS, LEDConstants.redV);
-                }
+            } else if (!SwerveS.fieldOriented) {
+
+                setConstantColors(LEDConstants.blueHSV);
                     
-                else {
-                setConstantColors(LEDConstants.blueH, LEDConstants.blueS, LEDConstants.blueV);
-                }
-                } */
+            } else {
+
+                rainbow();
+
             }
         }
-        }
+    }
+    
     public void rainbow() {
         if (runSineWave){
             // For every pixel
