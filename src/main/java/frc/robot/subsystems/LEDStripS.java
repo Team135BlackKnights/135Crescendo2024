@@ -53,7 +53,12 @@ public class LEDStripS extends SubsystemBase{
         //if its enabled
          else{
             if (SwerveS.overrideLEDPatterns){
-                setColorWave(LEDConstants.goldHSV, runSineWave);
+                if (SwerveS.getAlliance()){
+                        setColorWave(LEDConstants.redHSV, runSineWave);
+                    }
+                    else{
+                        setColorWave(LEDConstants.blueHSV, runSineWave);
+                    }
             }
             else{
             //if it is trying to autolock

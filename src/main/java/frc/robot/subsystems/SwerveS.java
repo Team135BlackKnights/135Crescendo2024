@@ -466,6 +466,8 @@ public class SwerveS extends SubsystemBase {
      */
     public void navXDisconnectProtocol(){
         if (gyro.isConnected()){
+            overrideLEDPatterns = false;
+            fieldOriented = true;
             return;
         }
         else{
@@ -476,9 +478,10 @@ public class SwerveS extends SubsystemBase {
             fieldOriented = false;
             if (navXDisconnectTimer.get() < LEDConstants.overrideLEDPatternTime){
                 overrideLEDPatterns = true;
+                System.out.print("J");
             }
             else{
-                navXDisconnectTimer.stop();
+                
                 overrideLEDPatterns = false;
             }
             
