@@ -1,7 +1,7 @@
 package frc.robot.commands;
 
 
-import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.OutakeS;
@@ -9,7 +9,6 @@ import frc.robot.Constants.OutakeConstants;
 
 public class OutakeC extends Command {
     private final OutakeS outakeS;
-    private final PIDController shooterPID = new PIDController(0.0001, 0, 0);
     public OutakeC(OutakeS outakeS) {
         this.outakeS = outakeS;
 
@@ -25,8 +24,8 @@ public class OutakeC extends Command {
     public void execute() {
         //for amp
         if (RobotContainer.manipController.getRightBumper()){
-            double topWheelSpeed = OutakeConstants.idealPercentTop + shooterPID.calculate(OutakeS.topFlywheelEncoder.getVelocity(), OutakeConstants.flywheelMaxRPM*OutakeConstants.idealPercentTop);
-            double bottomWheelSpeed = OutakeConstants.idealPercentBottom + shooterPID.calculate(OutakeS.bottomFlywheelEncoder.getVelocity(),OutakeConstants.flywheelMaxRPM*OutakeConstants.idealPercentBottom);
+            double topWheelSpeed = OutakeConstants.idealPercentTop + outakeS.shooterPID.calculate(OutakeS.topFlywheelEncoder.getVelocity(), OutakeConstants.flywheelMaxRPM*OutakeConstants.idealPercentTop);
+            double bottomWheelSpeed = OutakeConstants.idealPercentBottom + outakeS.shooterPID.calculate(OutakeS.bottomFlywheelEncoder.getVelocity(),OutakeConstants.flywheelMaxRPM*OutakeConstants.idealPercentBottom);
             outakeS.setIndividualFlywheelSpeeds(topWheelSpeed, bottomWheelSpeed);
         }
         //for speaker
@@ -36,9 +35,9 @@ public class OutakeC extends Command {
             outakeSpeed = -0.25;
         }
         if (RobotContainer.manipController.getAButton() == true) {
-            outakeSpeed = 0.5 + shooterPID.calculate(OutakeS.getAverageFlywheelSpeed(), 4000);
+            outakeSpeed = 0.49 + MathUtil.clamp(outakeS.shooterPID.calculate(OutakeS.getAverageFlywheelSpeed(), 4000),-0.1,0.1);
         } else if (RobotContainer.manipController.getXButton() == true) {
-            outakeSpeed = 0.33 + shooterPID.calculate(OutakeS.getAverageFlywheelSpeed(), 2700);
+            outakeSpeed = 0.355 + MathUtil.clamp(outakeS.shooterPID.calculate(OutakeS.getAverageFlywheelSpeed(), 2700), -0.1, 0.1);
         }
         outakeS.setIndividualFlywheelSpeeds(outakeSpeed, outakeSpeed);
     }

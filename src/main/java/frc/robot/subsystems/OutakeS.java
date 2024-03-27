@@ -13,7 +13,7 @@ import frc.robot.Constants;
 public class OutakeS extends SubsystemBase {
     //motor declarations
    
-    public PIDController shooterPID = new PIDController(0.000005, 0, 0);
+    public PIDController shooterPID = new PIDController(0.0000005, 0, 0);
 
 
     public CANSparkMax topFlywheel = new CANSparkMax(Constants.OutakeConstants.topFlywheel, MotorType.kBrushless);
@@ -42,6 +42,7 @@ public class OutakeS extends SubsystemBase {
         //sets changes to the motors' controllers
         topFlywheel.burnFlash();
         bottomFlywheel.burnFlash();
+
     }
 
     @Override

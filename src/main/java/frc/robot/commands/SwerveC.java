@@ -42,11 +42,16 @@ public class SwerveC extends Command {
     ySpeed = Math.pow(ySpeed, 2) * (ySpeed < 0 ? -1 : 1);
     //turningSpeed = Math.pow(turningSpeed, 2) * (turningSpeed < 0 ? -1 : 1);
 
+    if (RobotContainer.driveController.getRightBumper() == true) {
+      xSpeed /=2;
+      ySpeed /=2;
+    }
+
     if (SwerveS.autoLock == true && SwerveS.aprilTagVisible() == true) {
       turningSpeed = swerveS.autoLockController.calculate(SwerveS.getXError(), 0.0);
       SmartDashboard.putNumber("Spin", turningSpeed);
     }
-    
+
     // If the desired ChassisSpeeds are really small (ie from controller drift) make them even smaller so that the robot doesn't move
     xSpeed = Math.abs(xSpeed) > Constants.SwerveConstants.kDeadband ? xSpeed : 0.0001;
     ySpeed = Math.abs(ySpeed) > Constants.SwerveConstants.kDeadband ? ySpeed : 0.0001;

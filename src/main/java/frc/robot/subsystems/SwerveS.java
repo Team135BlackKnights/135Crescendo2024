@@ -345,7 +345,9 @@ public class SwerveS extends SubsystemBase {
         }
         
     
-
+    public static boolean robotInRange() {
+        return getDistanceFromSpeakerUsingRobotPose() > 1.9 && getDistanceFromSpeakerUsingRobotPose() < 2.4;
+    }
 
 
 

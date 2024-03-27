@@ -12,6 +12,7 @@ import frc.robot.commands.OutakeC;
 import frc.robot.commands.SetAngle;
 import frc.robot.commands.SwerveC;
 import frc.robot.commands.VariableAngle;
+import frc.robot.commands.VariableSpeed;
 import frc.robot.commands.autoCommands.AutoLock;
 import frc.robot.commands.autoCommands.AutonIntake;
 import frc.robot.commands.autoCommands.FireShooter;
@@ -76,7 +77,7 @@ public class RobotContainer {
   private void configureBindings() {
     aButton.onTrue(swerveS.toggleAutoLockCommand());
     xButton.onTrue(new InstantCommand(() -> swerveS.zeroHeading()));
-    yButton.onTrue(new VariableAngle(intakeS, outakeS, false));
+    yButton.onTrue(new VariableSpeed(intakeS, outakeS, false));
     bButton.onTrue(new SetAngle(intakeS, outakeS, 13));
     povZero.onTrue(new HangMacroC(hangS, HangConstants.upperHookHeight));
     manipPOVZero.onTrue(new InstantCommand(() -> IntakeConstants.intakeOffset += 1));
