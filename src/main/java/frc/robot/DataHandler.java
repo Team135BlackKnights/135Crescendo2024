@@ -6,6 +6,7 @@ import java.io.IOError;
 public class DataHandler{
     public static FileWriter fileWriter;
     String[] loggingArray;
+    public static int id = 999999;
     /**
      * Creates a file on a USB attached to the rio.
      * Used in conjunction with https://colab.research.google.com/drive/1pj7j6u2x-s2kY2aWgmiyc5_2wwpUgusc. ONLY CALL ONCE OR IT'LL BRICK!
@@ -25,16 +26,17 @@ public class DataHandler{
         if (createdFile.exists()){
             //Renames a file if the logfile exists
             Scanner renameScanner = new Scanner(createdFile);
-            int id = Integer.parseInt(renameScanner.nextLine());
+            id = Integer.parseInt(renameScanner.nextLine());
             File newFileName = new File("/U/logs/" + id + ".txt");
             createdFile.renameTo(newFileName);
             renameScanner.close();
             createdFile.createNewFile();
-            fileWriter = new FileWriter(createdFile);
-            id +=1; 
-            fileWriter.write(id);
-          }  
-            } 
+            
+          } 
+        fileWriter = new FileWriter(createdFile);
+        id +=1; 
+        fileWriter.write(id);
+        } 
             //catch any errors
             catch (Exception e) {
                 e.printStackTrace();
