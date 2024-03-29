@@ -1,10 +1,12 @@
 package frc.robot;
 import java.io.File;
 import java.util.Scanner;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
 import java.io.IOError;
 public class DataHandler{
-    public static FileWriter fileWriter;
+    public static FileOutputStream outputStream;
+    public static OutputStreamWriter outputStreamWriter;
     String[] loggingArray;
     public static int id = 999999;
     /**
@@ -20,22 +22,25 @@ public class DataHandler{
 
     try {
         //Creates new file 
-        String fileName = "/U/logs/Latest.txt";
+        String fileName = "C://logs/Latest.txt";
         File createdFile = new File(fileName);
         //if it exists, rename file with same name to the id in its first line
         if (createdFile.exists()){
             //Renames a file if the logfile exists
             Scanner renameScanner = new Scanner(createdFile);
             id = Integer.parseInt(renameScanner.nextLine());
-            File newFileName = new File("/U/logs/" + id + ".txt");
+            File newFileName = new File("C://logs" + id + ".txt");
             createdFile.renameTo(newFileName);
             renameScanner.close();
-            createdFile.createNewFile();
             
           } 
-        fileWriter = new FileWriter(createdFile);
+        createdFile.createNewFile();
+        
+        outputStream = new FileOutputStream(createdFile);
+        outputStreamWriter = new OutputStreamWriter(outputStream);
         id +=1; 
-        fileWriter.write(id);
+        outputStreamWriter.write(id + System.lineSeparator());
+        outputStreamWriter.flush();
         } 
             //catch any errors
             catch (Exception e) {
@@ -55,9 +60,10 @@ public class DataHandler{
         for (String heading : tableHeadings){
             lineToBeSaved += (heading + ",");
         }
-        lineToBeSaved = lineToBeSaved.substring(0, (lineToBeSaved.length()-2));
+        lineToBeSaved = lineToBeSaved.substring(0, (lineToBeSaved.length()-1));
         try {
-            fileWriter.write(lineToBeSaved);
+            outputStreamWriter.write(lineToBeSaved + System.lineSeparator());
+            outputStreamWriter.flush();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -70,7 +76,7 @@ public class DataHandler{
      */
     public static void closeWriter(){
         try {
-            fileWriter.close();
+            outputStreamWriter.close();
         } catch (Exception e) {
             // TODO: handle exception
         }
