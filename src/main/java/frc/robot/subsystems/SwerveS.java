@@ -1,6 +1,5 @@
 package frc.robot.subsystems;
 
-
 import com.kauailabs.navx.frc.AHRS;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
@@ -29,7 +28,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.LimelightHelpers;
-
+import frc.robot.DataHandler;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.LimelightConstants;
@@ -99,7 +98,7 @@ public class SwerveS extends SubsystemBase {
     public static boolean redIsAlliance = true; //used to determine the alliance for LED systems
     static double distance = 0;
 
-    
+
     public SwerveS() {
         // Waits for the RIO to finishing booting
         new Thread(() -> {
@@ -132,7 +131,8 @@ public class SwerveS extends SubsystemBase {
         );
 
         SmartDashboard.putData("Field", robotField);
-
+        DataHandler.setUpLogOnUSB();
+        DataHandler.logData(new String[]{"x", "y"});
     
     }
     
@@ -203,7 +203,7 @@ public class SwerveS extends SubsystemBase {
         SmartDashboard.putNumber("Desired Intake Lower Bound", getDesiredShooterLowerBound());
         SmartDashboard.putNumber("Desired Intake Upper Bound", getDesiredShooterUpperBound());
         SmartDashboard.putNumber("Desired Intake Angle", getDesiredShooterAngle());
-
+        
 
         xError = tx.getDouble(0.0);
 
