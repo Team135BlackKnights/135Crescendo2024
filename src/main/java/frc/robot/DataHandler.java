@@ -2,6 +2,7 @@ package frc.robot;
 import java.io.File;
 import java.util.Scanner;
 import java.io.FileWriter;
+import java.io.IOError;
 public class DataHandler{
     public static FileWriter fileWriter;
     String[] loggingArray;
@@ -38,6 +39,9 @@ public class DataHandler{
             catch (Exception e) {
                 e.printStackTrace();
             }
+            catch (IOError e){
+                e.printStackTrace();
+            }
     }
     /**
      * Creates an array of strings, each string represents a table entry to be logged. 
@@ -55,6 +59,9 @@ public class DataHandler{
         } catch (Exception e) {
             e.printStackTrace();
         }
+        catch (IOError e){
+                e.printStackTrace();
+            }
     }
     /**
      * Closes writer at the end, might not be used
@@ -65,5 +72,8 @@ public class DataHandler{
         } catch (Exception e) {
             // TODO: handle exception
         }
+        catch (IOError e){
+                e.printStackTrace();
+            }
     }
 }
