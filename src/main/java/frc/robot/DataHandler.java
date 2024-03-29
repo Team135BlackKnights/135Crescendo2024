@@ -18,7 +18,7 @@ import java.io.IOError;
     public static OutputStreamWriter outputStreamWriter;
     String[] loggingArray;
     public static int id = 0;
-    public static String directoryName = "E://logs/";
+    public static String directoryName = "/U/logs/";
     public static File newFileName;
     /**
      * Creates a file on a USB attached to the rio to log all values to. ONLY CALL ONE TIME EVER (either in RobotInit or a subsystem constructor)
