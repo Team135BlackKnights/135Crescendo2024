@@ -1,7 +1,5 @@
 package frc.robot;
 import java.io.File;
-import java.io.IOException;
-import java.util.Date;
 import java.util.Scanner;
 import java.io.FileWriter;
 public class DataHandler{
