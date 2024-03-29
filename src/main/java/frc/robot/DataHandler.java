@@ -9,6 +9,8 @@ public class DataHandler{
     public static OutputStreamWriter outputStreamWriter;
     String[] loggingArray;
     public static int id = 0;
+    public static String directoryName = "E://logs/";
+    public static File newFileName;
     /**
      * Creates a file on a USB attached to the rio.
      * Used in conjunction with https://colab.research.google.com/drive/1pj7j6u2x-s2kY2aWgmiyc5_2wwpUgusc. ONLY CALL ONCE OR IT'LL BRICK!
@@ -16,26 +18,30 @@ public class DataHandler{
      * FileName: The file name of the created file, or an error if it could not be created
      */
 
-    // "/U" is the default directory for RoboRIO flash drives, add new file to this
+    // "/U" is the default directory for RoboRIO flash drives, add new file to "/U/logs/"
     //function based off of https://github.com/HoyaRobotics/InfiniteRecharge2020/blob/master/src/main/java/frc/robot/util/Logger.java
     public static void setUpLogOnUSB(){
 
         try {
         
             //Creates new file 
-            String fileName = "C://logs/Latest.txt";
+            String fileName = directoryName + "Latest.txt";
             File createdFile = new File(fileName);
             
             //if a file named "latest" exists, rename "latest" to the id in its first line
             if (createdFile.exists()){
                 //TODO: Get this renaming to work
-                    
-                    Scanner renameScanner = new Scanner(createdFile);
+
+                Scanner renameScanner = new Scanner(createdFile);
+                if (renameScanner.hasNext()){
                     id = Integer.parseInt(renameScanner.nextLine());
-                    File newFileName = new File("C://logs/Log" + id + ".txt");
-                    System.out.println(newFileName);
-                    createdFile.renameTo(newFileName);
                     renameScanner.close();
+                    System.out.println(newFileName);
+                }
+                
+                File newFileName = new File(directoryName + "Log" + id + ".txt");
+                createdFile.renameTo(newFileName);
+
             } 
 
             createdFile.createNewFile();
