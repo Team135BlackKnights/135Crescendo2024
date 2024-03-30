@@ -60,7 +60,7 @@ import java.io.IOError;
                 }
 
                 //Create the new file
-                File newFileName = new File(directoryName + "/Logs" + id + ".txt");
+                File newFileName = new File(directoryName + "/Log" + id + ".txt");
                 createdFile.renameTo(newFileName);
 
             } 
