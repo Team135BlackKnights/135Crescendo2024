@@ -28,6 +28,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.LimelightHelpers;
+import frc.robot.Robot;
 import frc.robot.DataHandler;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.FieldConstants;
@@ -131,7 +132,13 @@ public class SwerveS extends SubsystemBase {
         );
 
         SmartDashboard.putData("Field", robotField);
-        DataHandler.createLogFileOnRIOUSB();
+        if (Robot.isReal()){
+            DataHandler.createLogFileOnRIOUSB();
+        }
+        else{
+            DataHandler.createLogFileinSimulation("G://");
+        }
+        
         DataHandler.logData(new String[]{"x", "y"});
     
     }

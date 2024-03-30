@@ -21,7 +21,8 @@ import java.io.IOError;
     public static OutputStreamWriter outputStreamWriter;
     String[] loggingArray;
     public static int id = 0;
-    public static String directoryName = "/U/logs/";
+    public static String diskName= "/U";
+    public static String directoryName = "";
     public static File newFileName;
     /**
      * Creates a file on a USB attached to the rio to log all values to. Only call one time (either in RobotInit or a subsystem constructor).
@@ -32,11 +33,22 @@ import java.io.IOError;
     // "/U" is the default directory (drive name) for RoboRIO flash drives, add new file to "/U/logs/"
     //function based off of https://github.com/HoyaRobotics/InfiniteRecharge2020/blob/master/src/main/java/frc/robot/util/Logger.java
     public static void createLogFileOnRIOUSB(){
+        directoryName = diskName + "/logs";
+        //Creates the logs file in the specified drive if none is there
+        File directory = new File(directoryName);
+
+        //This line isn't TECHNICALLY needed, but i would like to make sure this is here
+        if (!directory.exists()){
+            boolean works = directory.mkdir();
+            System.out.println(works);
+        }
+        //TODO: See if we can potentially just create a logs folder if it isnt there
+
 
         try {
         
             //Creates new file 
-            String fileName = directoryName + "Latest.txt";
+            String fileName = directoryName + "/Latest.txt";
             File createdFile = new File(fileName);
             
             //if a file named "latest" exists, rename "latest" to the id in its first line
@@ -50,7 +62,7 @@ import java.io.IOError;
                 }
 
                 //Create the new file
-                File newFileName = new File(directoryName + "Log" + id + ".txt");
+                File newFileName = new File(directoryName + "/Log" + id + ".txt");
                 createdFile.renameTo(newFileName);
 
             } 
@@ -104,8 +116,8 @@ import java.io.IOError;
      * @param directory The folder where the simulated log will be written. Will need to be changed based on the device you're running simulation from and the directory where the logs are recorded.
      * @see DataHandler
      */
-    public static void createLogFileinSimulation(String directory){
-        directoryName = directory;
+    public static void createLogFileinSimulation(String disk){
+        diskName = disk;
         createLogFileOnRIOUSB();
     }
     /**
