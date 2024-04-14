@@ -17,11 +17,11 @@
     {
       "anchor": {
         "x": 8.5,
-        "y": 3.9
+        "y": 4.05
       },
       "prevControl": {
         "x": 7.5,
-        "y": 3.9
+        "y": 4.05
       },
       "nextControl": null,
       "isLocked": false,
@@ -34,7 +34,7 @@
   "globalConstraints": {
     "maxVelocity": 4.6,
     "maxAcceleration": 3.0,
-    "maxAngularVelocity": 480.0,
+    "maxAngularVelocity": 560.0,
     "maxAngularAcceleration": 390.0
   },
   "goalEndState": {

@@ -80,8 +80,7 @@ public class RobotContainer {
     yButton.onTrue(new VariableSpeed(intakeS, outakeS, false));
     bButton.onTrue(new SetAngle(intakeS, outakeS, 13));
     povZero.onTrue(new HangMacroC(hangS, HangConstants.upperHookHeight));
-    manipPOVZero.onTrue(new InstantCommand(() -> IntakeConstants.intakeOffset += 1));
-    manipPOV180.onTrue(new InstantCommand(() -> IntakeConstants.intakeOffset -= 2));
+    manipPOVZero.onTrue(new SetAngle(intakeS, outakeS, 27));
   }
 
   /**

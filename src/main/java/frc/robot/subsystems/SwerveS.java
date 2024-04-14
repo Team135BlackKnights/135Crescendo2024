@@ -94,15 +94,20 @@ public class SwerveS extends SubsystemBase {
     ChassisSpeeds m_ChassisSpeeds = Constants.DriveConstants.kDriveKinematics.toChassisSpeeds(new SwerveModuleState[]{frontLeft.getState(), frontRight.getState(), backLeft.getState(), backRight.getState()});
     SwerveDrivePoseEstimator poseEstimator = new SwerveDrivePoseEstimator(Constants.DriveConstants.kDriveKinematics, getRotation2d(), new SwerveModulePosition[]{frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()},robotPosition);
     SwerveModulePosition[] m_modulePositions = new SwerveModulePosition[]{frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()};
+    
     public static boolean autoLock = false;
-    public static boolean redIsAlliance = true; //used to determine the alliance for LED systems
+
+    public static boolean redIsAlliance = true;
+
     static double distance = 0;
+
+    
 
     public PIDController autoLockController = new PIDController(0.0044, 0.00135, 0.00001);
 
     //so that the navXDisconnect command doesn't start twice
     int debounce = 0;
-    
+
     public SwerveS() {
         // Waits for the RIO to finishing booting
         new Thread(() -> {
@@ -346,7 +351,7 @@ public class SwerveS extends SubsystemBase {
         
     
     public static boolean robotInRange() {
-        return getDistanceFromSpeakerUsingRobotPose() > 1.9 && getDistanceFromSpeakerUsingRobotPose() < 2.4;
+        return getDistanceFromSpeakerUsingRobotPose() > 1.9 && getDistanceFromSpeakerUsingRobotPose() < 2.2;
     }
 
 

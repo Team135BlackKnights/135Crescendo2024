@@ -36,14 +36,14 @@ public final class Constants {
       deployIntakeID = 21,
       intakeAbsEncoderID = 1,
       intakeLimitSwitchID = 9,
-      intakeOffset = 40;
+      intakeOffset = 43;
 
     public static double
-      absIntakeEncoderOffset = 60.370652,
+      absIntakeEncoderOffset = 59.870652,
       absIntakeEncoderConversionFactor = 360,
       primaryIntakeGearRatio = 1/4.5,
       deployIntakeInnerBound = 0,
-      deployIntakeOuterBound = 84;
+      deployIntakeOuterBound = 90;
 
     public static boolean
       primaryIntakeReversed = true,
@@ -94,8 +94,8 @@ public final class Constants {
       // Distance from center of robot to the farthest module
 
       kMaxSpeedMetersPerSecond = Units.feetToMeters(15.1),
-      kMaxTurningSpeedRadPerSec = 4.414667 * 2 * Math.PI, // 1.33655 *2 *Math.PI
-      kTeleDriveMaxAcceleration = Units.feetToMeters(8.66), //guess
+      kMaxTurningSpeedRadPerSec = 3.914667 * 2 * Math.PI, // 1.33655 *2 *Math.PI
+      kTeleDriveMaxAcceleration = Units.feetToMeters(12), //guess
       kTeleTurningMaxAcceleration = 5, //guess
       
       // To find these set them to zero, then turn the robot on and manually set the wheels straight.
@@ -186,8 +186,8 @@ public final class Constants {
       //left side is left, right side is right
 
       public static int
-      leftHangID = 41,
-      rightHangID = 40;
+        leftHangID = 41,
+        rightHangID = 40;
 
     public static boolean
       leftHangReversed = true,

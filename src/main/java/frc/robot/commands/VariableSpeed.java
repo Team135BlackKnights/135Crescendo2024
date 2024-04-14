@@ -45,13 +45,8 @@ public class VariableSpeed extends Command {
             intakeS.setPrimaryIntake(0);
             double topOutakeSpeed;
             double bottomOutakeSpeed;
-            if (SwerveS.getDistanceFromSpeakerUsingRobotPose() < 2.1) {
-                topOutakeSpeed = 0.49 + MathUtil.clamp(outakeS.shooterPID.calculate(OutakeS.topFlywheelEncoder.getVelocity(), 4000), -0.1, 0.1);
-                bottomOutakeSpeed = 0.49 + MathUtil.clamp(outakeS.shooterPID.calculate(OutakeS.bottomFlywheelEncoder.getVelocity(), 4000), -0.1, 0.1);
-            } else {
-                topOutakeSpeed = 0.355 + MathUtil.clamp(outakeS.shooterPID.calculate(OutakeS.topFlywheelEncoder.getVelocity(), 2700), -0.1, 0.1);
-                bottomOutakeSpeed = 0.355 + MathUtil.clamp(outakeS.shooterPID.calculate(OutakeS.bottomFlywheelEncoder.getVelocity(), 2700), -0.1, 0.1);
-            }
+            topOutakeSpeed = 0.49 + MathUtil.clamp(outakeS.shooterPID.calculate(OutakeS.topFlywheelEncoder.getVelocity(), 4000), -0.1, 0.1);
+            bottomOutakeSpeed = 0.49 + MathUtil.clamp(outakeS.shooterPID.calculate(OutakeS.bottomFlywheelEncoder.getVelocity(), 4000), -0.1, 0.1);
             outakeS.setIndividualFlywheelSpeeds(topOutakeSpeed, bottomOutakeSpeed);
         }
         if (RobotContainer.manipController.getLeftBumper() == true) {
