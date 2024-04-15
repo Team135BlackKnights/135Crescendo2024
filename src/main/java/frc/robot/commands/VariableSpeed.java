@@ -43,23 +43,18 @@ public class VariableSpeed extends Command {
             intakeS.setPrimaryIntake(0.2);
         } else if (timer.get() >= 0.25) {
             intakeS.setPrimaryIntake(0);
-            double topOutakeSpeed;
-            double bottomOutakeSpeed;
-            topOutakeSpeed = 0.49 + MathUtil.clamp(outakeS.shooterPID.calculate(OutakeS.topFlywheelEncoder.getVelocity(), 4000), -0.1, 0.1);
-            bottomOutakeSpeed = 0.49 + MathUtil.clamp(outakeS.shooterPID.calculate(OutakeS.bottomFlywheelEncoder.getVelocity(), 4000), -0.1, 0.1);
-            outakeS.setIndividualFlywheelSpeeds(topOutakeSpeed, bottomOutakeSpeed);
+            outakeS.setRPM(4000);
         }
         if (RobotContainer.manipController.getLeftBumper() == true) {
             intakeS.setPrimaryIntake(-0.5);
             delay.start();
         }
-        if (SwerveS.robotInRange() && OutakeS.getFlywheelSpeedDifference() < 100 && timer.get() >= 0.3 && outakeS.shooterPID.getPositionError() < 150 && Math.abs(SwerveS.getXError()) < 3 && RobotContainer.manipController.getAButton() == false && IntakeS.getIntakePosition() >= IntakeConstants.deployIntakeOuterBound-2) {
+        if (SwerveS.robotInRange() && OutakeS.getBottomRPMError(4000) < 100 && OutakeS.getTopRPMError(4000) < 100 && timer.get() >= 0.3 && Math.abs(SwerveS.getXError()) < 3 && RobotContainer.manipController.getAButton() == false && IntakeS.getIntakePosition() >= IntakeConstants.deployIntakeOuterBound-2) {
             intakeS.setPrimaryIntake(-0.5);
             delay.start();
         }
 
         SmartDashboard.putNumber("Angle Error", intakeS.anglePidController.getPositionError());
-        SmartDashboard.putNumber("Flywheel Error", outakeS.shooterPID.getPositionError());
         
         intakeS.deployIntake(0.5);
 

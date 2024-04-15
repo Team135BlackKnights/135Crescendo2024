@@ -12,6 +12,7 @@ import frc.robot.Constants.DataLog;
 public class VariableAngle extends Command {
     private final IntakeS intakeS;
     private final OutakeS outakeS;
+    private int desiredRPM;
     private boolean isFinished = false, isAutonomous;
     Timer timer = new Timer();
     Timer delay = new Timer();
@@ -44,21 +45,22 @@ public class VariableAngle extends Command {
             intakeS.setPrimaryIntake(0.2);
         } else if (timer.get() >= 0.25 && Math.abs(intakeS.anglePidController.getPositionError()) < 10) {
             intakeS.setPrimaryIntake(0);
-            double outakeSpeed;
             if (SwerveS.getDistanceFromSpeakerUsingRobotPose() > 4.5) {
-                outakeSpeed = 0.85 + outakeS.shooterPID.calculate(OutakeS.getAverageFlywheelSpeed(), 6000);
+                outakeS.setRPM(6000);
+                desiredRPM = 6000;
             } else if (SwerveS.getDistanceFromSpeakerUsingRobotPose() > 2.4) {
-                outakeSpeed = 0.67 + outakeS.shooterPID.calculate(OutakeS.getAverageFlywheelSpeed(), 4750);
+                outakeS.setRPM(4750);
+                desiredRPM = 4750;
             } else {
-                outakeSpeed  = 0.46 + outakeS.shooterPID.calculate(OutakeS.getAverageFlywheelSpeed(), 3300);
+                outakeS.setRPM(3300);
+                desiredRPM = 3300;
             }
-            outakeS.setIndividualFlywheelSpeeds(outakeSpeed, outakeSpeed);
         }
         if (RobotContainer.manipController.getLeftBumper() == true) {
             intakeS.setPrimaryIntake(-0.5);
             delay.start();
         }
-        if (OutakeS.getFlywheelSpeedDifference() < 100 && timer.get() >= 0.3 && (intakeS.intakeWithinBounds() || Math.abs(intakeS.anglePidController.getPositionError()) < 0.5) && outakeS.shooterPID.getPositionError() < 150 && Math.abs(SwerveS.getXError()) < 3 && RobotContainer.manipController.getAButton() == false && Math.abs(output) < 0.1) {
+        if (OutakeS.getBottomRPMError(desiredRPM) < 100 && OutakeS.getTopRPMError(desiredRPM) < 100 && timer.get() >= 0.2 && (intakeS.intakeWithinBounds() || Math.abs(intakeS.anglePidController.getPositionError()) < 0.5) && Math.abs(SwerveS.getXError()) < 3 && RobotContainer.manipController.getAButton() == false && Math.abs(output) < 0.1) {
             intakeS.setPrimaryIntake(-0.5);
             delay.start();
         }
@@ -66,7 +68,7 @@ public class VariableAngle extends Command {
         
         SmartDashboard.putNumber("Angle Output", output);
         SmartDashboard.putNumber("Angle Error", intakeS.anglePidController.getPositionError());
-        SmartDashboard.putNumber("Flywheel Error", outakeS.shooterPID.getPositionError());
+        SmartDashboard.putNumber("Flywheel Error", OutakeS.getBottomRPMError(desiredRPM));
         if (delay.get() < 0.2) {
             DataLog.angleOutputDegrees = intakeS.getIntakeAngle();
             DataLog.variableAngleDistance = SwerveS.getDistanceFromSpeakerUsingRobotPose();

@@ -43,14 +43,13 @@ public class SetAngle extends Command {
             intakeS.setPrimaryIntake(0.2);
         } else if (timer.get() >= 0.25  && Math.abs(intakeS.anglePidController.getPositionError()) < 10) {
             intakeS.setPrimaryIntake(0);
-            double outakeSpeed = 0.85 + outakeS.shooterPID.calculate(OutakeS.getAverageFlywheelSpeed(), 6000);
-            outakeS.setIndividualFlywheelSpeeds(outakeSpeed, outakeSpeed);
+            outakeS.setRPM(6000);
         }
         if (RobotContainer.manipController.getLeftBumper() == true) {
             intakeS.setPrimaryIntake(-0.5);
             delay.start();
         }
-        if (OutakeS.getFlywheelSpeedDifference() < 100 && timer.get() >= 0.3 && outakeS.shooterPID.getPositionError() < 150 && RobotContainer.manipController.getAButton() == false && Math.abs(output) < 0.1) {
+        if (OutakeS.getBottomRPMError(6000) < 100 && OutakeS.getTopRPMError(6000) < 100 && timer.get() >= 0.3 && RobotContainer.manipController.getAButton() == false && Math.abs(output) < 0.1) {
             intakeS.setPrimaryIntake(-0.5);
             delay.start();
         }
@@ -58,7 +57,6 @@ public class SetAngle extends Command {
         
         SmartDashboard.putNumber("Angle Output", output);
         SmartDashboard.putNumber("Angle Error", intakeS.anglePidController.getPositionError());
-        SmartDashboard.putNumber("Flywheel Error", outakeS.shooterPID.getPositionError());
 
         intakeS.deployIntake(output);
     }

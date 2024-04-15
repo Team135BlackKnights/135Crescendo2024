@@ -30,11 +30,11 @@ public class AutonIntake extends Command {
         SmartDashboard.putBoolean("Note Loaded?", IntakeS.noteIsLoaded());
 
         intakeS.deployIntake(1);
-        if (timer.get() > 0.125) {
+        if (timer.get() > 0.15) {
             isFinished = true;
         }
         if (timer.get() > 0) {
-            intakeS.setPrimaryIntake(0.25);
+            intakeS.setPrimaryIntake(0.2);
         } else {
             intakeS.setPrimaryIntake(-0.5);
         }

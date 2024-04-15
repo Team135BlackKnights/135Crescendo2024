@@ -24,22 +24,21 @@ public class OutakeC extends Command {
     public void execute() {
         //for amp
         if (RobotContainer.manipController.getRightBumper()){
-            double topWheelSpeed = OutakeConstants.idealPercentTop + outakeS.shooterPID.calculate(OutakeS.topFlywheelEncoder.getVelocity(), OutakeConstants.flywheelMaxRPM*OutakeConstants.idealPercentTop);
-            double bottomWheelSpeed = OutakeConstants.idealPercentBottom + outakeS.shooterPID.calculate(OutakeS.bottomFlywheelEncoder.getVelocity(),OutakeConstants.flywheelMaxRPM*OutakeConstants.idealPercentBottom);
-            outakeS.setIndividualFlywheelSpeeds(topWheelSpeed, bottomWheelSpeed);
+            outakeS.setRPMTop(OutakeConstants.flywheelMaxRPM*OutakeConstants.idealPercentTop);
+            outakeS.setRPMBottom(OutakeConstants.flywheelMaxRPM*OutakeConstants.idealPercentBottom);
         }
         //for speaker
         else{
             double outakeSpeed = 0;
             if (RobotContainer.driveController.getLeftBumper() == true) {
             outakeSpeed = -0.25;
+            outakeS.setIndividualFlywheelSpeeds(outakeSpeed, outakeSpeed);
         }
         if (RobotContainer.manipController.getAButton() == true) {
-            outakeSpeed = 0.49 + MathUtil.clamp(outakeS.shooterPID.calculate(OutakeS.getAverageFlywheelSpeed(), 4000),-0.1,0.1);
+            outakeS.setRPM(4000);
         } else if (RobotContainer.manipController.getXButton() == true) {
-            outakeSpeed = 0.355 + MathUtil.clamp(outakeS.shooterPID.calculate(OutakeS.getAverageFlywheelSpeed(), 2700), -0.1, 0.1);
+            outakeS.setRPM(2700);
         }
-        outakeS.setIndividualFlywheelSpeeds(outakeSpeed, outakeSpeed);
     }
         
     }
