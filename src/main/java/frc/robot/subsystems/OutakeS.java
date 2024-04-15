@@ -98,8 +98,6 @@ public class OutakeS extends SubsystemBase {
         SmartDashboard.putNumber("Min Velocity", minVel);
         SmartDashboard.putNumber("Max Acceleration", maxAcc);
         SmartDashboard.putNumber("Allowed Closed Loop Error", allowedErr);
-        SmartDashboard.putNumber("Set Position", 0);
-        SmartDashboard.putNumber("Set Velocity", 0);
     }
 
     @Override
