@@ -47,10 +47,8 @@ public class FireShooter extends Command {
         if (timer.get() >= time) {
             isFinished = true;
         }
-        //output velocity and error to smartDashboard
-        SmartDashboard.putNumber("TOPWHEEL ERROR RPM", OutakeS.getTopRPMError(desRPM));
-        SmartDashboard.putNumber("BOTTOMWHEEL ERROR RPM", OutakeS.getTopRPMError(desRPM));
-
+        SmartDashboard.putNumber("Flywheel Top", OutakeS.topFlywheelEncoder.getVelocity());
+        SmartDashboard.putNumber("Flywheel Bottom ", OutakeS.bottomFlywheelEncoder.getVelocity());
     }
 
     @Override
