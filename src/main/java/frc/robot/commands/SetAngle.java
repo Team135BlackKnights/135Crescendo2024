@@ -43,6 +43,7 @@ public class SetAngle extends Command {
             intakeS.setPrimaryIntake(0.2);
         } else if (timer.get() >= 0.25  && Math.abs(intakeS.anglePidController.getPositionError()) < 10) {
             intakeS.setPrimaryIntake(0);
+        //  outakeS.setFF(.85); //may not be needed.
             outakeS.setRPM(6000);
         }
         if (RobotContainer.manipController.getLeftBumper() == true) {

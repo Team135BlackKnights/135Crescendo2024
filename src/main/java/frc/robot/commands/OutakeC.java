@@ -35,8 +35,10 @@ public class OutakeC extends Command {
             outakeS.setIndividualFlywheelSpeeds(outakeSpeed, outakeSpeed);
         }
         if (RobotContainer.manipController.getAButton() == true) {
+          //  outakeS.setFF(.49); //may not be needed.
             outakeS.setRPM(4000);
         } else if (RobotContainer.manipController.getXButton() == true) {
+            //  outakeS.setFF(.355); //may not be needed.
             outakeS.setRPM(2700);
         }
     }

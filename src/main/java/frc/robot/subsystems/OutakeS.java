@@ -176,6 +176,10 @@ public class OutakeS extends SubsystemBase {
         bottomPIDController.setReference(rpm, CANSparkMax.ControlType.kSmartVelocity);
         topPIDController.setReference(rpm, CANSparkMax.ControlType.kSmartVelocity); //we need to test SmartVelocity
     }
+    public void setFF(double FF){
+        bottomPIDController.setFF(FF);
+        topPIDController.setFF(FF);
+    }
     public void setRPMTop(double rpm){
         topPIDController.setReference(rpm, CANSparkMax.ControlType.kSmartVelocity);
     }

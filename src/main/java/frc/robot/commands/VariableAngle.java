@@ -46,12 +46,15 @@ public class VariableAngle extends Command {
         } else if (timer.get() >= 0.25 && Math.abs(intakeS.anglePidController.getPositionError()) < 10) {
             intakeS.setPrimaryIntake(0);
             if (SwerveS.getDistanceFromSpeakerUsingRobotPose() > 4.5) {
+            //  outakeS.setFF(.85); //may not be needed.
                 outakeS.setRPM(6000);
                 desiredRPM = 6000;
             } else if (SwerveS.getDistanceFromSpeakerUsingRobotPose() > 2.4) {
+            //  outakeS.setFF(.67); //may not be needed.
                 outakeS.setRPM(4750);
                 desiredRPM = 4750;
             } else {
+            //  outakeS.setFF(.46); //may not be needed.
                 outakeS.setRPM(3300);
                 desiredRPM = 3300;
             }

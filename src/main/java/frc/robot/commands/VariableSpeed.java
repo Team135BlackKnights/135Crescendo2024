@@ -43,6 +43,7 @@ public class VariableSpeed extends Command {
             intakeS.setPrimaryIntake(0.2);
         } else if (timer.get() >= 0.25) {
             intakeS.setPrimaryIntake(0);
+        //  outakeS.setFF(.49); //may not be needed.
             outakeS.setRPM(4000);
         }
         if (RobotContainer.manipController.getLeftBumper() == true) {
