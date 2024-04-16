@@ -35,20 +35,22 @@ public class FireShooter extends Command {
 
     @Override
     public void execute() {
-        if (SwerveS.getDistanceFromSpeakerUsingRobotPose() > 4.5) {
-            desRPM = 6000;
-        } else if (SwerveS.getDistanceFromSpeakerUsingRobotPose() > 2.4) {
-            desRPM = 4750;
-        } else {
-            desRPM = 3300;
+        if (AutonIntake.allClear){
+            if (SwerveS.getDistanceFromSpeakerUsingRobotPose() > 4.5) {
+                desRPM = 6000;
+            } else if (SwerveS.getDistanceFromSpeakerUsingRobotPose() > 2.4) {
+                desRPM = 4750;
+            } else {
+                desRPM = 3300;
+            }
+            outakeS.setRPM(desRPM);
+            //if the timer hasnt reached the time, essentially uses a pid loop with a feedforward constant (desired velocity/max velocity) to set the motor speed as a percentage
+            if (timer.get() >= time) {
+                isFinished = true;
+            }
+            SmartDashboard.putNumber("Flywheel Top", OutakeS.topFlywheelEncoder.getVelocity());
+            SmartDashboard.putNumber("Flywheel Bottom ", OutakeS.bottomFlywheelEncoder.getVelocity());
         }
-        outakeS.setRPM(desRPM);
-        //if the timer hasnt reached the time, essentially uses a pid loop with a feedforward constant (desired velocity/max velocity) to set the motor speed as a percentage
-        if (timer.get() >= time) {
-            isFinished = true;
-        }
-        SmartDashboard.putNumber("Flywheel Top", OutakeS.topFlywheelEncoder.getVelocity());
-        SmartDashboard.putNumber("Flywheel Bottom ", OutakeS.bottomFlywheelEncoder.getVelocity());
     }
 
     @Override

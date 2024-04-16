@@ -5,7 +5,6 @@
 package frc.robot;
 
 import frc.robot.Constants.HangConstants;
-import frc.robot.Constants.IntakeConstants;
 import frc.robot.commands.HangC;
 import frc.robot.commands.IntakeC;
 import frc.robot.commands.OutakeC;
@@ -41,9 +40,9 @@ public class RobotContainer {
   private final IntakeS intakeS = new IntakeS();
   private final OutakeS outakeS = new OutakeS();
   private final HangS hangS = new HangS();
+  @SuppressWarnings ("unused") //because all we do it make it run periodically. (LEDStripS Only)
   private final LEDStripS ledStripS = new LEDStripS();
   private final SendableChooser<Command> autoChooser;
-
   public static XboxController driveController = new XboxController(0);
   public static XboxController manipController = new XboxController(1);
 
@@ -60,10 +59,9 @@ public class RobotContainer {
     intakeS.setDefaultCommand(new IntakeC(intakeS));
     outakeS.setDefaultCommand(new OutakeC(outakeS));
     hangS.setDefaultCommand(new HangC(hangS));
-    
     NamedCommands.registerCommand("DeployIntake", new MoveIntake(intakeS));
     NamedCommands.registerCommand("Lock Onto April Tags", new AutoLock(swerveS));
-    NamedCommands.registerCommand("IntakeNote", new AutonIntake(intakeS));
+    NamedCommands.registerCommand("IntakeNote", new AutonIntake(intakeS,swerveS));
     NamedCommands.registerCommand("Shoot From Anywhere", new VariableAngle(intakeS, outakeS, true));
     NamedCommands.registerCommand("Hold Outake Ready", new FireShooter(outakeS));
 

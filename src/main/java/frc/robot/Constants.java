@@ -209,6 +209,14 @@ public final class Constants {
   public static class LimelightConstants{
     public static double limeLightAngleOffsetDegrees = 15,
     limelightLensHeightoffFloorInches = 22.5;
+    public static String limelightName = "limelight-swerve";
+    public static class PIDConstants{
+      public static double
+        P = 0.05,
+        I = 0,
+        D = 0,
+        intakeTaOffset = 1.16; //fiddle
+    }
   }
 
   public static class FieldConstants {

@@ -5,7 +5,7 @@
       "x": 1.3967320919036863,
       "y": 5.575539588928223
     },
-    "rotation": -2.9423001861598887e-27
+    "rotation": 5.013564742735525e-28
   },
   "command": {
     "type": "sequential",
@@ -50,19 +50,38 @@
           }
         },
         {
-          "type": "race",
+          "type": "named",
+          "data": {
+            "name": "IntakeNote"
+          }
+        },
+        {
+          "type": "deadline",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Shoot From Anywhere"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Lock Onto April Tags"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "sequential",
           "data": {
             "commands": [
               {
                 "type": "path",
                 "data": {
                   "pathName": "1690 Mode.2"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "IntakeNote"
                 }
               }
             ]
@@ -88,7 +107,7 @@
           }
         },
         {
-          "type": "race",
+          "type": "deadline",
           "data": {
             "commands": [
               {
@@ -100,7 +119,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "IntakeNote"
+                  "name": "Hold Outake Ready"
                 }
               }
             ]
@@ -126,7 +145,7 @@
           }
         },
         {
-          "type": "race",
+          "type": "deadline",
           "data": {
             "commands": [
               {
@@ -138,7 +157,26 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "IntakeNote"
+                  "name": "Hold Outake Ready"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "deadline",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Shoot From Anywhere"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Lock Onto April Tags"
                 }
               }
             ]
@@ -152,120 +190,6 @@
                 "type": "path",
                 "data": {
                   "pathName": "1690 Mode.5"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Hold Outake Ready"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "deadline",
-          "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "Shoot From Anywhere"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Lock Onto April Tags"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "race",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "1690 Mode.6"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "IntakeNote"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "deadline",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "1690 Mode.7"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Hold Outake Ready"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "deadline",
-          "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "Shoot From Anywhere"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Lock Onto April Tags"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "race",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "1690 Mode.8"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "IntakeNote"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "deadline",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "1690 Mode.9"
                 }
               },
               {

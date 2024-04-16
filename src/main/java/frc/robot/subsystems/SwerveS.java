@@ -82,7 +82,7 @@ public class SwerveS extends SubsystemBase {
     public static boolean fieldOriented = true;
     int periodicUpdateCycle;
 
-    public static NetworkTable limelight = NetworkTableInstance.getDefault().getTable("limelight-swerve");
+    public static NetworkTable limelight = NetworkTableInstance.getDefault().getTable(Constants.LimelightConstants.limelightName);
     static NetworkTableEntry tx = limelight.getEntry("tx");
     static double xError = tx.getDouble(0.0);
 
@@ -285,7 +285,7 @@ public class SwerveS extends SubsystemBase {
         
         //computes latency
         
-        poseEstimate = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight-swerve");
+        poseEstimate = LimelightHelpers.getBotPoseEstimate_wpiBlue(Constants.LimelightConstants.limelightName);
         int count = poseEstimate.tagCount;
         Pose2d poseLimelight = poseEstimate.pose;
         double latency = Timer.getFPGATimestamp() - (limelight.getEntry("tl").getDouble(0.0)/1000.0) - (limelight.getEntry("cl").getDouble(0.0)/1000.0);
