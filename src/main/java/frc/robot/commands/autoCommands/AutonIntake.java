@@ -2,7 +2,6 @@ package frc.robot.commands.autoCommands;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -46,7 +45,6 @@ public class AutonIntake extends Command {
         //when done, set timer.start().. and delayTimer.stop();
         intakeS.deployIntake(1);
 
-        //TODO: limelight
         double tx = SwerveS.getXError();
         boolean tv = LimelightHelpers.getTV(Constants.LimelightConstants.limelightName);
         double ta = LimelightHelpers.getTA(Constants.LimelightConstants.limelightName);
