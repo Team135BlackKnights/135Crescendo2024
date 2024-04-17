@@ -1,17 +1,13 @@
 package frc.robot.commands.autoCommands;
 
 
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants;
-import frc.robot.subsystems.IntakeS;
+
 import frc.robot.subsystems.OutakeS;
 import frc.robot.subsystems.SwerveS;
 
-import com.revrobotics.CANSparkMax;
 
 public class FireShooter extends Command {
     private final OutakeS outakeS;
