@@ -40,7 +40,7 @@ public class RobotContainer {
   private final IntakeS intakeS = new IntakeS();
   private final OutakeS outakeS = new OutakeS();
   private final HangS hangS = new HangS();
-  @SuppressWarnings ("unused") //because all we do it make it run periodically. (LEDStripS Only)
+  @SuppressWarnings("unused") //only periodic ledStrip is used, so don't care.
   private final LEDStripS ledStripS = new LEDStripS();
   private final SendableChooser<Command> autoChooser;
   public static XboxController driveController = new XboxController(0);
