@@ -1,6 +1,5 @@
 package frc.robot.commands.autoCommands;
 
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -16,7 +15,6 @@ public class AutonIntake extends Command {
     private boolean isFinished = false;
     private boolean loaded = false;
     public static boolean allClear = false;
-    private PIDController notePIDController;
     private ChassisSpeeds speeds;
     Timer timer = new Timer();
     Timer delayTimer = new Timer();
@@ -31,7 +29,6 @@ public class AutonIntake extends Command {
     public void initialize() {
         isFinished = false;
         LimelightHelpers.setPipelineIndex(Constants.LimelightConstants.limelightName, 2);
-        notePIDController = new PIDController(Constants.LimelightConstants.PIDConstants.P,Constants.LimelightConstants.PIDConstants.I,Constants.LimelightConstants.PIDConstants.D);
         delayTimer.reset();
         delayTimer.start();
         allClear = false;
@@ -47,12 +44,11 @@ public class AutonIntake extends Command {
 
         double tx = SwerveS.getXError();
         boolean tv = LimelightHelpers.getTV(Constants.LimelightConstants.limelightName);
-        double ta = LimelightHelpers.getTA(Constants.LimelightConstants.limelightName);
         if (tv == false && loaded==false) {
         // We don't see the target, seek for the target by spinning in place at a safe speed.
         speeds = new ChassisSpeeds(0,0,0.2*Constants.DriveConstants.kMaxTurningSpeedRadPerSec);
         } else if (loaded==false) {
-            double moveSpeed = notePIDController.calculate(ta,Constants.LimelightConstants.PIDConstants.intakeTaOffset);
+            double moveSpeed = Constants.IntakeConstants.macroMoveSpeed * Constants.DriveConstants.kMaxSpeedMetersPerSecond;
             speeds = new ChassisSpeeds(moveSpeed,0,swerveS.autoLockController.calculate(tx,0)*Constants.DriveConstants.kMaxTurningSpeedRadPerSec);
         }
         swerveS.setChassisSpeeds(speeds);

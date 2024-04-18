@@ -50,7 +50,8 @@ public final class Constants {
       absIntakeEncoderConversionFactor = 360,
       primaryIntakeGearRatio = 1/4.5,
       deployIntakeInnerBound = 0,
-      deployIntakeOuterBound = 90;
+      deployIntakeOuterBound = 90,
+      macroMoveSpeed = .5;
 
     public static boolean
       primaryIntakeReversed = true,
@@ -217,13 +218,6 @@ public final class Constants {
     public static double limeLightAngleOffsetDegrees = 15,
     limelightLensHeightoffFloorInches = 22.5;
     public static String limelightName = "limelight-swerve";
-    public static class PIDConstants{
-      public static double
-        P = 0.05,
-        I = 0,
-        D = 0,
-        intakeTaOffset = 1.16; //fiddle
-    }
   }
   public static class VisionConstants{ 
     //These are all placeholders
@@ -241,17 +235,13 @@ public final class Constants {
         X = center to limelight tube
         Y = center to right chassis rail
         Z = floor to camera 
-        OR 
-        X = center to right chsasis rail
-        Y = center to limelight tube
-        Z = floor to camera
       */
       leftCamTranslation3d = new Translation3d(0, 0, 0),
       backCamTranslation3d = new Translation3d(0,0,0);
     //Pitches of camera, in DEGREES, positive means UPWARD angle
     public static int 
       frontCamPitch = 15,
-      rightCamPitch = 15,
+      rightCamPitch = 15, //MUST GET
       leftCamPitch = 15,
       backCamPitch = 15;    
   }
