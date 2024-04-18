@@ -223,25 +223,25 @@ public final class Constants {
     //These are all placeholders
     //Camera names, from photonVision web interface
     public static String 
-      frontCamName = "FrontCamPlaceholder",
-      backCamName = "BackCamPlaceholder",
-      leftCamName = "LeftCamPlaceholder",
-      rightCamName = "RightCamPlaceholder";
+      frontCamName = "Front_Camera",
+      backCamName = "Back_Camera",
+      leftCamName = "Left_Camera",
+      rightCamName = "Right_Camera";
     //offset of each cam from robot center, in meters
     public static Translation3d 
-      frontCamTranslation3d = new Translation3d(0, 0, 0),
-      rightCamTranslation3d = new Translation3d(0,0,0), 
+      frontCamTranslation3d = new Translation3d(Units.inchesToMeters(0), Units.inchesToMeters(0), Units.inchesToMeters(0)),
+      rightCamTranslation3d = new Translation3d(Units.inchesToMeters(12.25),Units.inchesToMeters(-14.75),Units.inchesToMeters(19)), 
       /*For right cam ^
         X = center to limelight tube
         Y = center to right chassis rail
         Z = floor to camera 
       */
-      leftCamTranslation3d = new Translation3d(0, 0, 0),
-      backCamTranslation3d = new Translation3d(0,0,0);
+      leftCamTranslation3d = new Translation3d(Units.inchesToMeters(0), Units.inchesToMeters(0), Units.inchesToMeters(0)),
+      backCamTranslation3d = new Translation3d(Units.inchesToMeters(15.75),Units.inchesToMeters(0),Units.inchesToMeters(25));
     //Pitches of camera, in DEGREES, positive means UPWARD angle
     public static int 
       frontCamPitch = 15,
-      rightCamPitch = 15, //MUST GET
+      rightCamPitch = 32, //MUST GET
       leftCamPitch = 15,
       backCamPitch = 15;    
   }
@@ -267,5 +267,4 @@ public final class Constants {
     public static double variableAngleDistance = 0;
     public static double angleOutputDegrees = 0;
   }
-  
 }
