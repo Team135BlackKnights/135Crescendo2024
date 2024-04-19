@@ -34,10 +34,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.LimelightHelpers;
 
-import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.FieldConstants;
-import frc.robot.Constants.LimelightConstants;
-import frc.robot.Constants.OutakeConstants;
 import frc.robot.LimelightHelpers.PoseEstimate;
 
 
@@ -102,7 +99,6 @@ public class SwerveS extends SubsystemBase {
 
     public static boolean redIsAlliance = true;
 
-    static double distance = 0;
 
     
 
@@ -177,9 +173,9 @@ public class SwerveS extends SubsystemBase {
         }
         
 
-        if(periodicUpdateCycle%5 == 0){
+        /*if(periodicUpdateCycle%5 == 0){
             updatePoseEstimatorWithVisionBotPose();
-        }
+        }*/
         redIsAlliance = getAlliance();
         //puts values to smartDashboard
         SmartDashboard.putNumber("Robot Heading", getRotation2d().getDegrees());
@@ -193,12 +189,7 @@ public class SwerveS extends SubsystemBase {
         SmartDashboard.putNumber("Position X (getPose)", getPose().getX());
         SmartDashboard.putNumber("Position Y (getPose)", getPose().getY());
         SmartDashboard.putNumber("Robot Heading (getPose)", getPose().getRotation().getDegrees());
-        SmartDashboard.putNumber("April Tag Distance", getDistanceFromSpeakerInMeters());
-        SmartDashboard.putNumber("Odometry Distance", getDistanceFromSpeakerUsingRobotPose());
-
-        SmartDashboard.putNumber("Desired Intake Lower Bound", getDesiredShooterLowerBound());
-        SmartDashboard.putNumber("Desired Intake Upper Bound", getDesiredShooterUpperBound());
-        SmartDashboard.putNumber("Desired Intake Angle", getDesiredShooterAngle());
+        
 
 
         xError = tx.getDouble(0.0);
@@ -330,14 +321,10 @@ public class SwerveS extends SubsystemBase {
             return;
         }
        
-        //sanity check, ends if we're getting some unreasonable value (or aprilTags not detected)
         
 
         }
-        /*computes distance from current pose to limelight pose
-         * Note: I'm pretty sure pathPlanner (and by extension our odometry)'s coordinate system has its origin at the blue side
-         * To avoid issues, we call the blue origin based
-        */
+
 
         
     
@@ -359,90 +346,7 @@ public class SwerveS extends SubsystemBase {
 
 
 
-    public static double getDistanceFromSpeakerInMeters(){
-         //resets value so it doesn't output last value
-
-        /* if apriltag is detected, uses formula given here https://docs.limelightvision.io/docs/docs-limelight/tutorials/tutorial-estimating-distance
-        formula is d =(h2-h1)/tan(h2+h1)*/
-
-        if (aprilTagVisible()){
-        
-            // computing the angle
-            double theta = Units.degreesToRadians(LimelightConstants.limeLightAngleOffsetDegrees+limelight.getEntry("ty").getDouble(0.0));
-        
-            //computes distance
-            distance = Units.inchesToMeters(FieldConstants.targetHeightoffFloorInches-LimelightConstants.limelightLensHeightoffFloorInches)/Math.tan(theta);
-        }
-        return distance;
-    }
-
-    public static double getDesiredShooterUpperBound() {
-        double upperBoundHeight = 0;
-        double upperBoundDistance = 0;
-        if (getDistanceFromSpeakerUsingRobotPose() > 5) {
-            upperBoundHeight = 1.09*FieldConstants.speakerUpperLipHeight-FieldConstants.noteHeight-OutakeConstants.shooterHeight;
-            upperBoundDistance = getDistanceFromSpeakerUsingRobotPose() - FieldConstants.speakerOpeningDepth - DriveConstants.kChassisLength;
-        } else if (getDistanceFromSpeakerUsingRobotPose() > 4) {
-            upperBoundHeight = 1.02*FieldConstants.speakerUpperLipHeight-FieldConstants.noteHeight-OutakeConstants.shooterHeight;
-            upperBoundDistance = getDistanceFromSpeakerUsingRobotPose() - FieldConstants.speakerOpeningDepth - DriveConstants.kChassisLength;
-        } else if (getDistanceFromSpeakerUsingRobotPose() > 3) {
-            upperBoundHeight = 0.916*FieldConstants.speakerUpperLipHeight-FieldConstants.noteHeight-OutakeConstants.shooterHeight;
-            upperBoundDistance = getDistanceFromSpeakerUsingRobotPose() - FieldConstants.speakerOpeningDepth - DriveConstants.kChassisLength;
-        } else if (getDistanceFromSpeakerUsingRobotPose() > 2.4) {
-            upperBoundHeight = 0.82*FieldConstants.speakerUpperLipHeight-FieldConstants.noteHeight-OutakeConstants.shooterHeight;
-            upperBoundDistance = getDistanceFromSpeakerUsingRobotPose() - FieldConstants.speakerOpeningDepth - DriveConstants.kChassisLength;
-        } else {
-            return 44;
-        }
-        /* if (getDistanceFromSpeakerInMeters() > 6.5) {
-            upperBoundHeight = 1.236*FieldConstants.speakerUpperLipHeight-FieldConstants.noteHeight-Units.inchesToMeters(LimelightConstants.limelightLensHeightoffFloorInches);
-            upperBoundDistance = 0.764*getDistanceFromSpeakerInMeters() - FieldConstants.speakerOpeningDepth + OutakeConstants.limelightToShooter;
-        } else if (getDistanceFromSpeakerInMeters() > 5) {
-            upperBoundHeight = 1.2*FieldConstants.speakerUpperLipHeight-FieldConstants.noteHeight-Units.inchesToMeters(LimelightConstants.limelightLensHeightoffFloorInches);
-            upperBoundDistance = 0.8*getDistanceFromSpeakerInMeters() - FieldConstants.speakerOpeningDepth + OutakeConstants.limelightToShooter;
-        } else {
-            upperBoundHeight = 1.12*FieldConstants.speakerUpperLipHeight-FieldConstants.noteHeight-Units.inchesToMeters(LimelightConstants.limelightLensHeightoffFloorInches);
-            upperBoundDistance = 0.87*getDistanceFromSpeakerInMeters() - FieldConstants.speakerOpeningDepth + OutakeConstants.limelightToShooter;
-        } */
-        return Units.radiansToDegrees(Math.atan(upperBoundHeight/upperBoundDistance));
-    }
-
-    public static double getDesiredShooterLowerBound() {
-        double lowerBoundHeight = 0;
-        double lowerBoundDistance = 0;
-        if (getDistanceFromSpeakerUsingRobotPose() > 5) {
-            lowerBoundHeight = 1.1*FieldConstants.speakerLowerLipHeight + FieldConstants.noteHeight-OutakeConstants.shooterHeight;
-            lowerBoundDistance = getDistanceFromSpeakerUsingRobotPose() - DriveConstants.kChassisLength;
-        } else if (getDistanceFromSpeakerUsingRobotPose() > 4) {
-            lowerBoundHeight = 1.036*FieldConstants.speakerLowerLipHeight + FieldConstants.noteHeight-OutakeConstants.shooterHeight;
-            lowerBoundDistance = getDistanceFromSpeakerUsingRobotPose() - DriveConstants.kChassisLength;
-        } else if (getDistanceFromSpeakerUsingRobotPose() > 3) {
-            lowerBoundHeight = 0.96*FieldConstants.speakerLowerLipHeight + FieldConstants.noteHeight-OutakeConstants.shooterHeight;
-            lowerBoundDistance = getDistanceFromSpeakerUsingRobotPose() - DriveConstants.kChassisLength;
-        } else if (getDistanceFromSpeakerUsingRobotPose() > 2.4) {
-            lowerBoundHeight = 0.95*FieldConstants.speakerLowerLipHeight + FieldConstants.noteHeight-OutakeConstants.shooterHeight;
-            lowerBoundDistance = getDistanceFromSpeakerUsingRobotPose() - DriveConstants.kChassisLength;
-        } else {
-            return 42;
-        }
-        /* if (getDistanceFromSpeakerInMeters() > 6) {
-            lowerBoundHeight = 1.242*FieldConstants.speakerLowerLipHeight+FieldConstants.noteHeight-Units.inchesToMeters(LimelightConstants.limelightLensHeightoffFloorInches);
-            lowerBoundDistance = 0.758*getDistanceFromSpeakerInMeters() + OutakeConstants.limelightToShooter;
-        } else if (getDistanceFromSpeakerInMeters() > 4) {
-            lowerBoundHeight = 1.2*FieldConstants.speakerLowerLipHeight+FieldConstants.noteHeight-Units.inchesToMeters(LimelightConstants.limelightLensHeightoffFloorInches);
-            lowerBoundDistance = 0.8*getDistanceFromSpeakerInMeters() + OutakeConstants.limelightToShooter;
-        } else {
-            lowerBoundHeight = 1.12*FieldConstants.speakerLowerLipHeight+FieldConstants.noteHeight-Units.inchesToMeters(LimelightConstants.limelightLensHeightoffFloorInches);
-            lowerBoundDistance = 0.87*getDistanceFromSpeakerInMeters() + OutakeConstants.limelightToShooter;
-        } */
-        return Units.radiansToDegrees(Math.atan(lowerBoundHeight/lowerBoundDistance));
-    }
-
-    public static double getDesiredShooterAngle() {
-        double angle = (getDesiredShooterUpperBound() + getDesiredShooterLowerBound())/2;
-        if (angle > 42) angle = 43;
-        return angle;
-    }
+  
 
     public InstantCommand toggleAutoLockCommand() {
         return new InstantCommand(this::toggleAutoLock, this);
