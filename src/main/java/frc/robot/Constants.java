@@ -237,7 +237,7 @@ public final class Constants {
         Z = floor to camera 
       */
       leftCamTranslation3d = new Translation3d(Units.inchesToMeters(0), Units.inchesToMeters(0), Units.inchesToMeters(0)),
-      backCamTranslation3d = new Translation3d(Units.inchesToMeters(15.75),Units.inchesToMeters(0),Units.inchesToMeters(25));
+      backCamTranslation3d = new Translation3d(Units.inchesToMeters(12.75),Units.inchesToMeters(0),Units.inchesToMeters(25));
     //Pitches of camera, in DEGREES, positive means UPWARD angle
     public static int 
       frontCamPitch = 15,

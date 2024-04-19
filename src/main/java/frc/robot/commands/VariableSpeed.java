@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotContainer;
+import frc.robot.subsystems.CameraS;
 import frc.robot.subsystems.IntakeS;
 import frc.robot.subsystems.OutakeS;
 import frc.robot.subsystems.SwerveS;
@@ -49,7 +50,7 @@ public class VariableSpeed extends Command {
             intakeS.setPrimaryIntake(-0.5);
             delay.start();
         }
-        if (SwerveS.robotInRange() && OutakeS.getBottomRPMError(4000) < 100 && OutakeS.getTopRPMError(4000) < 100 && timer.get() >= 0.3 && Math.abs(SwerveS.getXError()) < 3 && RobotContainer.manipController.getAButton() == false && IntakeS.getIntakePosition() >= IntakeConstants.deployIntakeOuterBound-2) {
+        if (CameraS.robotInRange() && OutakeS.getBottomRPMError(4000) < 100 && OutakeS.getTopRPMError(4000) < 100 && timer.get() >= 0.3 && Math.abs(SwerveS.getXError()) < 3 && RobotContainer.manipController.getAButton() == false && IntakeS.getIntakePosition() >= IntakeConstants.deployIntakeOuterBound-2) {
             intakeS.setPrimaryIntake(-0.5);
             delay.start();
         }

@@ -4,7 +4,7 @@ package frc.robot.commands.autoCommands;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-
+import frc.robot.subsystems.CameraS;
 import frc.robot.subsystems.OutakeS;
 import frc.robot.subsystems.SwerveS;
 
@@ -32,9 +32,9 @@ public class FireShooter extends Command {
     @Override
     public void execute() {
         if (AutonIntake.allClear){
-            if (SwerveS.getDistanceFromSpeakerUsingRobotPose() > 4.5) {
+            if (CameraS.getDistanceFromSpeakerUsingRobotPose() > 4.5) {
                 desRPM = 6000;
-            } else if (SwerveS.getDistanceFromSpeakerUsingRobotPose() > 2.4) {
+            } else if (CameraS.getDistanceFromSpeakerUsingRobotPose() > 2.4) {
                 desRPM = 4750;
             } else {
                 desRPM = 3300;

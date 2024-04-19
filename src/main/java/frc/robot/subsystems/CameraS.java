@@ -19,6 +19,7 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.FieldConstants;
@@ -119,7 +120,7 @@ public static boolean aprilTagVisible() {
                         var estPose = est.estimatedPose.toPose2d();
                         // Change our trust in the measurement based on the tags we can see
                         var estStdDevs = getEstimationStdDevs(estPose,cEstimator,cCam);
-    
+                        SmartDashboard.putString("CAMERAUPDATE", cCam.getName());
                         SwerveS.addVisionMeasurement(est.estimatedPose.toPose2d(), est.timestampSeconds, estStdDevs);
                     });
         }

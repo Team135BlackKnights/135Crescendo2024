@@ -34,7 +34,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.LimelightHelpers;
 
-import frc.robot.Constants.FieldConstants;
 import frc.robot.LimelightHelpers.PoseEstimate;
 
 
@@ -324,24 +323,6 @@ public class SwerveS extends SubsystemBase {
         
 
         }
-
-
-        
-    
-
-        public static double getDistanceFromSpeakerUsingRobotPose() {
-            if (getAlliance()) {
-                return robotPosition.getTranslation().getDistance(FieldConstants.redSpeaker);
-            } else {
-                return robotPosition.getTranslation().getDistance(FieldConstants.blueSpeaker);
-            }
-        }
-        
-    
-    public static boolean robotInRange() {
-        return getDistanceFromSpeakerUsingRobotPose() > 1.9 && getDistanceFromSpeakerUsingRobotPose() < 2.2;
-    }
-
 
 
 
