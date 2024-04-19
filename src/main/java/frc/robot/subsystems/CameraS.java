@@ -8,6 +8,7 @@ import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import org.photonvision.simulation.VisionSystemSim;
 import org.photonvision.targeting.PhotonPipelineResult;
+import org.photonvision.targeting.PhotonTrackedTarget;
 
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
@@ -17,8 +18,14 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.Constants.FieldConstants;
+import frc.robot.Constants.OutakeConstants;
+import frc.robot.Constants.VisionConstants;
+import frc.robot.Constants.DriveConstants;
+
 public class CameraS extends SubsystemBase {
     public VisionSystemSim visionSim;
     public final PhotonPoseEstimator frontEstimator;
@@ -32,19 +39,21 @@ public class CameraS extends SubsystemBase {
         rightLastEstTimestamp = 0f,
         leftLastEstTimestamp = 0f,
         backLastEstTimestamp = 0f;
-    private PhotonCamera frontCam;
-    private PhotonCamera rightCam;
-    private PhotonCamera leftCam;
-    private PhotonCamera backCam;
+    public static double backCamXError = 0f;
+    private static PhotonCamera frontCam;
+    private static PhotonCamera rightCam;
+    private static PhotonCamera leftCam;
+    private static PhotonCamera backCam;
+    static double distance = 0;
     public CameraS() {
      //   frontCam = new PhotonCamera(Constants.VisionConstants.frontCamName);
         rightCam = new PhotonCamera(Constants.VisionConstants.rightCamName);
    //     leftCam = new PhotonCamera(Constants.VisionConstants.leftCamName);
-    //    backCam = new PhotonCamera(Constants.VisionConstants.backCamName);
+        backCam = new PhotonCamera(Constants.VisionConstants.backCamName);
     //    frontCam.setPipelineIndex(0);
         rightCam.setPipelineIndex(0);
    //     leftCam.setPipelineIndex(0);
-    //    backCam.setPipelineIndex(0);
+        backCam.setPipelineIndex(0);
         //POSITION CAMERAS (IMPORTANT)
         Translation3d frontPos = Constants.VisionConstants.frontCamTranslation3d;
         Translation3d rightPos = Constants.VisionConstants.rightCamTranslation3d;
@@ -68,9 +77,13 @@ public class CameraS extends SubsystemBase {
         backEstimator = new PhotonPoseEstimator(Constants.FieldConstants.kTagLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, backCam,robotToBack);
         backEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);   
       //  camEstimates = new PhotonPoseEstimator[]{frontEstimator,rightEstimator,leftEstimator,backEstimator};
-        camEstimates = new PhotonPoseEstimator[]{rightEstimator};
-        cams = new PhotonCamera[]{frontCam,rightCam,leftCam,backCam};
+        camEstimates = new PhotonPoseEstimator[]{rightEstimator,backEstimator};
+        //cams = new PhotonCamera[]{frontCam,rightCam,leftCam,backCam};
+        cams = new PhotonCamera[]{rightCam,backCam};
         
+}
+public static boolean aprilTagVisible() {
+    return backCam.getLatestResult().hasTargets();
 }
     public PhotonPipelineResult getLatestResult(PhotonCamera camera) {
         return camera.getLatestResult();
@@ -136,4 +149,103 @@ public class CameraS extends SubsystemBase {
 
         return estStdDevs;
     }
+    public static double getDistanceFromSpeakerUsingRobotPose() {
+        if (SwerveS.getAlliance()) {
+            return SwerveS.robotPosition.getTranslation().getDistance(Constants.FieldConstants.redSpeaker);
+        } else {
+            return SwerveS.robotPosition.getTranslation().getDistance(Constants.FieldConstants.blueSpeaker);
+        }
+    }
+    
+
+public static boolean robotInRange() {
+    return getDistanceFromSpeakerUsingRobotPose() > 1.9 && getDistanceFromSpeakerUsingRobotPose() < 2.2;
+}
+    public static double getDistanceFromSpeakerInMeters(){
+        //resets value so it doesn't output last value
+
+       /* if apriltag is detected, uses formula given here https://docs.limelightvision.io/docs/docs-limelight/tutorials/tutorial-estimating-distance
+       formula is d =(h2-h1)/tan(h2+h1)*/
+
+       if (aprilTagVisible()){
+        PhotonTrackedTarget target = backCam.getLatestResult().getBestTarget();
+
+           // computing the angle
+           double theta = Units.degreesToRadians(VisionConstants.backCamPitch + target.getBestCameraToTarget().getY()); // plus ty
+           
+       
+           //computes distance
+           distance = Units.inchesToMeters(FieldConstants.targetHeightoffFloorInches-VisionConstants.backCamTranslation3d.getZ())/Math.tan(theta);
+       }
+       else{return 0.0;}
+       return distance;
+   }
+
+   public static double getDesiredShooterUpperBound() {
+       double upperBoundHeight = 0;
+       double upperBoundDistance = 0;
+       if (getDistanceFromSpeakerUsingRobotPose() > 5) {
+           upperBoundHeight = 1.09*FieldConstants.speakerUpperLipHeight-FieldConstants.noteHeight-OutakeConstants.shooterHeight;
+           upperBoundDistance = getDistanceFromSpeakerUsingRobotPose() - FieldConstants.speakerOpeningDepth - DriveConstants.kChassisLength;
+       } else if (getDistanceFromSpeakerUsingRobotPose() > 4) {
+           upperBoundHeight = 1.02*FieldConstants.speakerUpperLipHeight-FieldConstants.noteHeight-OutakeConstants.shooterHeight;
+           upperBoundDistance = getDistanceFromSpeakerUsingRobotPose() - FieldConstants.speakerOpeningDepth - DriveConstants.kChassisLength;
+       } else if (getDistanceFromSpeakerUsingRobotPose() > 3) {
+           upperBoundHeight = 0.916*FieldConstants.speakerUpperLipHeight-FieldConstants.noteHeight-OutakeConstants.shooterHeight;
+           upperBoundDistance = getDistanceFromSpeakerUsingRobotPose() - FieldConstants.speakerOpeningDepth - DriveConstants.kChassisLength;
+       } else if (getDistanceFromSpeakerUsingRobotPose() > 2.4) {
+           upperBoundHeight = 0.82*FieldConstants.speakerUpperLipHeight-FieldConstants.noteHeight-OutakeConstants.shooterHeight;
+           upperBoundDistance = getDistanceFromSpeakerUsingRobotPose() - FieldConstants.speakerOpeningDepth - DriveConstants.kChassisLength;
+       } else {
+           return 44;
+       }
+       /* if (getDistanceFromSpeakerInMeters() > 6.5) {
+           upperBoundHeight = 1.236*FieldConstants.speakerUpperLipHeight-FieldConstants.noteHeight-Units.inchesToMeters(LimelightConstants.limelightLensHeightoffFloorInches);
+           upperBoundDistance = 0.764*getDistanceFromSpeakerInMeters() - FieldConstants.speakerOpeningDepth + OutakeConstants.limelightToShooter;
+       } else if (getDistanceFromSpeakerInMeters() > 5) {
+           upperBoundHeight = 1.2*FieldConstants.speakerUpperLipHeight-FieldConstants.noteHeight-Units.inchesToMeters(LimelightConstants.limelightLensHeightoffFloorInches);
+           upperBoundDistance = 0.8*getDistanceFromSpeakerInMeters() - FieldConstants.speakerOpeningDepth + OutakeConstants.limelightToShooter;
+       } else {
+           upperBoundHeight = 1.12*FieldConstants.speakerUpperLipHeight-FieldConstants.noteHeight-Units.inchesToMeters(LimelightConstants.limelightLensHeightoffFloorInches);
+           upperBoundDistance = 0.87*getDistanceFromSpeakerInMeters() - FieldConstants.speakerOpeningDepth + OutakeConstants.limelightToShooter;
+       } */
+       return Units.radiansToDegrees(Math.atan(upperBoundHeight/upperBoundDistance));
+   }
+
+   public static double getDesiredShooterLowerBound() {
+       double lowerBoundHeight = 0;
+       double lowerBoundDistance = 0;
+       if (getDistanceFromSpeakerUsingRobotPose() > 5) {
+           lowerBoundHeight = 1.1*FieldConstants.speakerLowerLipHeight + FieldConstants.noteHeight-OutakeConstants.shooterHeight;
+           lowerBoundDistance = getDistanceFromSpeakerUsingRobotPose() - DriveConstants.kChassisLength;
+       } else if (getDistanceFromSpeakerUsingRobotPose() > 4) {
+           lowerBoundHeight = 1.036*FieldConstants.speakerLowerLipHeight + FieldConstants.noteHeight-OutakeConstants.shooterHeight;
+           lowerBoundDistance = getDistanceFromSpeakerUsingRobotPose() - DriveConstants.kChassisLength;
+       } else if (getDistanceFromSpeakerUsingRobotPose() > 3) {
+           lowerBoundHeight = 0.96*FieldConstants.speakerLowerLipHeight + FieldConstants.noteHeight-OutakeConstants.shooterHeight;
+           lowerBoundDistance = getDistanceFromSpeakerUsingRobotPose() - DriveConstants.kChassisLength;
+       } else if (getDistanceFromSpeakerUsingRobotPose() > 2.4) {
+           lowerBoundHeight = 0.95*FieldConstants.speakerLowerLipHeight + FieldConstants.noteHeight-OutakeConstants.shooterHeight;
+           lowerBoundDistance = getDistanceFromSpeakerUsingRobotPose() - DriveConstants.kChassisLength;
+       } else {
+           return 42;
+       }
+       /* if (getDistanceFromSpeakerInMeters() > 6) {
+           lowerBoundHeight = 1.242*FieldConstants.speakerLowerLipHeight+FieldConstants.noteHeight-Units.inchesToMeters(LimelightConstants.limelightLensHeightoffFloorInches);
+           lowerBoundDistance = 0.758*getDistanceFromSpeakerInMeters() + OutakeConstants.limelightToShooter;
+       } else if (getDistanceFromSpeakerInMeters() > 4) {
+           lowerBoundHeight = 1.2*FieldConstants.speakerLowerLipHeight+FieldConstants.noteHeight-Units.inchesToMeters(LimelightConstants.limelightLensHeightoffFloorInches);
+           lowerBoundDistance = 0.8*getDistanceFromSpeakerInMeters() + OutakeConstants.limelightToShooter;
+       } else {
+           lowerBoundHeight = 1.12*FieldConstants.speakerLowerLipHeight+FieldConstants.noteHeight-Units.inchesToMeters(LimelightConstants.limelightLensHeightoffFloorInches);
+           lowerBoundDistance = 0.87*getDistanceFromSpeakerInMeters() + OutakeConstants.limelightToShooter;
+       } */
+       return Units.radiansToDegrees(Math.atan(lowerBoundHeight/lowerBoundDistance));
+   }
+
+   public static double getDesiredShooterAngle() {
+       double angle = (getDesiredShooterUpperBound() + getDesiredShooterLowerBound())/2;
+       if (angle > 42) angle = 43;
+       return angle;
+   }
 }

@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotContainer;
+import frc.robot.subsystems.CameraS;
 import frc.robot.subsystems.IntakeS;
 import frc.robot.subsystems.OutakeS;
 import frc.robot.subsystems.SwerveS;
@@ -39,7 +40,7 @@ public class VariableAngle extends Command {
             isFinished = true;
         }
 
-        double output = intakeS.anglePidController.calculate(intakeS.getIntakeAngle(), SwerveS.getDesiredShooterAngle());
+        double output = intakeS.anglePidController.calculate(intakeS.getIntakeAngle(), CameraS.getDesiredShooterAngle());
 
         if (timer.get() < 0.15 && !isAutonomous) {
             intakeS.setPrimaryIntake(0.2);
