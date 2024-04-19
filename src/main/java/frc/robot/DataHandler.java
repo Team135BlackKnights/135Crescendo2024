@@ -1,5 +1,6 @@
 package frc.robot;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.Scanner;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
@@ -23,6 +24,25 @@ import java.io.IOError;
     public static String diskName= "/U";
     public static String directoryName = "";
     public static File newFileName;
+    public static File createdFile;
+    public static File directory;
+    public static boolean isUSBConnected = true;
+    public static boolean fileCreated = false;
+    static int debounce = 0;
+
+    /**
+     * Creates a new Streamwriter, designed to be contingent in case of USB disconnection and reconnection
+     */
+
+    public static void createNewWriter(){
+        try {
+            outputStream = new FileOutputStream(createdFile);
+        } catch (FileNotFoundException e) {
+    
+            e.printStackTrace();
+        }
+            outputStreamWriter = new OutputStreamWriter(outputStream);
+        }
 
 
     /**
@@ -40,7 +60,7 @@ import java.io.IOError;
 
         //Creates the logs file in the specified drive if none is there
         directoryName = diskName + "/Logs";
-        File directory = new File(directoryName);
+        directory = new File(directoryName);
 
         //This code isn't TECHNICALLY needed to make the directory (it auto checks if a folder is there), but i would like to make sure this is here just in case something happens
         if (!directory.exists()){
@@ -51,7 +71,7 @@ import java.io.IOError;
         try {  
             //Creates new file in the /U/Logs folder 
             String fileName = directoryName + "/Latest.txt";
-            File createdFile = new File(fileName);
+            createdFile = new File(fileName);
             
             //if a file named "latest" exists, rename "latest" to the id in its first line
             if (createdFile.exists()){
@@ -67,6 +87,7 @@ import java.io.IOError;
                 //Create the new file object
                 File newFileName = new File(directoryName + "/Log" + id + ".txt");
                 createdFile.renameTo(newFileName);
+                fileCreated = true;
             } 
 
             //Creates an actual file in the directory
@@ -76,8 +97,7 @@ import java.io.IOError;
             id +=1; 
             
             //Makes the streamwriters for the written log file
-            outputStream = new FileOutputStream(createdFile);
-            outputStreamWriter = new OutputStreamWriter(outputStream);
+            createNewWriter();
             outputStreamWriter.write(id + "\r\n");
             outputStreamWriter.flush();
         } 
@@ -91,6 +111,8 @@ import java.io.IOError;
             e.printStackTrace();
         }
     }
+
+    
 
 
     /**
@@ -160,6 +182,34 @@ import java.io.IOError;
         
         catch (IOError e){
             e.printStackTrace();
+        }
+    }
+
+    /**
+     * Checks the USB connection status of the RIO by making sure the directory still exists 
+     */
+    public static void pingUSB(){
+        isUSBConnected = directory.exists();
+    }
+
+    /** Updates the state of the handler, and checks if the USB has been disconnected. Call this in the periodic function of the file you called createNewWriter in.
+     * 
+     */
+    public static void updateHandlerState(){
+        pingUSB();
+        //If the USB is disconnected and it hasn't closed the writer yet, close it
+        if (isUSBConnected == false && debounce == 0){
+            closeWriter();
+            debounce = -1;
+        }
+        //If the USB is reconnected and the writer is closed, open a new one
+        else if (isUSBConnected == true && debounce == -1){
+            createNewWriter();
+            debounce = 0;
+        }
+        //If neither condition is met, do nothing.
+        else {
+            return;
         }
     }
 }
