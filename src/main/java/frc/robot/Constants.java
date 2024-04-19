@@ -230,7 +230,7 @@ public final class Constants {
     //offset of each cam from robot center, in meters
     public static Translation3d 
       frontCamTranslation3d = new Translation3d(0, 0, 0),
-      rightCamTranslation3d = new Translation3d(0,0,0), 
+      rightCamTranslation3d = new Translation3d(Units.inchesToMeters(12.75),Units.inchesToMeters(Constants.DriveConstants.kChassisLength/2),Units.inchesToMeters(19.75)), 
       /*For right cam ^
         X = center to limelight tube
         Y = center to right chassis rail
@@ -241,7 +241,7 @@ public final class Constants {
     //Pitches of camera, in DEGREES, positive means UPWARD angle
     public static int 
       frontCamPitch = 15,
-      rightCamPitch = 15, //MUST GET
+      rightCamPitch = 32, //MUST GET
       leftCamPitch = 15,
       backCamPitch = 15;    
   }
