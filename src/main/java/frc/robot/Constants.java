@@ -241,9 +241,9 @@ public final class Constants {
     //Pitches of camera, in DEGREES, positive means UPWARD angle
     public static int 
       frontCamPitch = 15,
-      rightCamPitch = 32, //MUST GET
+      rightCamPitch = 21, //MUST GET
       leftCamPitch = 15,
-      backCamPitch = 15;    
+      backCamPitch = 26;    
   }
   public static class FieldConstants {
     public static final Matrix<N3, N1> kSingleTagStdDevs = VecBuilder.fill(4, 4, 8);

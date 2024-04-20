@@ -41,11 +41,11 @@ public class CameraS extends SubsystemBase {
         leftLastEstTimestamp = 0f,
         backLastEstTimestamp = 0f;
     public static double backCamXError = 0f;
-    private static PhotonCamera frontCam;
-    private static PhotonCamera rightCam;
-    private static PhotonCamera leftCam;
-    private static PhotonCamera backCam;
     static double distance = 0;
+   // private PhotonCamera frontCam;
+    private PhotonCamera rightCam;
+    //private PhotonCamera leftCam;
+    private PhotonCamera backCam;
     public CameraS() {
      //   frontCam = new PhotonCamera(Constants.VisionConstants.frontCamName);
         rightCam = new PhotonCamera(Constants.VisionConstants.rightCamName);
@@ -61,20 +61,20 @@ public class CameraS extends SubsystemBase {
         Translation3d leftPos = Constants.VisionConstants.leftCamTranslation3d;
         Translation3d backPos = Constants.VisionConstants.backCamTranslation3d;
         Rotation3d frontRot = new Rotation3d(0, Math.toRadians(Constants.VisionConstants.frontCamPitch), 0); 
-        Rotation3d rightRot = new Rotation3d(0, Math.toRadians(Constants.VisionConstants.rightCamPitch), 0);
-        Rotation3d leftRot = new Rotation3d(0, Math.toRadians(Constants.VisionConstants.leftCamPitch), 0);
-        Rotation3d backRot = new Rotation3d(0, Math.toRadians(Constants.VisionConstants.backCamPitch), 0);
+        Rotation3d rightRot = new Rotation3d(0, Math.toRadians(Constants.VisionConstants.rightCamPitch), -90);
+        Rotation3d leftRot = new Rotation3d(0, Math.toRadians(Constants.VisionConstants.leftCamPitch), 90);
+        Rotation3d backRot = new Rotation3d(0, Math.toRadians(Constants.VisionConstants.backCamPitch), 180);
         Transform3d robotToFront = new Transform3d(frontPos, frontRot); //transform
         Transform3d robotToRight = new Transform3d(rightPos, rightRot);
         Transform3d robotToLeft = new Transform3d(leftPos, leftRot);
         Transform3d robotToBack = new Transform3d(backPos, backRot);
     //sim
-        frontEstimator = new PhotonPoseEstimator(Constants.FieldConstants.kTagLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, frontCam,robotToFront);
-        frontEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
+        //frontEstimator = new PhotonPoseEstimator(Constants.FieldConstants.kTagLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, frontCam,robotToFront);
+        //frontEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
         rightEstimator = new PhotonPoseEstimator(Constants.FieldConstants.kTagLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, rightCam,robotToRight);
         rightEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);    
-        leftEstimator = new PhotonPoseEstimator(Constants.FieldConstants.kTagLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, leftCam,robotToLeft);
-        leftEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);    
+        //leftEstimator = new PhotonPoseEstimator(Constants.FieldConstants.kTagLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, leftCam,robotToLeft);
+        //leftEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);    
         backEstimator = new PhotonPoseEstimator(Constants.FieldConstants.kTagLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, backCam,robotToBack);
         backEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);   
       //  camEstimates = new PhotonPoseEstimator[]{frontEstimator,rightEstimator,leftEstimator,backEstimator};
