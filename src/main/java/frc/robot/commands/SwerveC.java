@@ -10,7 +10,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.DataHandler;
 import frc.robot.RobotContainer;
-import frc.robot.Constants.DataLogStorage;
 import frc.robot.subsystems.SwerveS;
 
 
@@ -23,6 +22,9 @@ public class SwerveC extends Command {
   private final boolean fieldOriented = true;
   private final PIDController autoLockController = new PIDController(0.0044, 0.00135, 0.00001);
   private final SlewRateLimiter xLimiter, yLimiter, turningLimiter;
+  public static  double[][] variableAngleLog = new double[2][20];
+  public static double variableAngleDistance = 0;
+  public static double angleOutputDegrees = 0;
   private int arrayIndex = 0;
   public SwerveC(SwerveS swerveS) {
     this.swerveS = swerveS;
@@ -58,8 +60,8 @@ public class SwerveC extends Command {
     if (RobotContainer.driveController.getXButtonPressed() == true){
       //angle is y, distance is x
       try {
-        DataLogStorage.variableAngleLog[1][arrayIndex] = DataLogStorage.angleOutputDegrees;
-        DataLogStorage.variableAngleLog[0][arrayIndex] = DataLogStorage.variableAngleDistance;
+        variableAngleLog[1][arrayIndex] = angleOutputDegrees;
+        variableAngleLog[0][arrayIndex] = variableAngleDistance;
         System.out.println("Logged!");
         arrayIndex +=1;
       } catch (Exception e) {
@@ -114,22 +116,22 @@ public class SwerveC extends Command {
     //outputs collected distance vs angle graph to console and also sends it to the data logging file. 
     System.out.println("Distance (X)                              Angle (Y)");
       for (var i = 0; i < arrayIndex; i++){
-        String output = " "+ Double.toString(DataLogStorage.variableAngleLog[0][i])+"    "+Double.toString(DataLogStorage.variableAngleLog[1][i]);
+        String output = " "+ Double.toString(variableAngleLog[0][i])+"    "+Double.toString(variableAngleLog[1][i]);
         System.out.println(output);
-        DataHandler.logData(new String[]{Double.toString(DataLogStorage.variableAngleLog[0][i]),Double.toString(DataLogStorage.variableAngleLog[1][i])});
+        DataHandler.logData(new String[]{Double.toString(variableAngleLog[0][i]),Double.toString(variableAngleLog[1][i])});
       }
       System.out.println("Distance (X)");
       for (var i = 0; i < arrayIndex; i++){
-        String output = Double.toString(DataLogStorage.variableAngleLog[0][i]) +" ";
+        String output = Double.toString(variableAngleLog[0][i]) +" ";
         System.out.println(output);
       }
       System.out.println("Angle (Y)");
       for (var i = 0; i < arrayIndex; i++){
-        String output = Double.toString(DataLogStorage.variableAngleLog[1][i]) +" ";
+        String output = Double.toString(variableAngleLog[1][i]) +" ";
         System.out.println(output);
         
       }
-      DataLogStorage.variableAngleLog = new double[2][20];
+      variableAngleLog = new double[2][20];
       arrayIndex = 0;
   }
   
