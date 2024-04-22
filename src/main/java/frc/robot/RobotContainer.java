@@ -16,6 +16,7 @@ import frc.robot.commands.autoCommands.AutoLock;
 import frc.robot.commands.autoCommands.AutonIntake;
 import frc.robot.commands.autoCommands.FireShooter;
 import frc.robot.commands.autoCommands.MoveIntake;
+import frc.robot.subsystems.CameraS;
 import frc.robot.subsystems.HangS;
 import frc.robot.subsystems.IntakeS;
 import frc.robot.subsystems.OutakeS;
@@ -42,6 +43,8 @@ public class RobotContainer {
   private final HangS hangS = new HangS();
   @SuppressWarnings("unused") //only periodic ledStrip is used, so don't care.
   private final LEDStripS ledStripS = new LEDStripS();
+  @SuppressWarnings("unused") //only periodic camera updates is used, so don't care.
+  private final CameraS cameraS = new CameraS();
   private final SendableChooser<Command> autoChooser;
   public static XboxController driveController = new XboxController(0);
   public static XboxController manipController = new XboxController(1);

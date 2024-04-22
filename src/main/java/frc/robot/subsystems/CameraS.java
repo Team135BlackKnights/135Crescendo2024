@@ -29,9 +29,9 @@ import frc.robot.Constants.DriveConstants;
 
 public class CameraS extends SubsystemBase {
     public VisionSystemSim visionSim;
-    public final PhotonPoseEstimator frontEstimator;
+   // public final PhotonPoseEstimator frontEstimator;
     public final PhotonPoseEstimator rightEstimator;
-    public final PhotonPoseEstimator leftEstimator;
+   // public final PhotonPoseEstimator leftEstimator;
     public final PhotonPoseEstimator backEstimator;
     public final PhotonPoseEstimator[] camEstimates;
     public final PhotonCamera[] cams;
@@ -42,18 +42,19 @@ public class CameraS extends SubsystemBase {
         backLastEstTimestamp = 0f;
     public static double backCamXError = 0f;
     static double distance = 0;
-   // private PhotonCamera frontCam;
-    private PhotonCamera rightCam;
-    //private PhotonCamera leftCam;
-    private PhotonCamera backCam;
+    static private PhotonCamera
+        frontCam,
+        rightCam,
+        leftCam;
+    private static PhotonCamera backCam;
     public CameraS() {
-     //   frontCam = new PhotonCamera(Constants.VisionConstants.frontCamName);
+        //frontCam = new PhotonCamera(Constants.VisionConstants.frontCamName);
         rightCam = new PhotonCamera(Constants.VisionConstants.rightCamName);
-   //     leftCam = new PhotonCamera(Constants.VisionConstants.leftCamName);
+        //leftCam = new PhotonCamera(Constants.VisionConstants.leftCamName);
         backCam = new PhotonCamera(Constants.VisionConstants.backCamName);
-    //    frontCam.setPipelineIndex(0);
+        //frontCam.setPipelineIndex(0);
         rightCam.setPipelineIndex(0);
-   //     leftCam.setPipelineIndex(0);
+        //leftCam.setPipelineIndex(0);
         backCam.setPipelineIndex(0);
         //POSITION CAMERAS (IMPORTANT)
         Translation3d frontPos = Constants.VisionConstants.frontCamTranslation3d;
@@ -76,8 +77,8 @@ public class CameraS extends SubsystemBase {
         //leftEstimator = new PhotonPoseEstimator(Constants.FieldConstants.kTagLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, leftCam,robotToLeft);
         //leftEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);    
         backEstimator = new PhotonPoseEstimator(Constants.FieldConstants.kTagLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, backCam,robotToBack);
-        backEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);   
-      //  camEstimates = new PhotonPoseEstimator[]{frontEstimator,rightEstimator,leftEstimator,backEstimator};
+        backEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY); 
+        //camEstimates = new PhotonPoseEstimator[]{frontEstimator,rightEstimator,leftEstimator,backEstimator};
         camEstimates = new PhotonPoseEstimator[]{rightEstimator,backEstimator};
         //cams = new PhotonCamera[]{frontCam,rightCam,leftCam,backCam};
         cams = new PhotonCamera[]{rightCam,backCam};
@@ -111,7 +112,7 @@ public static boolean aprilTagVisible() {
     }
     @Override
     public void periodic(){
-        for (int i = 0; i <4; i++){
+        for (int i = 0; i <2; i++){
             PhotonPoseEstimator cEstimator = camEstimates[i];
             PhotonCamera cCam = cams[i];
             var visionEst = getEstimatedGlobalPose(cEstimator,cCam);
@@ -121,9 +122,14 @@ public static boolean aprilTagVisible() {
                         // Change our trust in the measurement based on the tags we can see
                         var estStdDevs = getEstimationStdDevs(estPose,cEstimator,cCam);
                         SmartDashboard.putString("CAMERAUPDATE", cCam.getName());
+                        /*if (cCam.getName() == Constants.VisionConstants.backCamName){
+                            backCamXError = backEstimator.getReferencePose().getX();
+                        }*/
                         SwerveS.addVisionMeasurement(est.estimatedPose.toPose2d(), est.timestampSeconds, estStdDevs);
+                        
                     });
         }
+
         
     }
     //FOR SWERVE ESTIMATION

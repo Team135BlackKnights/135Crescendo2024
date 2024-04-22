@@ -6,7 +6,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.CameraS;
 import frc.robot.subsystems.OutakeS;
-import frc.robot.subsystems.SwerveS;
 
 
 public class FireShooter extends Command {

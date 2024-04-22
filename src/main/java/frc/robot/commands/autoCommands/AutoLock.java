@@ -1,5 +1,6 @@
 package frc.robot.commands.autoCommands;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.subsystems.CameraS;
 import frc.robot.subsystems.SwerveS;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.Timer;
