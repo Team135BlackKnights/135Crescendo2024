@@ -208,11 +208,5 @@ public final class Constants {
       redSpeaker = new Translation2d(16.59128, 5.56);
 
   }
-  public static class DataLogStorage{
-    //stores 20 values to be published at once. Only here because im piggybacking off of previous code (and also so we can see a printout of the data in the console)
-    public static double[][] variableAngleLog = new double[2][20];
-    public static double variableAngleDistance = 0;
-    public static double angleOutputDegrees = 0;
-  }
-  
+
 }

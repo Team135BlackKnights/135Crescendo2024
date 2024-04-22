@@ -17,18 +17,18 @@ import java.io.IOError;
 
  public class DataHandler{
 
-    public static FileOutputStream outputStream;
-    public static OutputStreamWriter outputStreamWriter;
+    private static FileOutputStream outputStream;
+    private static OutputStreamWriter outputStreamWriter;
     String[] loggingArray;
-    public static int id = 0;
-    public static String diskName= "/U";
-    public static String directoryName = "";
-    public static File newFileName;
-    public static File createdFile;
-    public static File directory;
+    private  static int id = 0;
+    private static String diskName= "/U";
+    private static String directoryName = "";
+    private static File newFileName;
+    private static File createdFile;
+    private static File directory;
     public static boolean isUSBConnected = true;
     public static boolean fileCreated = false;
-    static int debounce = 0;
+    private static int debounce = 0;
 
     /**
      * Creates a new Streamwriter, designed to be contingent in case of USB disconnection and reconnection
@@ -112,34 +112,22 @@ import java.io.IOError;
         }
     }
 
-    
 
-
-    /**
+     /**
      * Writes values to file
      * Recommended to start by logging the table heading names first, polynomial regression tool handles this. If there is a time when you want to log data but want to ignore something, 
      * put null in as the value in the array (will output a string "null"). Regression calculator currently cannot handle this exception, as well as data relationships that have more than 2 variables (y = f(x) type functions)
      * Writes everything as a string, please convert values to strings before adding them to the array.
      *  @param tableHeadings the array of values to be logged, can be different from the values declared in the setUpLogOnUsb
      */
-    public static void logData(String[] tableHeadings){
-        //String that will be output to the writer
-        String lineToBeSaved= "";
-        
-        //Adds each argument in the array to the string, adds a comma for separation (regression calculator uses this as well)
-        for (String heading : tableHeadings){
-            lineToBeSaved += (heading + ",");
-        }
-
-        //Removes last comma at the end
-        lineToBeSaved = lineToBeSaved.substring(0, (lineToBeSaved.length()-1));
-        
+    public static void logData(String data){
         //Tries writing to the file, adds an error if it doesn't work
         try {
-            outputStreamWriter.write(lineToBeSaved + "\r\n");
+            outputStreamWriter.write(data + "\r\n");
             outputStreamWriter.flush();
         } 
         
+    
         //Catches errors
         catch (Exception e) {
             e.printStackTrace();
@@ -149,7 +137,101 @@ import java.io.IOError;
             e.printStackTrace();
         }
     }
+    
 
+    public static void logData(String[] data){
+
+        //String that will be output to the writer
+        String lineToBeSaved= "";
+        
+        //Adds each argument in the array to the string, adds a comma for separation (regression calculator uses this as well)
+        for (String heading : data){
+            lineToBeSaved += (heading + ",");
+        }
+
+        //Removes last comma at the end
+        lineToBeSaved = lineToBeSaved.substring(0, (lineToBeSaved.length()-1));
+        logData(lineToBeSaved);
+
+    }
+
+
+    public static void logData(int data){
+
+        String dataString = Integer.toString(data);
+        logData(dataString);
+
+    }
+
+
+    public static void logData(int[] data){
+        
+        String lineToBeSaved= "";
+        for (int integer : data){
+            lineToBeSaved += (Integer.toString(integer) + ",");
+        }
+
+        lineToBeSaved = lineToBeSaved.substring(0, (lineToBeSaved.length()-1));
+        logData(lineToBeSaved);
+
+    }
+
+
+    public static void logData(boolean data){
+        String dataString = Boolean.toString(data);
+        logData(dataString);
+
+    }
+
+
+    public static void logData(boolean[] data){
+        
+        String lineToBeSaved= "";
+        for (boolean bool : data){
+            lineToBeSaved += (Boolean.toString(bool) + ",");
+        }
+
+        lineToBeSaved = lineToBeSaved.substring(0, (lineToBeSaved.length()-1));
+        logData(lineToBeSaved);
+
+    }
+
+
+    public static void logData(double data){
+        String dataString = Double.toString(data);
+        logData(dataString);
+
+    }
+
+
+    public static void logData(double[] data){
+        
+        String lineToBeSaved= "";
+        for (double num : data){
+            lineToBeSaved += (Double.toString(num) + ",");
+        }
+
+        lineToBeSaved = lineToBeSaved.substring(0, (lineToBeSaved.length()-1));
+        logData(lineToBeSaved);
+
+    }
+
+    
+    public static void logData(float data){
+        String dataString = Float.toString(data);
+        logData(dataString);
+    }
+
+
+    public static void logData(float[] data){
+        String lineToBeSaved= "";
+        for (float num : data){
+            lineToBeSaved += (Float.toString(num) + ",");
+        }
+
+        lineToBeSaved = lineToBeSaved.substring(0, (lineToBeSaved.length()-1));
+        logData(lineToBeSaved);
+    }
 
     /**
      * This function allows you to customize the directory that you send a log to in simulation. 
