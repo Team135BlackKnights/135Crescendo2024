@@ -101,10 +101,14 @@ public class Robot extends TimedRobot {
     AddressableLEDSim ledSim = new AddressableLEDSim(LEDStripS.leds);
     ledSim.setLength(Constants.LEDConstants.ledBufferLength);
     ledSim.setInitialized(true);
+    DataHandler.createLogFileinSimulation("D://");
     
   }
 
   /** This function is called periodically whilst in simulation. */
   @Override
-  public void simulationPeriodic() {}
+  public void simulationPeriodic() {
+    DataHandler.updateHandlerState();
+    DataHandler.logData(new String[]{"Test"});
+  }
 }
