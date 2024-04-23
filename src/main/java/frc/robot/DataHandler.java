@@ -20,7 +20,7 @@ import java.io.IOError;
     private static FileOutputStream outputStream;
     private static OutputStreamWriter outputStreamWriter;
     String[] loggingArray;
-    private  static int id = 0;
+    private static int id = 0;
     private static String diskName= "/U";
     private static String directoryName = "";
     private static File newFileName;
@@ -50,6 +50,7 @@ import java.io.IOError;
      * Using this function in simulation (instead of createLogFileInSimulation) will lead to an IOException of "the system cannot find the path specified". 
      * Use createLogFileInSimulation with a specific directory given to run this in simulation
      * If no USB drive is present, will just throw an error and not create a file. 
+     * Only include the drive and the colon (C:), NOT C://
      */
 
     
@@ -64,20 +65,20 @@ import java.io.IOError;
 
         //This code isn't TECHNICALLY needed to make the directory (it auto checks if a folder is there), but i would like to make sure this is here just in case something happens
         if (!directory.exists()){
-            boolean works = directory.mkdir();
-            System.out.println(works);
+           directory.mkdir();
+
         }
 
         try {  
             //Creates new file in the /U/Logs folder 
             String fileName = directoryName + "/Latest.txt";
             createdFile = new File(fileName);
-            
             //if a file named "latest" exists, rename "latest" to the id in its first line
             if (createdFile.exists()){
                 Scanner renameScanner = new Scanner(createdFile);
-                
+    
                 if (renameScanner.hasNext()){
+                    System.out.println("RUNNING");
                     id = Integer.parseInt(renameScanner.nextLine());
                     renameScanner.close();
                     System.out.println(newFileName);
@@ -91,6 +92,7 @@ import java.io.IOError;
             } 
 
             //Creates an actual file in the directory
+            System.out.println("Path" + createdFile.getAbsolutePath());
             createdFile.createNewFile();
             
             //Adds 1 to the id then writes it to the first line, this is used to ensure no two logs have the same file number.

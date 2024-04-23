@@ -132,14 +132,7 @@ public class SwerveS extends SubsystemBase {
         );
 
         SmartDashboard.putData("Field", robotField);
-        if (Robot.isReal()){
-            DataHandler.createLogFileOnRIOUSB();
-        }
-        else{
-            DataHandler.createLogFileinSimulation("G://");
-        }
-        
-        DataHandler.logData(new String[]{"x", "y"});
+       
     
     }
     
