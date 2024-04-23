@@ -122,9 +122,21 @@ public static boolean aprilTagVisible() {
                         // Change our trust in the measurement based on the tags we can see
                         var estStdDevs = getEstimationStdDevs(estPose,cEstimator,cCam);
                         SmartDashboard.putString("CAMERAUPDATE", cCam.getName());
-                        /*if (cCam.getName() == Constants.VisionConstants.backCamName){
-                            backCamXError = backEstimator.getReferencePose().getX();
-                        }*/
+                        if (cCam.getName() == Constants.VisionConstants.backCamName){
+                            var targets = backCam.getLatestResult().getTargets();
+                            for (var target : targets){
+                                if (SwerveS.getAlliance()){
+                                    if (target.getFiducialId() == 4){
+                                        backCamXError = target.getBestCameraToTarget().getX();
+                                    }
+                                }else{
+                                    if (target.getFiducialId() == 7){
+                                        backCamXError = target.getBestCameraToTarget().getX();
+                                    }
+                                }
+                                
+                            }
+                        }
                         SwerveS.addVisionMeasurement(est.estimatedPose.toPose2d(), est.timestampSeconds, estStdDevs);
                         
                     });
@@ -163,8 +175,14 @@ public static boolean aprilTagVisible() {
             return SwerveS.robotPosition.getTranslation().getDistance(Constants.FieldConstants.blueSpeaker);
         }
     }
-    
-
+    /**
+     *Returns tX BETWEEN -5 and 5 of the backCam.
+     */
+public static double getXError() {
+        // bounds xError between -5 and 5 (normal range of xError is -30 to 30)
+        double bounded = CameraS.backCamXError/6 + Math.copySign(0.9999, CameraS.backCamXError); //adds 0.9999 to reduce dead area range once we square
+        return bounded*Math.abs(bounded);
+    }
 public static boolean robotInRange() {
     return getDistanceFromSpeakerUsingRobotPose() > 1.9 && getDistanceFromSpeakerUsingRobotPose() < 2.2;
 }

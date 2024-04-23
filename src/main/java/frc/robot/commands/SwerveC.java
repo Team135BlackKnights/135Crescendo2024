@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
 import frc.robot.Constants.DataLog;
+import frc.robot.subsystems.CameraS;
 import frc.robot.subsystems.SwerveS;
 
 public class SwerveC extends Command {
@@ -48,7 +49,7 @@ public class SwerveC extends Command {
     }
 
     if (SwerveS.autoLock == true && SwerveS.aprilTagVisible() == true) {
-      turningSpeed = swerveS.autoLockController.calculate(SwerveS.getXError(), 0.0);
+      turningSpeed = swerveS.autoLockController.calculate(CameraS.getXError(), 0.0);
       SmartDashboard.putNumber("Spin", turningSpeed);
     }
 

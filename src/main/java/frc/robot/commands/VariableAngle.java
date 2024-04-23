@@ -7,7 +7,6 @@ import frc.robot.RobotContainer;
 import frc.robot.subsystems.CameraS;
 import frc.robot.subsystems.IntakeS;
 import frc.robot.subsystems.OutakeS;
-import frc.robot.subsystems.SwerveS;
 import frc.robot.Constants.DataLog;
 
 public class VariableAngle extends Command {
@@ -64,7 +63,7 @@ public class VariableAngle extends Command {
             intakeS.setPrimaryIntake(-0.5);
             delay.start();
         }
-        if (OutakeS.getBottomRPMError(desiredRPM) < 100 && OutakeS.getTopRPMError(desiredRPM) < 100 && timer.get() >= 0.2 && (intakeS.intakeWithinBounds() || Math.abs(intakeS.anglePidController.getPositionError()) < 0.5) && Math.abs(SwerveS.getXError()) < 3 && RobotContainer.manipController.getAButton() == false && Math.abs(output) < 0.1) {
+        if (OutakeS.getBottomRPMError(desiredRPM) < 100 && OutakeS.getTopRPMError(desiredRPM) < 100 && timer.get() >= 0.2 && (intakeS.intakeWithinBounds() || Math.abs(intakeS.anglePidController.getPositionError()) < 0.5) && Math.abs(CameraS.getXError()) < 3 && RobotContainer.manipController.getAButton() == false && Math.abs(output) < 0.1) {
             intakeS.setPrimaryIntake(-0.5);
             delay.start();
         }

@@ -225,11 +225,6 @@ public class SwerveS extends SubsystemBase {
         navXDisconnectProtocol();
     }
 
-    public static double getXError() {
-        // bounds xError between -5 and 5 (normal range of xError is -30 to 30)
-        double bounded = CameraS.backCamXError/6 + Math.copySign(0.9999, CameraS.backCamXError); //adds 0.9999 to reduce dead area range once we square
-        return bounded*Math.abs(bounded);
-    }
 
     public static boolean aprilTagVisible() {
         return xError != 0.0;

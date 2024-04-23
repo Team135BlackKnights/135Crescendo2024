@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.LimelightHelpers;
+import frc.robot.subsystems.CameraS;
 import frc.robot.subsystems.IntakeS;
 import frc.robot.subsystems.SwerveS;
 
@@ -42,7 +43,7 @@ public class AutonIntake extends Command {
         //when done, set timer.start().. and delayTimer.stop();
         intakeS.deployIntake(1);
 
-        double tx = SwerveS.getXError();
+        double tx = CameraS.getXError();
         boolean tv = LimelightHelpers.getTV(Constants.LimelightConstants.limelightName);
         if (tv == false && loaded==false) {
         // We don't see the target, seek for the target by spinning in place at a safe speed.
