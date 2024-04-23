@@ -78,11 +78,8 @@ import java.io.IOError;
                 Scanner renameScanner = new Scanner(createdFile);
     
                 if (renameScanner.hasNext()){
-                    System.out.println("RUNNING");
                     id = Integer.parseInt(renameScanner.nextLine());
                     renameScanner.close();
-                    System.out.println(newFileName);
-
                 }
                 
                 //Create the new file object
