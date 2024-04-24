@@ -5,6 +5,8 @@ import java.util.Scanner;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.IOError;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Class used for logging data. Coded as an alternative to DataLogManager (so you don't get every update in NetworkTables logged, just the values you want), designed to be used for polynomial regression.
@@ -20,6 +22,7 @@ import java.io.IOError;
     private static FileOutputStream outputStream;
     private static OutputStreamWriter outputStreamWriter;
     private static int id = 0;
+    private static List<String> dataBuffer = new ArrayList<String>();
     private static String diskName= "/U";
     private static String directoryName = "";
     private static File createdFile;
@@ -27,6 +30,7 @@ import java.io.IOError;
     public static boolean isUSBConnected = true;
     public static boolean fileCreated = false;
     private static int debounce = 0;
+    private static int dumpID = 1;
 
     /**
      * Creates a new Streamwriter, designed to be contingent in case of USB disconnection and reconnection
@@ -122,6 +126,7 @@ import java.io.IOError;
      * Writes everything as a string, please convert values to strings before adding them to the array.
      *  @param tableHeadings the array of values to be logged, can be different from the values declared in the setUpLogOnUsb
      */
+    
     public static void logData(String data){
         //Tries writing to the file, adds an error if it doesn't work
         try {
@@ -132,11 +137,11 @@ import java.io.IOError;
     
         //Catches errors
         catch (Exception e) {
-            e.printStackTrace();
+            dataBuffer.add(data);
         }
         
         catch (IOError e){
-            e.printStackTrace();
+            
         }
     }
     
@@ -224,6 +229,7 @@ import java.io.IOError;
         logData(dataString);
     }
 
+    
 
     public static void logData(float[] data){
         String lineToBeSaved= "";
@@ -248,7 +254,39 @@ import java.io.IOError;
     
     }
     
+    //Basically writes the entire buffer in the event the USB was disconnected. Creates a dump file to store it
+    public static void flushBuffer(){
+        File dumpFile = new File(directoryName + "/Log" + id + "DisconnectDump"+ dumpID + ".txt");
     
+        try {
+            
+            dumpFile.createNewFile();
+            FileOutputStream outputStream = new FileOutputStream(dumpFile);
+            OutputStreamWriter dumpFileOutputStreamWriter = new OutputStreamWriter(outputStream);
+            
+            if (dataBuffer.size() > 0){
+                for (String data : dataBuffer){
+            
+                    System.out.println(data);
+                    dumpFileOutputStreamWriter.write(data + "\r\n");
+                    dumpFileOutputStreamWriter.flush();
+                }
+                dataBuffer.clear();
+            }
+            dumpFileOutputStreamWriter.close();
+
+        }
+
+         catch (Exception e) {
+            e.printStackTrace();     
+            }
+            
+        }
+
+        
+ 
+    
+
     /**
      * Flushes the writer (outputs last value) and then closes it. Does not need to be called. 
      */
@@ -281,6 +319,7 @@ import java.io.IOError;
      */
     public static void updateHandlerState(){
         pingUSB();
+        flushBuffer();
         //If the USB is disconnected and it hasn't closed the writer yet, close it
         if (isUSBConnected == false && debounce == 0){
             closeWriter();
@@ -290,10 +329,12 @@ import java.io.IOError;
         else if (isUSBConnected == true && debounce == -1){
             if (Robot.isReal()){
                 createLogFileOnRIOUSB();
+          
             }
             else if (Robot.isSimulation()){
                 createLogFileinSimulation(diskName);
             }
+            
             debounce = 0;
         }
         //If neither condition is met, do nothing.
