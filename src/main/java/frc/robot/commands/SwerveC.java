@@ -8,7 +8,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.DataHandler;
 import frc.robot.RobotContainer;
-import frc.robot.Constants.DataLog;
 import frc.robot.subsystems.CameraS;
 import frc.robot.subsystems.SwerveS;
 

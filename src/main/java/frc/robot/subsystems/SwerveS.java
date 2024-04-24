@@ -33,11 +33,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.DataHandler;
 import frc.robot.LimelightHelpers;
-
-import frc.robot.Constants.DriveConstants;
-import frc.robot.Constants.FieldConstants;
-import frc.robot.Constants.LimelightConstants;
-import frc.robot.Constants.OutakeConstants;
 import frc.robot.LimelightHelpers.PoseEstimate;
 
 
@@ -99,10 +94,17 @@ public class SwerveS extends SubsystemBase {
     SwerveModulePosition[] m_modulePositions = new SwerveModulePosition[]{frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()};
     
     public static boolean autoLock = false;
-    public static boolean redIsAlliance = true; //used to determine the alliance for LED systems
-    static double distance = 0;
+
+    public static boolean redIsAlliance = true;
+
 
     
+
+    public PIDController autoLockController = new PIDController(0.0044, 0.00135, 0.00001);
+
+    //so that the navXDisconnect command doesn't start twice
+    int debounce = 0;
+
     public SwerveS() {
         // Waits for the RIO to finishing booting
         new Thread(() -> {
@@ -135,8 +137,6 @@ public class SwerveS extends SubsystemBase {
         );
 
         SmartDashboard.putData("Field", robotField);
-
-    
     }
     
     public void zeroHeading() {
@@ -187,12 +187,7 @@ public class SwerveS extends SubsystemBase {
         SmartDashboard.putNumber("Position X (getPose)", getPose().getX());
         SmartDashboard.putNumber("Position Y (getPose)", getPose().getY());
         SmartDashboard.putNumber("Robot Heading (getPose)", getPose().getRotation().getDegrees());
-        SmartDashboard.putNumber("April Tag Distance", getDistanceFromSpeakerInMeters());
-        SmartDashboard.putNumber("Odometry Distance", getDistanceFromSpeakerUsingRobotPose());
-
-        SmartDashboard.putNumber("Desired Intake Lower Bound", getDesiredShooterLowerBound());
-        SmartDashboard.putNumber("Desired Intake Upper Bound", getDesiredShooterUpperBound());
-        SmartDashboard.putNumber("Desired Intake Angle", getDesiredShooterAngle());
+        
 
 
         xError = tx.getDouble(0.0);
@@ -225,7 +220,10 @@ public class SwerveS extends SubsystemBase {
             // Do whatever you want with the poses here
             robotField.getObject("path").setPoses(poses);
         });
-
+        navXDisconnectProtocol();
+        if (periodicUpdateCycle %10 == 0){
+            DataHandler.logData(periodicUpdateCycle);
+        }
     }
 
 
