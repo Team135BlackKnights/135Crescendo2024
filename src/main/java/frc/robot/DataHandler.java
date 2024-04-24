@@ -19,11 +19,9 @@ import java.io.IOError;
 
     private static FileOutputStream outputStream;
     private static OutputStreamWriter outputStreamWriter;
-    String[] loggingArray;
     private static int id = 0;
     private static String diskName= "/U";
     private static String directoryName = "";
-    private static File newFileName;
     private static File createdFile;
     private static File directory;
     public static boolean isUSBConnected = true;
@@ -290,7 +288,12 @@ import java.io.IOError;
         }
         //If the USB is reconnected and the writer is closed, open a new one
         else if (isUSBConnected == true && debounce == -1){
-            createNewWriter();
+            if (Robot.isReal()){
+                createLogFileOnRIOUSB();
+            }
+            else if (Robot.isSimulation()){
+                createLogFileinSimulation(diskName);
+            }
             debounce = 0;
         }
         //If neither condition is met, do nothing.
