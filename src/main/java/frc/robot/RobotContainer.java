@@ -79,8 +79,8 @@ public class RobotContainer {
   private void configureBindings() {
     aButton.onTrue(swerveS.toggleAutoLockCommand());
     xButton.onTrue(new InstantCommand(() -> swerveS.zeroHeading()));
-    manipController.y().and(manipController.start().negate()).whileTrue(new VariableSpeed(intakeS, outakeS, false));
-    manipController.b().and(manipController.start().negate()).whileTrue(new SetAngle(intakeS, outakeS, 13));
+    manipController.y().and(manipController.start().negate()).onTrue(new VariableSpeed(intakeS, outakeS, false));
+    manipController.b().and(manipController.start().negate()).onTrue(new SetAngle(intakeS, outakeS, 13));
     povZero.onTrue(new HangMacroC(hangS, HangConstants.upperHookHeight));
     manipController.povUp().whileTrue(new SetAngle(intakeS, outakeS, 27));
     manipController
