@@ -80,20 +80,6 @@ public final class Constants {
     public static boolean
       topFlywheelReversed = false,
       bottomFlywheelReversed = false;
-    public static class PIDConstants{
-      public static double
-        P = 0.0000005,
-        I = 0,
-        D = 0,
-        Iz = 0,
-        FF = 0.000156,
-        max = 1,
-        min = -1,
-        maxVel =5700,
-        minVel = 0,
-        maxAccel = 5000,
-        allowedErr = 0.01;
-    }
   }
 
   public static class SwerveConstants {

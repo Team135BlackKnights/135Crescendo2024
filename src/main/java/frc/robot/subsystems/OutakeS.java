@@ -34,8 +34,6 @@ public class OutakeS extends SubsystemBase {
   
     public CANSparkMax topFlywheel = new CANSparkMax(Constants.OutakeConstants.topFlywheel, MotorType.kBrushless);
     public CANSparkMax bottomFlywheel = new CANSparkMax(Constants.OutakeConstants.bottomFlywheel, MotorType.kBrushless);
-    public static SparkPIDController topPIDController;
-    public static SparkPIDController bottomPIDController;
     
     //encoder declarations
     public static RelativeEncoder 
