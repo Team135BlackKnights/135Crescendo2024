@@ -7,7 +7,7 @@ import frc.robot.RobotContainer;
 import frc.robot.subsystems.CameraS;
 import frc.robot.subsystems.IntakeS;
 import frc.robot.subsystems.OutakeS;
-import frc.robot.Constants.DataLog;
+
 
 public class VariableAngle extends Command {
     private final IntakeS intakeS;
@@ -73,8 +73,9 @@ public class VariableAngle extends Command {
         SmartDashboard.putNumber("Flywheel Top", OutakeS.topFlywheelEncoder.getVelocity());
         SmartDashboard.putNumber("Flywheel Bottom ", OutakeS.bottomFlywheelEncoder.getVelocity());
         if (delay.get() < 0.2) {
-            DataLog.angleOutputDegrees = intakeS.getIntakeAngle();
-            DataLog.variableAngleDistance = CameraS.getDistanceFromSpeakerUsingRobotPose();
+            //stores values of the intake and distance. Updates every time command is called
+            SwerveC.angleOutputDegrees = intakeS.getIntakeAngle();
+            SwerveC.variableAngleDistance = CameraS.getDistanceFromSpeakerUsingRobotPose();
         }
         intakeS.deployIntake(output);
 

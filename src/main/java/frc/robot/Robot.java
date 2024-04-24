@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.subsystems.LEDStripS;
 import edu.wpi.first.wpilibj.simulation.AddressableLEDSim;
 
+
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
  * each mode, as described in the TimedRobot documentation. If you change the name of this class or
@@ -39,7 +40,13 @@ public class Robot extends TimedRobot {
     //DataLogManager.start();
     URCL.start(Constants.DataLog.manCanIdsToNames());
     m_robotContainer = new RobotContainer();
-    
+
+    if (Robot.isReal()){
+      DataHandler.createLogFileOnRIOUSB();
+    }
+    else if (Robot.isSimulation()){
+      DataHandler.createLogFileinSimulation("E:");
+    }
   }
 
   /**
@@ -116,5 +123,8 @@ public class Robot extends TimedRobot {
 
   /** This function is called periodically whilst in simulation. */
   @Override
-  public void simulationPeriodic() {}
+  public void simulationPeriodic() {
+    DataHandler.updateHandlerState();
+   
+  }
 }
