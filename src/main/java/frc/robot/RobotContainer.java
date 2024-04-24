@@ -24,7 +24,6 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import frc.robot.commands.HangMacroC;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -32,7 +31,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.subsystems.LEDStripS;
 /**
  * THIS CODE REQUIRES WPILIB 2024 AND PATHPLANNER 2024 IT WILL NOT WORK OTHERWISE
@@ -77,10 +75,18 @@ public class RobotContainer {
   }
 
   private void configureBindings() {
-    aButton.onTrue(swerveS.toggleAutoLockCommand());
-    xButton.onTrue(new InstantCommand(() -> swerveS.zeroHeading()));
-    yButton.onTrue(new VariableSpeed(intakeS, outakeS, false));
-    bButton.onTrue(new SetAngle(intakeS, outakeS, 13));
+    if (aButton.getAsBoolean() && !manipController.getStartButton()){
+      swerveS.toggleAutoLockCommand();
+    }
+    if (yButton.getAsBoolean() && !manipController.getStartButton()){
+      new InstantCommand(() -> swerveS.zeroHeading());
+    }
+    if (yButton.getAsBoolean() && !manipController.getStartButton()){
+      new VariableSpeed(intakeS, outakeS, false);
+    }
+    if (bButton.getAsBoolean() && !manipController.getStartButton()){
+      new SetAngle(intakeS, outakeS, 13);
+    }
    //manipController.y().and(manipController.start().negate()).onTrue(new VariableSpeed(intakeS, outakeS, false));
     //manipController.b().and(manipController.start().negate()).onTrue(new SetAngle(intakeS, outakeS, 13));
     povZero.onTrue(new HangMacroC(hangS, HangConstants.upperHookHeight));

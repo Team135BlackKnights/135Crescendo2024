@@ -49,7 +49,7 @@ public class SwerveC extends Command {
 
     if (SwerveS.autoLock == true && SwerveS.aprilTagVisible() == true) {
       turningSpeed = swerveS.autoLockController.calculate(SwerveS.getXError(), 0.0);
-      SmartDashboard.putNumber("Spin", turningSpeed);
+      //SmartDashboard.putNumber("Spin", turningSpeed);
     }
 
     // If the desired ChassisSpeeds are really small (ie from controller drift) make them even smaller so that the robot doesn't move

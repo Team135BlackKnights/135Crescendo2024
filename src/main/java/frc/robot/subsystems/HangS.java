@@ -38,8 +38,8 @@ public class HangS extends SubsystemBase {
     }
     @Override
     public void periodic(){
-        SmartDashboard.putNumber("Left Hang", leftHangEncoder.getPosition());
-        SmartDashboard.putNumber("Right Hang", rightHangEncoder.getPosition());
+       // SmartDashboard.putNumber("Left Hang", leftHangEncoder.getPosition());
+      //  SmartDashboard.putNumber("Right Hang", rightHangEncoder.getPosition());
     }
     public void setHangMotors(double leftOutput, double rightOutput){
         if (leftOutput < 0 && HangS.leftHangEncoder.getPosition() < Constants.HangConstants.hangLowerSoftStop) {

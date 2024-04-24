@@ -56,7 +56,7 @@ public class SetAngle extends Command {
         }
 
         
-        SmartDashboard.putNumber("Angle Output", output);
+        //SmartDashboard.putNumber("Angle Output", output);
         SmartDashboard.putNumber("Angle Error", intakeS.anglePidController.getPositionError());
         SmartDashboard.putNumber("Flywheel Error", outakeS.shooterPID.getPositionError());
 

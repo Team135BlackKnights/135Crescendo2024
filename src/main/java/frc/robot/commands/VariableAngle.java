@@ -64,7 +64,7 @@ public class VariableAngle extends Command {
         }
 
         
-        SmartDashboard.putNumber("Angle Output", output);
+      //  SmartDashboard.putNumber("Angle Output", output);
         SmartDashboard.putNumber("Angle Error", intakeS.anglePidController.getPositionError());
         SmartDashboard.putNumber("Flywheel Error", outakeS.shooterPID.getPositionError());
         if (delay.get() < 0.2) {

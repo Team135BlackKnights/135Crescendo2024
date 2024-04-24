@@ -48,9 +48,9 @@ public class OutakeC extends Command {
             if (RobotContainer.driveController.getLeftBumper() == true) {
             outakeSpeed = -1775; //was -.25
         }
-        if (RobotContainer.manipController.getAButton()) {
+        if (RobotContainer.manipController.getAButton() && !RobotContainer.manipController.getStartButton()) {
             outakeSpeed = 4000; // was outakeSpeed = 0.49 + MathUtil.clamp(outakeS.shooterPID.calculate(OutakeS.getAverageFlywheelSpeed(), 4000),-0.1,0.1);   
-        } else if (RobotContainer.manipController.getXButton()) {
+        } else if (RobotContainer.manipController.getXButton() && !RobotContainer.manipController.getStartButton()) {
             outakeSpeed = 2700; // was outakeSpeed = 0.355 + MathUtil.clamp(outakeS.shooterPID.calculate(OutakeS.getAverageFlywheelSpeed(), 2700), -0.1, 0.1);
         }
         outakeS.setIndividualFlywheelSpeeds(outakeSpeed, outakeSpeed);
