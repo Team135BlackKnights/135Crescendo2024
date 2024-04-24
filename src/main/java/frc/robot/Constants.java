@@ -61,7 +61,7 @@ public final class Constants {
       shooterHeight = Units.inchesToMeters(15),
       flywheelMaxRPM = 7100,
       flywheelGearRatio = 1.5,
-      idealPercentTop = .034,
+      idealPercentTop = .34,
       idealPercentBottom = .31,
       kP = 1,
       kSVolts = 0.05,

@@ -123,12 +123,28 @@ public class OutakeS extends SubsystemBase {
     public static double getFlywheelSpeedDifference() {
         return Math.abs(Math.abs(topFlywheelEncoder.getVelocity()) - Math.abs(bottomFlywheelEncoder.getVelocity()));
     }
-
+    /**
+     * Runs motors at specific RPM.
+     * 
+     * @param speed The RPM of the flywheels.
+     */
+    public void setRPM(double rpm){
+        topFlywheel.setVoltage(
+            shooterPID.calculate(topFlywheelEncoder.getVelocity(), rpm) 
+                + m_shooterFeedforward.calculate(rpm));
+        bottomFlywheel.setVoltage(
+            shooterPID.calculate(bottomFlywheelEncoder.getVelocity(), rpm)
+                + m_shooterFeedforward.calculate(rpm));
+    }
     /*
      **For shooting amp
      */
     public void setIndividualFlywheelSpeeds(double topWheelSpeed, double bottomWheelSpeed){
-        topFlywheel.set(topWheelSpeed);
-        bottomFlywheel.set(bottomWheelSpeed);
+        topFlywheel.setVoltage(
+            shooterPID.calculate(topFlywheelEncoder.getVelocity(), topWheelSpeed) 
+                + m_shooterFeedforward.calculate(topWheelSpeed));
+        bottomFlywheel.setVoltage(
+            shooterPID.calculate(bottomFlywheelEncoder.getVelocity(), bottomWheelSpeed)
+                + m_shooterFeedforward.calculate(bottomWheelSpeed));
     }
 }

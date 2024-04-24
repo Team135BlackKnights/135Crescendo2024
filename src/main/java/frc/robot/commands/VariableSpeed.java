@@ -43,11 +43,9 @@ public class VariableSpeed extends Command {
             intakeS.setPrimaryIntake(0.2);
         } else if (timer.get() >= 0.25) {
             intakeS.setPrimaryIntake(0);
-            double topOutakeSpeed;
-            double bottomOutakeSpeed;
-            topOutakeSpeed = 0.49 + MathUtil.clamp(outakeS.shooterPID.calculate(OutakeS.topFlywheelEncoder.getVelocity(), 4000), -0.1, 0.1);
-            bottomOutakeSpeed = 0.49 + MathUtil.clamp(outakeS.shooterPID.calculate(OutakeS.bottomFlywheelEncoder.getVelocity(), 4000), -0.1, 0.1);
-            outakeS.setIndividualFlywheelSpeeds(topOutakeSpeed, bottomOutakeSpeed);
+            double outakeSpeed;
+            outakeSpeed = 4000; //was 0.49 + MathUtil.clamp(outakeS.shooterPID.calculate(OutakeS.topFlywheelEncoder.getVelocity(), 4000), -0.1, 0.1);
+            outakeS.setIndividualFlywheelSpeeds(outakeSpeed, outakeSpeed);
         }
         if (RobotContainer.manipController.leftBumper().getAsBoolean() == true) {
             intakeS.setPrimaryIntake(-0.5);

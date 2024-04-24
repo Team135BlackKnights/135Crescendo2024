@@ -43,7 +43,7 @@ public class SetAngle extends Command {
             intakeS.setPrimaryIntake(0.2);
         } else if (timer.get() >= 0.25  && Math.abs(intakeS.anglePidController.getPositionError()) < 10) {
             intakeS.setPrimaryIntake(0);
-            double outakeSpeed = 0.85 + outakeS.shooterPID.calculate(OutakeS.getAverageFlywheelSpeed(), 6000);
+            double outakeSpeed = 6000; //was 0.85 + outakeS.shooterPID.calculate(OutakeS.getAverageFlywheelSpeed(), 6000);
             outakeS.setIndividualFlywheelSpeeds(outakeSpeed, outakeSpeed);
         }
         if (RobotContainer.manipController.leftBumper().getAsBoolean() == true) {
