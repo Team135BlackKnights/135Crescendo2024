@@ -9,6 +9,7 @@ import frc.robot.subsystems.OutakeS;
 
 public class OutakeC extends Command {
     private final OutakeS outakeS;
+    double outakeSpeed;
     public OutakeC(OutakeS outakeS) {
         this.outakeS = outakeS;
 
@@ -44,7 +45,6 @@ public class OutakeC extends Command {
         }
         //for speaker
         else{
-            double outakeSpeed = 0;
             if (RobotContainer.driveController.getLeftBumper() == true) {
             outakeSpeed = -1775; //was -.25
         }
