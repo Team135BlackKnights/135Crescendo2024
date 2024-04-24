@@ -54,11 +54,11 @@ public class VariableAngle extends Command {
             }
             outakeS.setIndividualFlywheelSpeeds(outakeSpeed, outakeSpeed);
         }
-        if (RobotContainer.manipController.leftBumper().getAsBoolean()) {
+        if (RobotContainer.manipController.getLeftBumper()) {
             intakeS.setPrimaryIntake(-0.5);
             delay.start();
         }
-        if (OutakeS.getFlywheelSpeedDifference() < 100 && timer.get() >= 0.3 && (intakeS.intakeWithinBounds() || Math.abs(intakeS.anglePidController.getPositionError()) < 0.5) && outakeS.shooterPID.getPositionError() < 150 && Math.abs(SwerveS.getXError()) < 3 && RobotContainer.manipController.a().getAsBoolean() == false && Math.abs(output) < 0.1) {
+        if (OutakeS.getFlywheelSpeedDifference() < 100 && timer.get() >= 0.3 && (intakeS.intakeWithinBounds() || Math.abs(intakeS.anglePidController.getPositionError()) < 0.5) && outakeS.shooterPID.getPositionError() < 150 && Math.abs(SwerveS.getXError()) < 3 && !RobotContainer.manipController.getAButton() && Math.abs(output) < 0.1) {
             intakeS.setPrimaryIntake(-0.5);
             delay.start();
         }

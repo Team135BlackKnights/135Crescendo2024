@@ -47,12 +47,12 @@ public class RobotContainer {
   private final SendableChooser<Command> autoChooser;
 
   public static XboxController driveController = new XboxController(0);
-  public static CommandXboxController manipController = new CommandXboxController(1);
+  public static XboxController manipController = new XboxController(1);
 
   JoystickButton aButton = new JoystickButton(driveController, 1);
   JoystickButton xButton = new JoystickButton(driveController, 3);
- // JoystickButton yButton = new JoystickButton(manipController, 4);
- // JoystickButton bButton = new JoystickButton(manipController, 2);
+  JoystickButton yButton = new JoystickButton(manipController, 4);
+  JoystickButton bButton = new JoystickButton(manipController, 2);
   POVButton povZero = new POVButton(driveController, 0);
  // POVButton manipPOVZero = new POVButton(manipController, 0);
  // POVButton manipPOV180 = new POVButton(manipController, 180);
@@ -79,26 +79,13 @@ public class RobotContainer {
   private void configureBindings() {
     aButton.onTrue(swerveS.toggleAutoLockCommand());
     xButton.onTrue(new InstantCommand(() -> swerveS.zeroHeading()));
-    manipController.y().and(manipController.start().negate()).whileTrue(new VariableSpeed(intakeS, outakeS, false));
-    manipController.b().and(manipController.start().negate()).whileTrue(new SetAngle(intakeS, outakeS, 13));
+    yButton.onTrue(new VariableSpeed(intakeS, outakeS, false));
+    bButton.onTrue(new SetAngle(intakeS, outakeS, 13));
+   //manipController.y().and(manipController.start().negate()).onTrue(new VariableSpeed(intakeS, outakeS, false));
+    //manipController.b().and(manipController.start().negate()).onTrue(new SetAngle(intakeS, outakeS, 13));
     povZero.onTrue(new HangMacroC(hangS, HangConstants.upperHookHeight));
-    manipController.povUp().whileTrue(new SetAngle(intakeS, outakeS, 27));
-    manipController
-        .a()
-        .and(manipController.start())
-        .whileTrue(outakeS.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-    manipController
-        .b()
-        .and(manipController.start())
-        .whileTrue(outakeS.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-    manipController
-        .x()
-        .and(manipController.start())
-        .whileTrue(outakeS.sysIdDynamic(SysIdRoutine.Direction.kForward));
-    manipController
-        .y()
-        .and(manipController.start())
-        .whileTrue(outakeS.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+    povZero.onTrue(new SetAngle(intakeS, outakeS, 27));
+    //manipController.povUp().whileTrue(new SetAngle(intakeS, outakeS, 27));
   }
 
   /**

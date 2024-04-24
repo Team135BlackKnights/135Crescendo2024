@@ -46,11 +46,11 @@ public class SetAngle extends Command {
             double outakeSpeed = 6000; //was 0.85 + outakeS.shooterPID.calculate(OutakeS.getAverageFlywheelSpeed(), 6000);
             outakeS.setIndividualFlywheelSpeeds(outakeSpeed, outakeSpeed);
         }
-        if (RobotContainer.manipController.leftBumper().getAsBoolean() == true) {
+        if (RobotContainer.manipController.getLeftBumper()) {
             intakeS.setPrimaryIntake(-0.5);
             delay.start();
         }
-        if (OutakeS.getFlywheelSpeedDifference() < 100 && timer.get() >= 0.3 && outakeS.shooterPID.getPositionError() < 150 && RobotContainer.manipController.a().getAsBoolean() == false && Math.abs(output) < 0.1) {
+        if (OutakeS.getFlywheelSpeedDifference() < 100 && timer.get() >= 0.3 && outakeS.shooterPID.getPositionError() < 150 && !RobotContainer.manipController.getAButton() && Math.abs(output) < 0.1) {
             intakeS.setPrimaryIntake(-0.5);
             delay.start();
         }
