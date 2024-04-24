@@ -7,7 +7,6 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import frc.robot.Constants;
 import frc.robot.Constants.HangConstants;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 
@@ -38,8 +37,8 @@ public class HangS extends SubsystemBase {
     }
     @Override
     public void periodic(){
-        SmartDashboard.putNumber("Left Hang", leftHangEncoder.getPosition());
-        SmartDashboard.putNumber("Right Hang", rightHangEncoder.getPosition());
+       // SmartDashboard.putNumber("Left Hang", leftHangEncoder.getPosition());
+       // SmartDashboard.putNumber("Right Hang", rightHangEncoder.getPosition());
     }
     public void setHangMotors(double leftOutput, double rightOutput){
         if (leftOutput < 0 && HangS.leftHangEncoder.getPosition() < Constants.HangConstants.hangLowerSoftStop) {

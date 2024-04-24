@@ -69,7 +69,7 @@ public class VariableAngle extends Command {
         }
 
         
-        SmartDashboard.putNumber("Angle Output", output);
+        //SmartDashboard.putNumber("Angle Output", output);
         SmartDashboard.putNumber("Angle Error", intakeS.anglePidController.getPositionError());
         SmartDashboard.putNumber("Flywheel Top", OutakeS.topFlywheelEncoder.getVelocity());
         SmartDashboard.putNumber("Flywheel Bottom ", OutakeS.bottomFlywheelEncoder.getVelocity());

@@ -75,10 +75,10 @@ public class IntakeS extends SubsystemBase {
     public void periodic() {
         
         //sets values to SmartDashboard periodically
-        SmartDashboard.putNumber("Deploy Intake", deployIntakeEncoder.getPosition());
+     //   SmartDashboard.putNumber("Deploy Intake", deployIntakeEncoder.getPosition());
         SmartDashboard.putNumber("Deploy Intake Abs", getIntakePosition());
         SmartDashboard.putNumber("Intake Angle", getIntakeAngle());
-        SmartDashboard.putBoolean("Intake Within Bounds", intakeWithinBounds());
+     //   SmartDashboard.putBoolean("Intake Within Bounds", intakeWithinBounds());
         SmartDashboard.putNumber("Intake Offset", IntakeConstants.intakeOffset);
 
     }
@@ -132,7 +132,7 @@ public class IntakeS extends SubsystemBase {
             }
         }
         //power value (as a percent) sent to smartDashboard only if intake is called
-        SmartDashboard.putNumber("Deploy Intake Percentage", power);
+       // SmartDashboard.putNumber("Deploy Intake Percentage", power);
 
         deployIntake.set(power);
     }

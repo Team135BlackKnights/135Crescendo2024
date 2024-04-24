@@ -4,7 +4,6 @@ package frc.robot.commands;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
@@ -50,7 +49,7 @@ public class SwerveC extends Command {
 
     if (SwerveS.autoLock == true && SwerveS.aprilTagVisible() == true) {
       turningSpeed = swerveS.autoLockController.calculate(CameraS.getXError(), 0.0);
-      SmartDashboard.putNumber("Spin", turningSpeed);
+      //SmartDashboard.putNumber("Spin", turningSpeed);
     }
 
     // If the desired ChassisSpeeds are really small (ie from controller drift) make them even smaller so that the robot doesn't move

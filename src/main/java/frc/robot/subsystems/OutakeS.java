@@ -87,10 +87,10 @@ public class OutakeS extends SubsystemBase {
         SmartDashboard.putNumber("P Gain", kP);
         SmartDashboard.putNumber("I Gain", kI);
         SmartDashboard.putNumber("D Gain", kD);
-        SmartDashboard.putNumber("I Zone", kIz);
+       // SmartDashboard.putNumber("I Zone", kIz);
         SmartDashboard.putNumber("Feed Forward", kFF);
-        SmartDashboard.putNumber("Max Output", kMaxOutput);
-        SmartDashboard.putNumber("Min Output", kMinOutput);
+      //  SmartDashboard.putNumber("Max Output", kMaxOutput);
+      //  SmartDashboard.putNumber("Min Output", kMinOutput);
         // display Smart Motion coefficients
         SmartDashboard.putNumber("Max Velocity", maxVel);
         SmartDashboard.putNumber("Min Velocity", minVel);
@@ -102,15 +102,15 @@ public class OutakeS extends SubsystemBase {
     public void periodic() {
         SmartDashboard.putNumber("Top Flywheel Speed", topFlywheelEncoder.getVelocity());
         SmartDashboard.putNumber("Bottom Flywheel Speed", bottomFlywheelEncoder.getVelocity());
-        SmartDashboard.putNumber("Average Flywheel Speed", getAverageFlywheelSpeed());
+       // SmartDashboard.putNumber("Average Flywheel Speed", getAverageFlywheelSpeed());
         // read PID coefficients from SmartDashboard
         double p = SmartDashboard.getNumber("P Gain", Constants.OutakeConstants.PIDConstants.P);
         double i = SmartDashboard.getNumber("I Gain", Constants.OutakeConstants.PIDConstants.I);
         double d = SmartDashboard.getNumber("D Gain", Constants.OutakeConstants.PIDConstants.D);
-        double iz = SmartDashboard.getNumber("I Zone", Constants.OutakeConstants.PIDConstants.Iz);
+     //   double iz = SmartDashboard.getNumber("I Zone", Constants.OutakeConstants.PIDConstants.Iz);
         double ff = SmartDashboard.getNumber("Feed Forward", Constants.OutakeConstants.PIDConstants.FF);
-        double max = SmartDashboard.getNumber("Max Output", Constants.OutakeConstants.PIDConstants.max);
-        double min = SmartDashboard.getNumber("Min Output", Constants.OutakeConstants.PIDConstants.min);
+   //     double max = SmartDashboard.getNumber("Max Output", Constants.OutakeConstants.PIDConstants.max);
+   //     double min = SmartDashboard.getNumber("Min Output", Constants.OutakeConstants.PIDConstants.min);
         double maxV = SmartDashboard.getNumber("Max Velocity", Constants.OutakeConstants.PIDConstants.maxVel);
         double minV = SmartDashboard.getNumber("Min Velocity", Constants.OutakeConstants.PIDConstants.minVel);
         double maxA = SmartDashboard.getNumber("Max Acceleration", Constants.OutakeConstants.PIDConstants.maxAccel);
@@ -129,19 +129,19 @@ public class OutakeS extends SubsystemBase {
             topPIDController.setD(d); kD = d;
             bottomPIDController.setD(d); kD = d;
         }
-        if ((iz != kIz)) {
+     /*    if ((iz != kIz)) {
             topPIDController.setIZone(iz); kIz = iz; 
             bottomPIDController.setIZone(iz); kIz = iz; 
-        }
+        }*/
         if ((ff != kFF)) {
             topPIDController.setFF(ff); kFF = ff; 
             bottomPIDController.setFF(ff); kFF = ff; 
         }
-        if ((max != kMaxOutput) || (min != kMinOutput)) { 
+        /*if ((max != kMaxOutput) || (min != kMinOutput)) { 
             topPIDController.setOutputRange(min, max); 
             bottomPIDController.setOutputRange(min, max); 
             kMinOutput = min; kMaxOutput = max; 
-        }
+        }*/
         if((maxV != maxVel)) { 
             topPIDController.setSmartMotionMaxVelocity(maxV,0); maxVel = maxV; 
             bottomPIDController.setSmartMotionMaxVelocity(maxV,0); maxVel = maxV; 
