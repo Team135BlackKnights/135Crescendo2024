@@ -205,7 +205,6 @@ public class SwerveS extends SubsystemBase {
 
         robotField.setRobotPose(getPose());
 
-
         PathPlannerLogging.setLogCurrentPoseCallback((pose) -> {
             // Do whatever you want with the pose here
             robotField.setRobotPose(pose);

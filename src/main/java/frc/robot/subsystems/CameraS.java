@@ -19,6 +19,7 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -119,6 +120,9 @@ public static boolean aprilTagVisible() {
             visionEst.ifPresent(
                     est -> {
                         var estPose = est.estimatedPose.toPose2d();
+                        Field2d cameraField = new Field2d();
+                        cameraField.setRobotPose(estPose);
+                        SmartDashboard.putData(cameraField);
                         // Change our trust in the measurement based on the tags we can see
                         var estStdDevs = getEstimationStdDevs(estPose,cEstimator,cCam);
                         SmartDashboard.putString("CAMERAUPDATE", cCam.getName());
