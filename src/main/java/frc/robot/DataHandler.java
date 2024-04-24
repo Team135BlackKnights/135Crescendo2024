@@ -78,7 +78,12 @@ import java.io.IOError;
                 Scanner renameScanner = new Scanner(createdFile);
     
                 if (renameScanner.hasNext()){
-                    id = Integer.parseInt(renameScanner.nextLine());
+                    try {
+                        id = Integer.parseInt(renameScanner.nextLine());
+                    } catch (Exception e) {
+                       System.out.println("ID did not exist, using default" + id);
+                    }
+                    
                     renameScanner.close();
                 }
                 

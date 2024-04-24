@@ -36,7 +36,7 @@ public class Robot extends TimedRobot {
       DataHandler.createLogFileOnRIOUSB();
     }
     else if (Robot.isSimulation()){
-      DataHandler.createLogFileinSimulation("C:");
+      DataHandler.createLogFileinSimulation("E:");
     }
   }
 

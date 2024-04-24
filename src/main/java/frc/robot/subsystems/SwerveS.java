@@ -27,6 +27,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.DataHandler;
 import frc.robot.LimelightHelpers;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.FieldConstants;
@@ -234,7 +235,9 @@ public class SwerveS extends SubsystemBase {
             // Do whatever you want with the poses here
             robotField.getObject("path").setPoses(poses);
         });
-
+        if (periodicUpdateCycle %10 == 0){
+            DataHandler.logData(periodicUpdateCycle);
+        }
     }
 
     public static double getXError() {
