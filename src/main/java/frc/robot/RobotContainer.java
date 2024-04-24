@@ -25,6 +25,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import frc.robot.commands.HangMacroC;
 import edu.wpi.first.wpilibj.XboxController;
+
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -54,8 +55,8 @@ public class RobotContainer {
   JoystickButton yButton = new JoystickButton(manipController, 4);
   JoystickButton bButton = new JoystickButton(manipController, 2);
   POVButton povZero = new POVButton(driveController, 0);
-  POVButton manipPOVZero = new POVButton(manipController, 0);
-  POVButton manipPOV180 = new POVButton(manipController, 180);
+ // POVButton manipPOVZero = new POVButton(manipController, 0);
+ // POVButton manipPOV180 = new POVButton(manipController, 180);
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     swerveS.setDefaultCommand(new SwerveC(swerveS));
@@ -75,12 +76,23 @@ public class RobotContainer {
   }
 
   private void configureBindings() {
-    aButton.onTrue(swerveS.toggleAutoLockCommand());
-    xButton.onTrue(new InstantCommand(() -> swerveS.zeroHeading()));
-    yButton.onTrue(new VariableSpeed(intakeS, outakeS, false));
-    bButton.onTrue(new SetAngle(intakeS, outakeS, 13));
+    if (aButton.getAsBoolean() && !manipController.getStartButton()){
+      swerveS.toggleAutoLockCommand();
+    }
+    if (yButton.getAsBoolean() && !manipController.getStartButton()){
+      new InstantCommand(() -> swerveS.zeroHeading());
+    }
+    if (yButton.getAsBoolean() && !manipController.getStartButton()){
+      new VariableSpeed(intakeS, outakeS, false);
+    }
+    if (bButton.getAsBoolean() && !manipController.getStartButton()){
+      new SetAngle(intakeS, outakeS, 13);
+    }
+   //manipController.y().and(manipController.start().negate()).onTrue(new VariableSpeed(intakeS, outakeS, false));
+    //manipController.b().and(manipController.start().negate()).onTrue(new SetAngle(intakeS, outakeS, 13));
     povZero.onTrue(new HangMacroC(hangS, HangConstants.upperHookHeight));
-    manipPOVZero.onTrue(new SetAngle(intakeS, outakeS, 27));
+    povZero.onTrue(new SetAngle(intakeS, outakeS, 27));
+    //manipController.povUp().whileTrue(new SetAngle(intakeS, outakeS, 27));
   }
 
   /**

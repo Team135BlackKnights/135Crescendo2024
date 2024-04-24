@@ -47,29 +47,28 @@ public class VariableAngle extends Command {
             intakeS.setPrimaryIntake(0);
             if (CameraS.getDistanceFromSpeakerUsingRobotPose() > 4.5) {
             //  outakeS.setFF(.85); //may not be needed.
-                outakeS.setRPM(6000);
                 desiredRPM = 6000;
             } else if (CameraS.getDistanceFromSpeakerUsingRobotPose() > 2.4) {
             //  outakeS.setFF(.67); //may not be needed.
-                outakeS.setRPM(4750);
                 desiredRPM = 4750;
             } else {
             //  outakeS.setFF(.46); //may not be needed.
-                outakeS.setRPM(3300);
                 desiredRPM = 3300;
             }
+            outakeS.setIndividualFlywheelSpeeds(desiredRPM, desiredRPM);
         }
-        if (RobotContainer.manipController.getLeftBumper() == true) {
+        if (RobotContainer.manipController.getLeftBumper()) {
             intakeS.setPrimaryIntake(-0.5);
             delay.start();
         }
-        if (OutakeS.getBottomRPMError(desiredRPM) < 100 && OutakeS.getTopRPMError(desiredRPM) < 100 && timer.get() >= 0.2 && (intakeS.intakeWithinBounds() || Math.abs(intakeS.anglePidController.getPositionError()) < 0.5) && Math.abs(CameraS.getXError()) < 3 && RobotContainer.manipController.getAButton() == false && Math.abs(output) < 0.1) {
+
+        if (OutakeS.getFlywheelSpeedDifference() < 100 && timer.get() >= 0.3 && (intakeS.intakeWithinBounds() || Math.abs(intakeS.anglePidController.getPositionError()) < 0.5) && outakeS.shooterPID.getPositionError() < 150 && Math.abs(SwerveS.getXError()) < 3 && !RobotContainer.manipController.getAButton() && Math.abs(output) < 0.1) {
             intakeS.setPrimaryIntake(-0.5);
             delay.start();
         }
 
         
-        //SmartDashboard.putNumber("Angle Output", output);
+      //  SmartDashboard.putNumber("Angle Output", output);
         SmartDashboard.putNumber("Angle Error", intakeS.anglePidController.getPositionError());
         SmartDashboard.putNumber("Flywheel Top", OutakeS.topFlywheelEncoder.getVelocity());
         SmartDashboard.putNumber("Flywheel Bottom ", OutakeS.bottomFlywheelEncoder.getVelocity());

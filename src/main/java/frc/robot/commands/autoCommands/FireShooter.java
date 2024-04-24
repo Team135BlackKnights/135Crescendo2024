@@ -17,7 +17,6 @@ public class FireShooter extends Command {
 
     public FireShooter(OutakeS outakeS) {
         this.outakeS = outakeS;
-
         addRequirements(outakeS);
     }
 
@@ -38,7 +37,7 @@ public class FireShooter extends Command {
             } else {
                 desRPM = 3300;
             }
-            outakeS.setRPM(desRPM);
+            outakeS.setIndividualFlywheelSpeeds(desRPM, desRPM);
             //if the timer hasnt reached the time, essentially uses a pid loop with a feedforward constant (desired velocity/max velocity) to set the motor speed as a percentage
             if (timer.get() >= time) {
                 isFinished = true;

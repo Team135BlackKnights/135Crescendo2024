@@ -21,6 +21,7 @@ import frc.robot.Constants.IntakeConstants;
 
 
 
+
 public class IntakeS extends SubsystemBase {
     //declarations of motors/encoders and limit switch
     public CANSparkMax primaryIntake = new CANSparkMax(Constants.IntakeConstants.primaryIntakeID, MotorType.kBrushless);
@@ -35,7 +36,6 @@ public class IntakeS extends SubsystemBase {
     public static Thread sensorThread;
     public static int timesRan;
     public PIDController anglePidController = new PIDController(0.06, 0, 0);
-   
 
 
     
@@ -66,7 +66,6 @@ public class IntakeS extends SubsystemBase {
         //sets changes to motor (resource intensive, ONLY CALL ON INITIALIZATION)
         primaryIntake.burnFlash();
         deployIntake.burnFlash();
-        
 
         //Color sensor thread
 
@@ -75,10 +74,10 @@ public class IntakeS extends SubsystemBase {
     public void periodic() {
         
         //sets values to SmartDashboard periodically
-     //   SmartDashboard.putNumber("Deploy Intake", deployIntakeEncoder.getPosition());
+      //  SmartDashboard.putNumber("Deploy Intake", deployIntakeEncoder.getPosition());
         SmartDashboard.putNumber("Deploy Intake Abs", getIntakePosition());
         SmartDashboard.putNumber("Intake Angle", getIntakeAngle());
-     //   SmartDashboard.putBoolean("Intake Within Bounds", intakeWithinBounds());
+      //  SmartDashboard.putBoolean("Intake Within Bounds", intakeWithinBounds());
         SmartDashboard.putNumber("Intake Offset", IntakeConstants.intakeOffset);
 
     }
@@ -105,7 +104,6 @@ public class IntakeS extends SubsystemBase {
         }
 
     }
-    
 
     public void setPrimaryIntake(double power) {
         // sets the primary intake, comment below is a deadband check

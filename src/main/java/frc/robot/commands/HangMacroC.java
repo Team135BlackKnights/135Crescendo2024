@@ -34,8 +34,7 @@ public class HangMacroC extends Command{
         if (leftOutput > 1) leftOutput = 1;
         if (rightOutput > 1) rightOutput = 1;
         hangS.setHangMotors(leftOutput, rightOutput);
-        
-        //SmartDashboard.putNumber("Left Hang Output", leftOutput);
+        // SmartDashboard.putNumber("Left Hang Output", leftOutput);
         //SmartDashboard.putNumber("Right Hang Output", rightOutput);
        
     }
