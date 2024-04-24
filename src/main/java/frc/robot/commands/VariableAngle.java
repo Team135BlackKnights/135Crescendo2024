@@ -46,19 +46,19 @@ public class VariableAngle extends Command {
             intakeS.setPrimaryIntake(0);
             double outakeSpeed;
             if (SwerveS.getDistanceFromSpeakerUsingRobotPose() > 4.5) {
-                outakeSpeed = 0.85 + outakeS.shooterPID.calculate(OutakeS.getAverageFlywheelSpeed(), 6000);
+                outakeSpeed = 6000; //was 0.85 + outakeS.shooterPID.calculate(OutakeS.getAverageFlywheelSpeed(), 6000);
             } else if (SwerveS.getDistanceFromSpeakerUsingRobotPose() > 2.4) {
-                outakeSpeed = 0.67 + outakeS.shooterPID.calculate(OutakeS.getAverageFlywheelSpeed(), 4750);
+                outakeSpeed = 4750; //was 0.67 + outakeS.shooterPID.calculate(OutakeS.getAverageFlywheelSpeed(), 4750);
             } else {
-                outakeSpeed  = 0.46 + outakeS.shooterPID.calculate(OutakeS.getAverageFlywheelSpeed(), 3300);
+                outakeSpeed = 3300; //was 0.46 + outakeS.shooterPID.calculate(OutakeS.getAverageFlywheelSpeed(), 3300);
             }
             outakeS.setIndividualFlywheelSpeeds(outakeSpeed, outakeSpeed);
         }
-        if (RobotContainer.manipController.getLeftBumper() == true) {
+        if (RobotContainer.manipController.getLeftBumper()) {
             intakeS.setPrimaryIntake(-0.5);
             delay.start();
         }
-        if (OutakeS.getFlywheelSpeedDifference() < 100 && timer.get() >= 0.3 && (intakeS.intakeWithinBounds() || Math.abs(intakeS.anglePidController.getPositionError()) < 0.5) && outakeS.shooterPID.getPositionError() < 150 && Math.abs(SwerveS.getXError()) < 3 && RobotContainer.manipController.getAButton() == false && Math.abs(output) < 0.1) {
+        if (OutakeS.getFlywheelSpeedDifference() < 100 && timer.get() >= 0.3 && (intakeS.intakeWithinBounds() || Math.abs(intakeS.anglePidController.getPositionError()) < 0.5) && outakeS.shooterPID.getPositionError() < 150 && Math.abs(SwerveS.getXError()) < 3 && !RobotContainer.manipController.getAButton() && Math.abs(output) < 0.1) {
             intakeS.setPrimaryIntake(-0.5);
             delay.start();
         }

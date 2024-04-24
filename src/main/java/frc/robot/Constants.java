@@ -5,6 +5,7 @@
 package frc.robot;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -61,8 +62,12 @@ public final class Constants {
       shooterHeight = Units.inchesToMeters(15),
       flywheelMaxRPM = 7100,
       flywheelGearRatio = 1.5,
-      idealPercentTop = .034,
-      idealPercentBottom = .31;
+      idealPercentTop = .34,
+      idealPercentBottom = .31,
+      kP = 0.00035971,
+      kSVolts = -0.24149,
+      kVVoltSecondsPerRotation= 0.0010486,
+      kAVoltSecondsSquaredPerRotation = 0.00034565;
 
     public static boolean
       topFlywheelReversed = false,
@@ -212,7 +217,11 @@ public final class Constants {
 
   }
   public static class DataLog{
- 
+    public static Map<Integer, String> manCanIdsToNames(){
+      HashMap<Integer,String> map = new HashMap<>();
+      map.put(Constants.OutakeConstants.topFlywheel,"topFlywheel");
+      return map;
+    }
     public static double[][] variableAngleLog = new double[2][20];
     public static double variableAngleDistance = 0;
     public static double angleOutputDegrees = 0;

@@ -1,6 +1,6 @@
 package frc.robot.commands;
 
-import edu.wpi.first.math.MathUtil;
+
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -43,17 +43,15 @@ public class VariableSpeed extends Command {
             intakeS.setPrimaryIntake(0.2);
         } else if (timer.get() >= 0.25) {
             intakeS.setPrimaryIntake(0);
-            double topOutakeSpeed;
-            double bottomOutakeSpeed;
-            topOutakeSpeed = 0.49 + MathUtil.clamp(outakeS.shooterPID.calculate(OutakeS.topFlywheelEncoder.getVelocity(), 4000), -0.1, 0.1);
-            bottomOutakeSpeed = 0.49 + MathUtil.clamp(outakeS.shooterPID.calculate(OutakeS.bottomFlywheelEncoder.getVelocity(), 4000), -0.1, 0.1);
-            outakeS.setIndividualFlywheelSpeeds(topOutakeSpeed, bottomOutakeSpeed);
+            double outakeSpeed;
+            outakeSpeed = 4000; //was 0.49 + MathUtil.clamp(outakeS.shooterPID.calculate(OutakeS.topFlywheelEncoder.getVelocity(), 4000), -0.1, 0.1);
+            outakeS.setIndividualFlywheelSpeeds(outakeSpeed, outakeSpeed);
         }
-        if (RobotContainer.manipController.getLeftBumper() == true) {
+        if (RobotContainer.manipController.getLeftBumper()) {
             intakeS.setPrimaryIntake(-0.5);
             delay.start();
         }
-        if (SwerveS.robotInRange() && OutakeS.getFlywheelSpeedDifference() < 100 && timer.get() >= 0.3 && outakeS.shooterPID.getPositionError() < 150 && Math.abs(SwerveS.getXError()) < 3 && RobotContainer.manipController.getAButton() == false && IntakeS.getIntakePosition() >= IntakeConstants.deployIntakeOuterBound-2) {
+        if (SwerveS.robotInRange() && OutakeS.getFlywheelSpeedDifference() < 100 && timer.get() >= 0.3 && outakeS.shooterPID.getPositionError() < 150 && Math.abs(SwerveS.getXError()) < 3 && !RobotContainer.manipController.getAButton() && IntakeS.getIntakePosition() >= IntakeConstants.deployIntakeOuterBound-2) {
             intakeS.setPrimaryIntake(-0.5);
             delay.start();
         }
