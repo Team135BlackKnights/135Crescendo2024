@@ -62,7 +62,11 @@ public final class Constants {
       flywheelMaxRPM = 7100,
       flywheelGearRatio = 1.5,
       idealPercentTop = .034,
-      idealPercentBottom = .31;
+      idealPercentBottom = .31,
+      kP = 1,
+      kSVolts = 0.05,
+      kVVoltSecondsPerRotation= 12/flywheelMaxRPM,
+      kAVoltSecondsSquaredPerRotation = 0;
 
     public static boolean
       topFlywheelReversed = false,

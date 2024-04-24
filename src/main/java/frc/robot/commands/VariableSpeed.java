@@ -49,11 +49,11 @@ public class VariableSpeed extends Command {
             bottomOutakeSpeed = 0.49 + MathUtil.clamp(outakeS.shooterPID.calculate(OutakeS.bottomFlywheelEncoder.getVelocity(), 4000), -0.1, 0.1);
             outakeS.setIndividualFlywheelSpeeds(topOutakeSpeed, bottomOutakeSpeed);
         }
-        if (RobotContainer.manipController.getLeftBumper() == true) {
+        if (RobotContainer.manipController.leftBumper().getAsBoolean() == true) {
             intakeS.setPrimaryIntake(-0.5);
             delay.start();
         }
-        if (SwerveS.robotInRange() && OutakeS.getFlywheelSpeedDifference() < 100 && timer.get() >= 0.3 && outakeS.shooterPID.getPositionError() < 150 && Math.abs(SwerveS.getXError()) < 3 && RobotContainer.manipController.getAButton() == false && IntakeS.getIntakePosition() >= IntakeConstants.deployIntakeOuterBound-2) {
+        if (SwerveS.robotInRange() && OutakeS.getFlywheelSpeedDifference() < 100 && timer.get() >= 0.3 && outakeS.shooterPID.getPositionError() < 150 && Math.abs(SwerveS.getXError()) < 3 && RobotContainer.manipController.a().getAsBoolean() == false && IntakeS.getIntakePosition() >= IntakeConstants.deployIntakeOuterBound-2) {
             intakeS.setPrimaryIntake(-0.5);
             delay.start();
         }

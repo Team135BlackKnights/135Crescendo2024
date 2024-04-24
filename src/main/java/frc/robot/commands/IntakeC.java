@@ -41,7 +41,7 @@ public class IntakeC extends Command {
 
         intakeSpeed = Math.pow(intakeSpeed, 2) * (intakeSpeed < 0 ? -1 : 1);
 
-        if (RobotContainer.manipController.getLeftBumper() == true) {
+        if (RobotContainer.manipController.leftBumper().getAsBoolean() == true) {
             intakeSpeed = -0.5;
         }
 
@@ -49,7 +49,7 @@ public class IntakeC extends Command {
 
         if (Math.abs(deployIntakeSpeed) < 0.1) deployIntakeSpeed = 0;
 
-        if (RobotContainer.manipController.getXButton() == true || RobotContainer.manipController.getAButton() == true || RobotContainer.manipController.getRightBumper() == true) {
+        if (RobotContainer.manipController.x().getAsBoolean() == true || RobotContainer.manipController.a().getAsBoolean() == true || RobotContainer.manipController.rightBumper().getAsBoolean() == true) {
             deployIntakeSpeed = 0.25;
         }
 

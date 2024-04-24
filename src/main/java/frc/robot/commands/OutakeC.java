@@ -23,7 +23,7 @@ public class OutakeC extends Command {
     @Override
     public void execute() {
         //for amp
-        if (RobotContainer.manipController.getRightBumper()){
+        if (RobotContainer.manipController.rightBumper().getAsBoolean()){
             double topWheelSpeed = OutakeConstants.idealPercentTop + outakeS.shooterPID.calculate(OutakeS.topFlywheelEncoder.getVelocity(), OutakeConstants.flywheelMaxRPM*OutakeConstants.idealPercentTop);
             double bottomWheelSpeed = OutakeConstants.idealPercentBottom + outakeS.shooterPID.calculate(OutakeS.bottomFlywheelEncoder.getVelocity(),OutakeConstants.flywheelMaxRPM*OutakeConstants.idealPercentBottom);
             outakeS.setIndividualFlywheelSpeeds(topWheelSpeed, bottomWheelSpeed);
@@ -34,9 +34,9 @@ public class OutakeC extends Command {
             if (RobotContainer.driveController.getLeftBumper() == true) {
             outakeSpeed = -0.25;
         }
-        if (RobotContainer.manipController.getAButton() == true) {
+        if (RobotContainer.manipController.a().getAsBoolean() == true) {
             outakeSpeed = 0.49 + MathUtil.clamp(outakeS.shooterPID.calculate(OutakeS.getAverageFlywheelSpeed(), 4000),-0.1,0.1);
-        } else if (RobotContainer.manipController.getXButton() == true) {
+        } else if (RobotContainer.manipController.x().getAsBoolean() == true) {
             outakeSpeed = 0.355 + MathUtil.clamp(outakeS.shooterPID.calculate(OutakeS.getAverageFlywheelSpeed(), 2700), -0.1, 0.1);
         }
         outakeS.setIndividualFlywheelSpeeds(outakeSpeed, outakeSpeed);

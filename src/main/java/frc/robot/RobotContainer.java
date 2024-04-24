@@ -5,7 +5,6 @@
 package frc.robot;
 
 import frc.robot.Constants.HangConstants;
-import frc.robot.Constants.IntakeConstants;
 import frc.robot.commands.HangC;
 import frc.robot.commands.IntakeC;
 import frc.robot.commands.OutakeC;
@@ -25,12 +24,15 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import frc.robot.commands.HangMacroC;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.subsystems.LEDStripS;
 /**
  * THIS CODE REQUIRES WPILIB 2024 AND PATHPLANNER 2024 IT WILL NOT WORK OTHERWISE
@@ -45,15 +47,15 @@ public class RobotContainer {
   private final SendableChooser<Command> autoChooser;
 
   public static XboxController driveController = new XboxController(0);
-  public static XboxController manipController = new XboxController(1);
+  public static CommandXboxController manipController = new CommandXboxController(1);
 
   JoystickButton aButton = new JoystickButton(driveController, 1);
   JoystickButton xButton = new JoystickButton(driveController, 3);
-  JoystickButton yButton = new JoystickButton(manipController, 4);
-  JoystickButton bButton = new JoystickButton(manipController, 2);
+ // JoystickButton yButton = new JoystickButton(manipController, 4);
+ // JoystickButton bButton = new JoystickButton(manipController, 2);
   POVButton povZero = new POVButton(driveController, 0);
-  POVButton manipPOVZero = new POVButton(manipController, 0);
-  POVButton manipPOV180 = new POVButton(manipController, 180);
+ // POVButton manipPOVZero = new POVButton(manipController, 0);
+ // POVButton manipPOV180 = new POVButton(manipController, 180);
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     swerveS.setDefaultCommand(new SwerveC(swerveS));
@@ -77,10 +79,26 @@ public class RobotContainer {
   private void configureBindings() {
     aButton.onTrue(swerveS.toggleAutoLockCommand());
     xButton.onTrue(new InstantCommand(() -> swerveS.zeroHeading()));
-    yButton.onTrue(new VariableSpeed(intakeS, outakeS, false));
-    bButton.onTrue(new SetAngle(intakeS, outakeS, 13));
+    manipController.y().and(manipController.start().negate()).whileTrue(new VariableSpeed(intakeS, outakeS, false));
+    manipController.b().and(manipController.start().negate()).whileTrue(new SetAngle(intakeS, outakeS, 13));
     povZero.onTrue(new HangMacroC(hangS, HangConstants.upperHookHeight));
-    manipPOVZero.onTrue(new SetAngle(intakeS, outakeS, 27));
+    manipController.povUp().whileTrue(new SetAngle(intakeS, outakeS, 27));
+    manipController
+        .a()
+        .and(manipController.start())
+        .whileTrue(outakeS.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+    manipController
+        .b()
+        .and(manipController.start())
+        .whileTrue(outakeS.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+    manipController
+        .x()
+        .and(manipController.start())
+        .whileTrue(outakeS.sysIdDynamic(SysIdRoutine.Direction.kForward));
+    manipController
+        .y()
+        .and(manipController.start())
+        .whileTrue(outakeS.sysIdDynamic(SysIdRoutine.Direction.kReverse));
   }
 
   /**
