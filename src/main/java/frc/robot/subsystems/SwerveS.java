@@ -88,12 +88,12 @@ public class SwerveS extends SubsystemBase {
     static Pose2d robotPosition = new Pose2d(0,0, getRotation2d());
 
     Field2d robotField = new Field2d();
-
+    static double zAccel = 0;
     // LIST MODULES IN THE SAME EXACT ORDER USED WHEN DECLARING SwerveDriveKinematics
     ChassisSpeeds m_ChassisSpeeds = Constants.DriveConstants.kDriveKinematics.toChassisSpeeds(new SwerveModuleState[]{frontLeft.getState(), frontRight.getState(), backLeft.getState(), backRight.getState()});
     static SwerveDrivePoseEstimator poseEstimator = new SwerveDrivePoseEstimator(Constants.DriveConstants.kDriveKinematics, getRotation2d(), new SwerveModulePosition[]{frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()},robotPosition);
     SwerveModulePosition[] m_modulePositions = new SwerveModulePosition[]{frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()};
-    
+
     public static boolean autoLock = false;
 
     public static boolean redIsAlliance = true;
@@ -184,7 +184,8 @@ public class SwerveS extends SubsystemBase {
         SmartDashboard.putNumber("BackRight Abs Encoder", backRight.getAbsoluteEncoderRad());
         SmartDashboard.putNumber("xError", xError);
         SmartDashboard.putBoolean("Auto Lock", autoLock);
-        
+        SmartDashboard.putBoolean("Red is Alliance", getAlliance());
+        zAccel = gyro.getRawAccelZ();
         SmartDashboard.putNumber("Position X (getPose)", getPose().getX());
         SmartDashboard.putNumber("Position Y (getPose)", getPose().getY());
         SmartDashboard.putNumber("Robot Heading (getPose)", getPose().getRotation().getDegrees());
@@ -227,6 +228,20 @@ public class SwerveS extends SubsystemBase {
         }
     }
 
+
+    public static double getZAccel(){
+        return zAccel;
+    }
+    public static double getZDistance(){
+        return limelight.getEntry("ty").getDouble(0.0);
+    }
+    public static double getXError() {
+        // bounds xError between -5 and 5 (normal range of xError is -30 to 30)
+        double bounded = xError/6 + Math.copySign(0.9999, xError); //adds 0.9999 to reduce dead area range once we square
+        return bounded*Math.abs(bounded);
+
+
+    }
 
     public static boolean aprilTagVisible() {
         return xError != 0.0;
