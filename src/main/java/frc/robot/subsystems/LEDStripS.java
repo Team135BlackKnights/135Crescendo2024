@@ -128,6 +128,7 @@ public class LEDStripS extends SubsystemBase{
         //sets data to buffer
         leds.setData(ledBuffer);
         }
+        }
 
         
 
