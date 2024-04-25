@@ -175,8 +175,6 @@ public final class Constants {
     disabledHSV = new int[]{0,0,0};
     public static int sinePeriod = 32;
     
-
-    public static int sinePeriod = 16;
     public static int[] ledStates = new int[LEDConstants.sinePeriod];
    
     //Basically controls how different the waves are from one another when the setColorWave function is called. Due to how it is calculated , this value CANNOT be zero (divide by zero error). 

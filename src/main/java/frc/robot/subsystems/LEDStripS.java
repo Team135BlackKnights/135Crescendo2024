@@ -132,7 +132,7 @@ public class LEDStripS extends SubsystemBase{
 
         
 
-    }
+    
 
     public void setLEDSBreathing(int[] LEDColors, boolean run){
         breathingLoopValue +=.25;
@@ -160,5 +160,6 @@ public class LEDStripS extends SubsystemBase{
 
     }
     
+    }
 }
 
