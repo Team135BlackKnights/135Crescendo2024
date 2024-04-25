@@ -31,6 +31,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.SerialPort.Port;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -100,7 +101,7 @@ public class SwerveS extends SubsystemBase {
     SwerveModulePosition[] m_modulePositions = new SwerveModulePosition[]{frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()};
 
     public static boolean autoLock = false;
-
+    public static boolean runningTest = false;
     public static boolean redIsAlliance = true;
 
     SysIdRoutine sysIdRoutine = new SysIdRoutine(
@@ -116,7 +117,30 @@ public class SwerveS extends SubsystemBase {
     , this
         )
       );
-    
+    /**
+   * Returns a command that will execute a quasistatic test in the given direction.
+   *
+   * @param direction The direction (forward or reverse) to run the test in
+   */
+  public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
+    runningTest = true;
+    sysIdRoutine.quasistatic(direction).finallyDo(() -> {
+        runningTest = false;
+    });
+    return sysIdRoutine.quasistatic(direction);
+  }
+  /**
+   * Returns a command that will execute a dynamic test in the given direction.
+   *
+   * @param direction The direction (forward or reverse) to run the test in
+   */
+  public Command sysIdDynamic(SysIdRoutine.Direction direction) {
+    runningTest = true;
+    sysIdRoutine.quasistatic(direction).finallyDo(() -> {
+        runningTest = false;
+    });
+    return sysIdRoutine.dynamic(direction);
+  }
 
     public PIDController autoLockController = new PIDController(0.0044, 0.00135, 0.00001);
 

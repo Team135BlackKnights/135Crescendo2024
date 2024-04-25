@@ -90,8 +90,10 @@ public class RobotContainer {
     }
    //manipController.y().and(manipController.start().negate()).onTrue(new VariableSpeed(intakeS, outakeS, false));
     //manipController.b().and(manipController.start().negate()).onTrue(new SetAngle(intakeS, outakeS, 13));
-    povZero.onTrue(new HangMacroC(hangS, HangConstants.upperHookHeight));
-    povZero.onTrue(new SetAngle(intakeS, outakeS, 27));
+    if (povZero.getAsBoolean() && !manipController.getStartButton()){
+      new HangMacroC(hangS, HangConstants.upperHookHeight);
+      new SetAngle(intakeS, outakeS, 27);
+    }
     //manipController.povUp().whileTrue(new SetAngle(intakeS, outakeS, 27));
   }
 

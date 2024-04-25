@@ -4,7 +4,6 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 
-import java.util.function.DoubleSupplier;
 
 import com.revrobotics.CANSparkBase.IdleMode;
 
@@ -39,7 +38,7 @@ public class OutakeS extends SubsystemBase {
     public static RelativeEncoder 
     topFlywheelEncoder,
     bottomFlywheelEncoder;
-
+    public static boolean runningTest = false;
     SysIdRoutine sysIdRoutine = new SysIdRoutine(
         new SysIdRoutine.Config(),
         new SysIdRoutine.Mechanism(
@@ -83,6 +82,10 @@ public class OutakeS extends SubsystemBase {
    * @param direction The direction (forward or reverse) to run the test in
    */
   public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
+    runningTest = true;
+    sysIdRoutine.quasistatic(direction).finallyDo(() -> {
+        runningTest = false;
+    });
     return sysIdRoutine.quasistatic(direction);
   }
   /**
@@ -91,6 +94,10 @@ public class OutakeS extends SubsystemBase {
    * @param direction The direction (forward or reverse) to run the test in
    */
   public Command sysIdDynamic(SysIdRoutine.Direction direction) {
+    runningTest = true;
+    sysIdRoutine.quasistatic(direction).finallyDo(() -> {
+        runningTest = false;
+    });
     return sysIdRoutine.dynamic(direction);
   }
     public static double getAverageFlywheelSpeed() {

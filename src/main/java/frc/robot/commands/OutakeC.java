@@ -23,16 +23,16 @@ public class OutakeC extends Command {
 
     @Override
     public void execute() {
-        if (RobotContainer.manipController.getAButton() && RobotContainer.manipController.getStartButton()){
+        if (RobotContainer.manipController.getAButton() && RobotContainer.manipController.getStartButton() && !OutakeS.runningTest){
             outakeS.sysIdQuasistatic(SysIdRoutine.Direction.kForward);
         }
-        else if (RobotContainer.manipController.getBButton() && RobotContainer.manipController.getStartButton()){
+        else if (RobotContainer.manipController.getBButton() && RobotContainer.manipController.getStartButton() && !OutakeS.runningTest){
             outakeS.sysIdQuasistatic(SysIdRoutine.Direction.kReverse);
         }
-        else if (RobotContainer.manipController.getXButton() && RobotContainer.manipController.getStartButton()){
+        else if (RobotContainer.manipController.getXButton() && RobotContainer.manipController.getStartButton() && !OutakeS.runningTest){
             outakeS.sysIdDynamic(SysIdRoutine.Direction.kForward);
         }
-        else if (RobotContainer.manipController.getYButton() && RobotContainer.manipController.getStartButton()){
+        else if (RobotContainer.manipController.getYButton() && RobotContainer.manipController.getStartButton() && !OutakeS.runningTest){
             outakeS.sysIdDynamic(SysIdRoutine.Direction.kReverse);
         }
         //for amp
