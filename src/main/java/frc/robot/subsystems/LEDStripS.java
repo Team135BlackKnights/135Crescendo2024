@@ -7,12 +7,14 @@ import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.DriverStation;
 public class LEDStripS extends SubsystemBase{
     double timesRan = 0;
-    int initialLoopValue = 0;
     AddressableLEDBuffer ledBuffer;
     public static AddressableLED leds;
-    int schedulerCount = 0;
     boolean runSineWave = false;
-    int m_rainbowFirstPixelHue; 
+    public static int 
+    initialLoopValue = 0,
+    schedulerCount = 0,
+     m_rainbowFirstPixelHue;
+    public static double breathingLoopValue = 0;
     public LEDStripS(){
         
         //creates LED objects  
@@ -25,6 +27,7 @@ public class LEDStripS extends SubsystemBase{
         leds.start(); //FOR THE LOVE OF GOD PLEASE REMEMBER THIS IF YOU'RE GONNA CODE YOUR OWN SUBSYSTEM I SPENT LIKE 6 HOURS TROUBLESHOOTING AND IT DIDNT WORK BECAUSE OF THIS
 
         for (var i= 0; i < LEDConstants.sinePeriod; i++){
+
             LEDConstants.ledStates[i] = (int)Math.floor(Math.abs(Math.sin(((i*Math.PI/LEDConstants.sinePeriod)+initialLoopValue)))*255); 
         }
     }
@@ -41,6 +44,7 @@ public class LEDStripS extends SubsystemBase{
         // if it's disabled make it so LEDs are off unless navx is disconnected. If navx is disconnected run colorwave
         if (DriverStation.isDisabled()) {
 
+
             if (!SwerveS.fieldOriented) {
                 setConstantColors(new int[]{0,0,0});
             } else {
@@ -51,10 +55,15 @@ public class LEDStripS extends SubsystemBase{
         } else { //if its enabled
             //if it is trying to autolock
             if (SwerveS.autoLock) {
+
                 
                 //if its locked on, set to constant green
                 if (SwerveS.aprilTagVisible() && CameraS.robotInRange()) {
                     setConstantColors(LEDConstants.greenHSV);
+                    
+
+               
+
                 } else { 
                     setConstantColors(LEDConstants.redHSV);
                 } 
@@ -68,6 +77,7 @@ public class LEDStripS extends SubsystemBase{
                 rainbow();
 
             }
+
         }
     }
     
@@ -99,7 +109,6 @@ public class LEDStripS extends SubsystemBase{
         }
         leds.setData(ledBuffer);
     }
-
     public void setColorWave(int[] LEDColors, boolean run){//value is basically how dark it is, is controlled by the wave function
         if (run){
             
@@ -119,9 +128,38 @@ public class LEDStripS extends SubsystemBase{
         //sets data to buffer
         leds.setData(ledBuffer);
         }
+        }
+
+        
+
+    
+
+    public void setLEDSBreathing(int[] LEDColors, boolean run){
+        breathingLoopValue +=.25;
+        breathingLoopValue %= LEDConstants.sinePeriod;
+        final int value = LEDConstants.ledStates[(int)Math.floor(breathingLoopValue)];
+
+        if (run){
+                
+                for (var i = 0; i < (ledBuffer.getLength()); i++) {
+
+                
+                ledBuffer.setHSV(i, LEDColors[0], LEDColors[1], value);
+                leds.setData(ledBuffer);
+            }
+
+            
+            //offset by one "notch" each time
+            System.out.println(breathingLoopValue);
+            //Prevents any kind of integer overflow error happening (prob would take the robot running for a year straight or something like that to reach, )
+    
+        //sets data to buffer
+        leds.setData(ledBuffer);
 
         
 
     }
     
+    }
 }
+
