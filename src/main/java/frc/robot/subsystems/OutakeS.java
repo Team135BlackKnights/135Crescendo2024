@@ -86,28 +86,6 @@ public class OutakeS extends SubsystemBase {
     return sysIdRoutine.quasistatic(direction);
   }
   /**
-   * 
-   * @param shooterSpeed in RPM
-   * @return Command
-  */
-  public Command runShooter(DoubleSupplier shooterSpeed) {
-    // Run shooter wheel at the desired speed using a PID controller and feedforward.
-    return run(() -> {
-        topFlywheel.setVoltage(
-            shooterPID.calculate(topFlywheelEncoder.getVelocity(), shooterSpeed.getAsDouble()) 
-                + m_shooterFeedforward.calculate(shooterSpeed.getAsDouble()));
-        bottomFlywheel.setVoltage(
-            shooterPID.calculate(bottomFlywheelEncoder.getVelocity(), shooterSpeed.getAsDouble())
-                + m_shooterFeedforward.calculate(shooterSpeed.getAsDouble()));
-        })
-        .finallyDo(
-            () -> {
-              topFlywheel.stopMotor();
-              bottomFlywheel.stopMotor();
-            })
-        .withName("runShooter");
-  }
-  /**
    * Returns a command that will execute a dynamic test in the given direction.
    *
    * @param direction The direction (forward or reverse) to run the test in
@@ -132,21 +110,21 @@ public class OutakeS extends SubsystemBase {
      */
     public void setRPM(double rpm){
         topFlywheel.setVoltage(
-            shooterPID.calculate(topFlywheelEncoder.getVelocity(), rpm));
-               // + m_shooterFeedforward.calculate(rpm));
+            shooterPID.calculate(topFlywheelEncoder.getVelocity(), rpm)
+                + m_shooterFeedforward.calculate(rpm));
         bottomFlywheel.setVoltage(
-            shooterPID.calculate(bottomFlywheelEncoder.getVelocity(), rpm));
-                //+ m_shooterFeedforward.calculate(rpm));
+            shooterPID.calculate(bottomFlywheelEncoder.getVelocity(), rpm)
+                + m_shooterFeedforward.calculate(rpm));
     }
     /*
      **For shooting amp
      */
     public void setIndividualFlywheelSpeeds(double topWheelSpeed, double bottomWheelSpeed){
         topFlywheel.setVoltage(
-            shooterPID.calculate(topFlywheelEncoder.getVelocity(), topWheelSpeed));
-                //+ m_shooterFeedforward.calculate(topWheelSpeed));
+            shooterPID.calculate(topFlywheelEncoder.getVelocity(), topWheelSpeed)
+                + m_shooterFeedforward.calculate(topWheelSpeed));
         bottomFlywheel.setVoltage(
-            shooterPID.calculate(bottomFlywheelEncoder.getVelocity(), bottomWheelSpeed));
-                //+ m_shooterFeedforward.calculate(bottomWheelSpeed));
+            shooterPID.calculate(bottomFlywheelEncoder.getVelocity(), bottomWheelSpeed)
+                + m_shooterFeedforward.calculate(bottomWheelSpeed));
     }
 }

@@ -93,8 +93,10 @@ public final class Constants {
       kTurningEncoderRPM2RadPerSec = kTurningEncoderRot2Rad / 60,
       kDeadband = 0.1,
       kAutoDeadband = 0.01,
-
-      kTurningP = 0.5;
+      kTurningP = 0.5,
+      kSVolts = -0.24149,
+      kVVoltSecondsPerRotation= 0.0010486,
+      kAVoltSecondsSquaredPerRotation = 0.00034565;
   }
 
   public static class DriveConstants {

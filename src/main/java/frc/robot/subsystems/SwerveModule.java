@@ -11,6 +11,7 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.SparkAnalogSensor.Mode;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -27,13 +28,17 @@ public class SwerveModule {
     private final RelativeEncoder turningEncoder;
 
     private final PIDController turningPidController;
-
+    private final SimpleMotorFeedforward turningFeedForward =
+    new SimpleMotorFeedforward(
+        Constants.SwerveConstants.kSVolts,
+        Constants.SwerveConstants.kVVoltSecondsPerRotation,
+        Constants.SwerveConstants.kAVoltSecondsSquaredPerRotation);
     private final SparkAnalogSensor absoluteEncoder;
     //private final AnalogInput absoluteEncoder; // Use either AnalogInput or CANCoder depending on the absolute encoder
     //private final CANCoder absoluteEncoder;
     private final boolean absoluteEncoderReversed;
     private final double absoluteEncoderOffsetRad;
-
+    
     /**
      * 
      * @param driveMotorId Drive CANSparkMax Motor ID
@@ -95,7 +100,9 @@ public class SwerveModule {
         //returns velocity of turning motor
         return turningEncoder.getVelocity();
     }
-
+    public void setTurningTest(double volts){
+        turningMotor.setVoltage(volts);
+    }
     public double getAbsoluteEncoderRad() {
         //gets the voltage and divides by the maximum voltage to get a percent, then multiplies that percent by 2pi to get a degree heading.
         double angle = absoluteEncoder.getVoltage() / RobotController.getVoltage3V3(); // use 5V when plugged into RIO 3.3V when using breakout board
@@ -151,7 +158,11 @@ public class SwerveModule {
         state = SwerveModuleState.optimize(state, getState().angle);
 
         driveMotor.set(state.speedMetersPerSecond / Constants.DriveConstants.kMaxSpeedMetersPerSecond);
-        turningMotor.set(turningPidController.calculate(getAbsoluteEncoderRad(), state.angle.getRadians()));
+        turningMotor.setVoltage(
+            turningPidController.calculate(getAbsoluteEncoderRad(), state.angle.getRadians())
+                + turningFeedForward.calculate(state.angle.getRadians()));
+       // turningMotor.setVoltage(state.angle.getRadians());
+        //turningMotor.set(turningPidController.calculate(getAbsoluteEncoderRad(), state.angle.getRadians()));
     }
 
     public void stop() {

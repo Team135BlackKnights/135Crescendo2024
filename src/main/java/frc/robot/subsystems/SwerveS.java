@@ -23,6 +23,8 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.units.Measure;
+import edu.wpi.first.units.Voltage;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.SerialPort.Port;
@@ -30,10 +32,13 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.DataHandler;
 import frc.robot.LimelightHelpers;
 import frc.robot.LimelightHelpers.PoseEstimate;
+
+import static edu.wpi.first.units.Units.Volts;
 
 
 public class SwerveS extends SubsystemBase {
@@ -97,7 +102,19 @@ public class SwerveS extends SubsystemBase {
 
     public static boolean redIsAlliance = true;
 
-
+    SysIdRoutine sysIdRoutine = new SysIdRoutine(
+        new SysIdRoutine.Config(),
+        new SysIdRoutine.Mechanism(
+            (Measure<Voltage> volts) -> {
+                frontLeft.setTurningTest(volts.in(Volts));
+                frontRight.setTurningTest(volts.in(Volts));
+                backLeft.setTurningTest(volts.in(Volts));
+                backRight.setTurningTest(volts.in(Volts));
+              },
+          null // No log consumer, since data is recorded by URCL
+    , this
+        )
+      );
     
 
     public PIDController autoLockController = new PIDController(0.0044, 0.00135, 0.00001);
