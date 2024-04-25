@@ -10,8 +10,8 @@ import frc.robot.Constants.HangConstants;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-
 public class HangS extends SubsystemBase {
+    static double hangState = 0;
 
     //hang motors
     public static CANSparkMax leftHang = new CANSparkMax(HangConstants.leftHangID, MotorType.kBrushless);
@@ -36,10 +36,22 @@ public class HangS extends SubsystemBase {
         
 
     }
+  
     @Override
-    public void periodic(){
-       // SmartDashboard.putNumber("Left Hang", leftHangEncoder.getPosition());
-      //  SmartDashboard.putNumber("Right Hang", rightHangEncoder.getPosition());
+    public void periodic() {
+        //SmartDashboard.putNumber("Left Hang", leftHangEncoder.getPosition());
+        //SmartDashboard.putNumber("Right Hang", rightHangEncoder.getPosition());
+        //trying to hang
+        if((leftHangEncoder.getVelocity() > 15) && (rightHangEncoder.getVelocity() > 15) && (SwerveS.getZAccel() > 0)){
+            hangState = 1;
+        }
+        //hang done 
+        else if (SwerveS.getZDistance() > 10){
+            hangState = 2;
+        }
+        else{
+            hangState = 0;
+        }
     }
     public void setHangMotors(double leftOutput, double rightOutput){
         if (leftOutput < 0 && HangS.leftHangEncoder.getPosition() < Constants.HangConstants.hangLowerSoftStop) {
