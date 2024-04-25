@@ -2,8 +2,8 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.38,
-      "y": 4.1
+      "x": 0.46,
+      "y": 4.1046482092964185
     },
     "rotation": 0
   },
@@ -31,40 +31,22 @@
           }
         },
         {
-          "type": "named",
-          "data": {
-            "name": "ShootNote 3600 RPM"
-          }
-        },
-        {
-          "type": "race",
+          "type": "deadline",
           "data": {
             "commands": [
               {
-                "type": "path",
+                "type": "named",
                 "data": {
-                  "pathName": "Bottom Drive to Center Note (Upper)"
+                  "name": "Shoot From Anywhere"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "IntakeNote"
+                  "name": "Lock Onto April Tags"
                 }
               }
             ]
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Bottom Drive into Team Wing (Upper)"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "ShootNote 3600 RPM"
           }
         },
         {
@@ -93,9 +75,66 @@
           }
         },
         {
-          "type": "named",
+          "type": "deadline",
           "data": {
-            "name": "ShootNote 3600 RPM"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Shoot From Anywhere"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Lock Onto April Tags"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "race",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Bottom Drive to Center Note (Upper)"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "IntakeNote"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Bottom Drive into Team Wing (Upper)"
+          }
+        },
+        {
+          "type": "deadline",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Shoot From Anywhere"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Lock Onto April Tags"
+                }
+              }
+            ]
           }
         }
       ]

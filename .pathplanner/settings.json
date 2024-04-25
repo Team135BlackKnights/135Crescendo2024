@@ -13,9 +13,9 @@
     "Bottom Autos",
     "Top Autos"
   ],
-  "defaultMaxVel": 3.66,
+  "defaultMaxVel": 4.6,
   "defaultMaxAccel": 3.0,
-  "defaultMaxAngVel": 480.0,
+  "defaultMaxAngVel": 560.0,
   "defaultMaxAngAccel": 390.0,
-  "maxModuleSpeed": 3.657
+  "maxModuleSpeed": 4.6
 }

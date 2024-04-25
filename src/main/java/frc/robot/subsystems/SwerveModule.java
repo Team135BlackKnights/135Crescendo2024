@@ -142,7 +142,7 @@ public class SwerveModule {
 
     public void setDesiredState(SwerveModuleState state) {
         // Stops the motors if the desired state is too small
-        if (Math.abs(state.speedMetersPerSecond) < 0.001) {
+        if (Math.abs(state.speedMetersPerSecond) < 0.001 && !SwerveS.autoLock) {
             stop();
             return;
         }

@@ -27,8 +27,8 @@ public class LEDStripS extends SubsystemBase{
         leds.start(); //FOR THE LOVE OF GOD PLEASE REMEMBER THIS IF YOU'RE GONNA CODE YOUR OWN SUBSYSTEM I SPENT LIKE 6 HOURS TROUBLESHOOTING AND IT DIDNT WORK BECAUSE OF THIS
 
         for (var i= 0; i < LEDConstants.sinePeriod; i++){
-            LEDConstants.ledStates[i] = (int)Math.floor(Math.abs(Math.sin((i*Math.PI/LEDConstants.sinePeriod)))*255); 
-            
+
+            LEDConstants.ledStates[i] = (int)Math.floor(Math.abs(Math.sin(((i*Math.PI/LEDConstants.sinePeriod)+initialLoopValue)))*255); 
         }
     }
 
@@ -41,62 +41,46 @@ public class LEDStripS extends SubsystemBase{
         runSineWave = ( schedulerCount == 0);
         //if there is a note stored in the intake, set it to a constant note color
 
-        // if it's disabled make it so LEDs are off
+        // if it's disabled make it so LEDs are off unless navx is disconnected. If navx is disconnected run colorwave
         if (DriverStation.isDisabled()) {
-            //setColorWave(LEDConstants.goldH, LEDConstants.goldS, LEDConstants.disabledSinePeriod);
-            setConstantColors(LEDConstants.disabledHSV);
-        }
-        else if (DriverStation.isAutonomous()){
-            if (SwerveS.redIsAlliance){
-                setColorWave(LEDConstants.redHSV, runSineWave);
+
+
+            if (!SwerveS.fieldOriented) {
+                setConstantColors(new int[]{0,0,0});
+            } else {
+                setColorWave(LEDConstants.goldHSV, runSineWave);
             }
-            else{
-                setColorWave(LEDConstants.redHSV, runSineWave);
-            }
-            }
-            //teleop
-        else{
-            if (SwerveS.autoLock){
-                if (SwerveS.aprilTagVisible()){
-                    setConstantColors(LEDConstants.greenHSV);
-                }
-                else{
-                    setConstantColors(LEDConstants.redHSV);
-                }
-            }
-            else{
-             rainbow();   
-            }
-        }
-           //if it is trying to autolock
-            /*if (SwerveS.autoLock){
+            
+            
+        } else { //if its enabled
+            //if it is trying to autolock
+            if (SwerveS.autoLock) {
+
                 
                 //if its locked on, set to constant green
-                if (SwerveS.aprilTagVisible()){
+                if (SwerveS.aprilTagVisible() && SwerveS.robotInRange()) {
                     setConstantColors(LEDConstants.greenHSV);
-                }
-                
-                //if its not locked on, set to flashing green
-                else{ 
-                    setColorWave(LEDConstants.greenHSV, runSineWave);
-                }    
-            } else {
-                setColorWave(LEDConstants.greenHSV, runSineWave); //this function cycles once every 20ms, so every 10 cycles (200ms) sineWave can run
-            }
-        
-            /* else{
-
-                //If none of the previous conditions are met do the wave pattern with our alliance color
-                if(SwerveS.redIsAlliance) {
-                    setConstantColors(LEDConstants.redH, LEDConstants.redS, LEDConstants.redV);
-                }
                     
-                else {
-                setConstantColors(LEDConstants.blueH, LEDConstants.blueS, LEDConstants.blueV);
-                }
-                } */
-            
+
+               
+
+                } else { 
+                    setConstantColors(LEDConstants.redHSV);
+                } 
+
+            } else if (!SwerveS.fieldOriented) {
+
+                setConstantColors(LEDConstants.blueHSV);
+                    
+            } else {
+
+                rainbow();
+
+            }
+
         }
+    }
+    
     public void rainbow() {
         if (runSineWave){
             // For every pixel
@@ -148,6 +132,7 @@ public class LEDStripS extends SubsystemBase{
         
 
     }
+
     public void setLEDSBreathing(int[] LEDColors, boolean run){
         breathingLoopValue +=.25;
         breathingLoopValue %= LEDConstants.sinePeriod;
@@ -175,4 +160,4 @@ public class LEDStripS extends SubsystemBase{
     }
     
 }
-}
+

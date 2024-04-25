@@ -5,13 +5,15 @@
 package frc.robot;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.util.Color;
+import edu.wpi.first.wpilibj2.command.Command;
+
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
  * constants. This class should not be used for any other purpose. All constants should be declared
@@ -34,14 +36,15 @@ public final class Constants {
       primaryIntakeID = 20,
       deployIntakeID = 21,
       intakeAbsEncoderID = 1,
-      intakeLimitSwitchID = 9;
+      intakeLimitSwitchID = 9,
+      intakeOffset = 43;
 
     public static double
-      absIntakeEncoderOffset = 20.356957,
+      absIntakeEncoderOffset = 59.870652,
       absIntakeEncoderConversionFactor = 360,
       primaryIntakeGearRatio = 1/4.5,
       deployIntakeInnerBound = 0,
-      deployIntakeOuterBound = 91;
+      deployIntakeOuterBound = 90;
 
     public static boolean
       primaryIntakeReversed = true,
@@ -56,21 +59,26 @@ public final class Constants {
 
     public static double
       limelightToShooter = Units.inchesToMeters(-3),
-      flywheelMaxRPM = 6600,
+      shooterHeight = Units.inchesToMeters(15),
+      flywheelMaxRPM = 7100,
       flywheelGearRatio = 1.5,
-      idealPercentTop = .034,
-      idealPercentBottom = .31;
+      idealPercentTop = .34,
+      idealPercentBottom = .31,
+      kP = 0.00035971,
+      kSVolts = -0.24149,
+      kVVoltSecondsPerRotation= 0.0010486,
+      kAVoltSecondsSquaredPerRotation = 0.00034565;
 
     public static boolean
-      topFlywheelReversed = true,
-      bottomFlywheelReversed = true;
+      topFlywheelReversed = false,
+      bottomFlywheelReversed = false;
     
   }
 
   public static class SwerveConstants {
     public static double
       kWheelDiameter = Units.inchesToMeters(3.873), 
-      kDriveMotorGearRatio = 1/8.14, 
+      kDriveMotorGearRatio = 1/6.75, 
       kTurningMotorGearRatio = (7/150),
       kDriveEncoderRot2Meter = kDriveMotorGearRatio * Math.PI * kWheelDiameter,
       kDriveEncoderRPM2MeterPerSec = kDriveEncoderRot2Meter / 60,
@@ -88,17 +96,17 @@ public final class Constants {
       kChassisLength = Units.inchesToMeters(24.25), // Distance betwwen Front and Back wheels
 
       kDriveBaseRadius = Units.inchesToMeters(Math.sqrt(kChassisLength*kChassisLength + kChassisWidth*kChassisWidth)/2),
-      // Distance from center of robot to the fartshest module
+      // Distance from center of robot to the farthest module
 
-      kMaxSpeedMetersPerSecond = Units.feetToMeters(12.0),
-      kMaxTurningSpeedRadPerSec = 4.414667 * 2 * Math.PI, // 1.33655 *2 *Math.PI
-      kTeleDriveMaxAcceleration = Units.feetToMeters(5.66), //guess
+      kMaxSpeedMetersPerSecond = Units.feetToMeters(15.1),
+      kMaxTurningSpeedRadPerSec = 3.914667 * 2 * Math.PI, // 1.33655 *2 *Math.PI
+      kTeleDriveMaxAcceleration = Units.feetToMeters(12), //guess
       kTeleTurningMaxAcceleration = 5, //guess
       
       // To find these set them to zero, then turn the robot on and manually set the wheels straight.
       // The encoder values being read are then your new Offset values
       kFrontLeftAbsEncoderOffsetRad = 0.562867,
-      kFrontRightAbsEncoderOffsetRad = 2.610261,
+      kFrontRightAbsEncoderOffsetRad = 0.548137,
       kBackLeftAbsEncoderOffsetRad = 2*Math.PI - 2.891372,
       kBackRightAbsEncoderOffsetRad = 2*Math.PI - 0.116861; 
     
@@ -152,16 +160,20 @@ public final class Constants {
     ledPort = 9, 
     // amount of LEDs in the light strip
     ledBufferLength = 90,
-    sineWaveUpdateCycles = 3;
+
+    sineWaveUpdateCycles = 3,
+    overrideLEDPatternTime = 4;
+
     //all arrays below use the H,S,V format
-    public static 
-    int[] noteHSV = new int[]{12, 255, 100},
+    public static int[] 
+    noteHSV = new int[]{12, 255, 100},
     redHSV = new int[]{0,255,100},
     blueHSV = new int[]{120,255,100},
     greenHSV = new int[]{50,255,100},
+
     goldHSV = new int[]{23,255,100},
     disabledHSV = new int[]{0,0,0};
-  
+    public static int sinePeriod = 32;
     
 
     public static int sinePeriod = 16;
@@ -175,12 +187,14 @@ public final class Constants {
   }
   public static class HangConstants{
     public static double
+      upperHookHeight = 63,
       hangLowerSoftStop = 5,
       hangUpperSoftStop = 101; //Note: for some reason left and right encoders output different values, MAYBE change them to have left and right max?
+      //left side is left, right side is right
 
-    public static int
-      leftHangID = 41,
-      rightHangID = 40;
+      public static int
+        leftHangID = 41,
+        rightHangID = 40;
 
     public static boolean
       leftHangReversed = true,
@@ -194,11 +208,25 @@ public final class Constants {
   public static class FieldConstants {
     public static double
       targetHeightoffFloorInches = 57,
-      speakerLowerLipHeight = Units.inchesToMeters(78),
-      speakerUpperLipHeight = Units.inchesToMeters(83),
+      speakerLowerLipHeight = Units.inchesToMeters(78.13),
+      speakerUpperLipHeight = Units.inchesToMeters(80.9),
       noteHeight = Units.inchesToMeters(2.5),
-      speakerOpeningDepth = Units.inchesToMeters(17);
+      speakerOpeningDepth = Units.inchesToMeters(18.11);
 
+    public static Translation2d
+      blueSpeaker = new Translation2d(0, 5.56),
+      redSpeaker = new Translation2d(16.59128, 5.56);
+
+  }
+  public static class DataLog{
+    public static Map<Integer, String> manCanIdsToNames(){
+      HashMap<Integer,String> map = new HashMap<>();
+      map.put(Constants.OutakeConstants.topFlywheel,"topFlywheel");
+      return map;
+    }
+    public static double[][] variableAngleLog = new double[2][20];
+    public static double variableAngleDistance = 0;
+    public static double angleOutputDegrees = 0;
   }
   
 }

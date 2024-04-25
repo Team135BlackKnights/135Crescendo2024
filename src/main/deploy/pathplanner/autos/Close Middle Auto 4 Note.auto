@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.46002314226850705,
-      "y": 2.0523241046482092
+      "x": 1.27,
+      "y": 5.54
     },
-    "rotation": 0
+    "rotation": 0.0
   },
   "command": {
     "type": "sequential",
@@ -18,7 +18,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Bottom Drive to Initial Scoring Position"
+                  "pathName": "Middle Drive to Scoring Position"
                 }
               },
               {
@@ -56,7 +56,83 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Bottom Drive to Ground Note"
+                  "pathName": "Middle Drive to First Ground Note"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "IntakeNote"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "deadline",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Shoot From Anywhere"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Lock Onto April Tags"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "race",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Middle Note to Top Note"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "IntakeNote"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "deadline",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Shoot From Anywhere"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Lock Onto April Tags"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "race",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Top Note to Bottom Note"
                 }
               },
               {
@@ -96,6 +172,6 @@
       ]
     }
   },
-  "folder": "Bottom Autos",
+  "folder": "Middle Autos",
   "choreoAuto": false
 }

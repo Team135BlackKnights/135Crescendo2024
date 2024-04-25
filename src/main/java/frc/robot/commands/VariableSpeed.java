@@ -1,5 +1,6 @@
 package frc.robot.commands;
 
+
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -7,16 +8,16 @@ import frc.robot.RobotContainer;
 import frc.robot.subsystems.IntakeS;
 import frc.robot.subsystems.OutakeS;
 import frc.robot.subsystems.SwerveS;
-import frc.robot.Constants.DataLog;
+import frc.robot.Constants.IntakeConstants;
 
-public class VariableAngle extends Command {
+public class VariableSpeed extends Command {
     private final IntakeS intakeS;
     private final OutakeS outakeS;
     private boolean isFinished = false, isAutonomous;
     Timer timer = new Timer();
     Timer delay = new Timer();
 
-    public VariableAngle(IntakeS intakeS, OutakeS outakeS, boolean isAutonomous) {
+    public VariableSpeed(IntakeS intakeS, OutakeS outakeS, boolean isAutonomous) {
         this.intakeS = intakeS;
         this.outakeS = outakeS;
         this.isAutonomous = isAutonomous;
@@ -38,40 +39,27 @@ public class VariableAngle extends Command {
             isFinished = true;
         }
 
-        double output = intakeS.anglePidController.calculate(intakeS.getIntakeAngle(), SwerveS.getDesiredShooterAngle());
-
         if (timer.get() < 0.15 && !isAutonomous) {
             intakeS.setPrimaryIntake(0.2);
-        } else if (timer.get() >= 0.25 && Math.abs(intakeS.anglePidController.getPositionError()) < 10) {
+        } else if (timer.get() >= 0.25) {
             intakeS.setPrimaryIntake(0);
             double outakeSpeed;
-            if (SwerveS.getDistanceFromSpeakerUsingRobotPose() > 4.5) {
-                outakeSpeed = 6000; //was 0.85 + outakeS.shooterPID.calculate(OutakeS.getAverageFlywheelSpeed(), 6000);
-            } else if (SwerveS.getDistanceFromSpeakerUsingRobotPose() > 2.4) {
-                outakeSpeed = 4750; //was 0.67 + outakeS.shooterPID.calculate(OutakeS.getAverageFlywheelSpeed(), 4750);
-            } else {
-                outakeSpeed = 3300; //was 0.46 + outakeS.shooterPID.calculate(OutakeS.getAverageFlywheelSpeed(), 3300);
-            }
+            outakeSpeed = 4000; //was 0.49 + MathUtil.clamp(outakeS.shooterPID.calculate(OutakeS.topFlywheelEncoder.getVelocity(), 4000), -0.1, 0.1);
             outakeS.setIndividualFlywheelSpeeds(outakeSpeed, outakeSpeed);
         }
         if (RobotContainer.manipController.getLeftBumper()) {
             intakeS.setPrimaryIntake(-0.5);
             delay.start();
         }
-        if (OutakeS.getFlywheelSpeedDifference() < 100 && timer.get() >= 0.3 && (intakeS.intakeWithinBounds() || Math.abs(intakeS.anglePidController.getPositionError()) < 0.5) && outakeS.shooterPID.getPositionError() < 150 && Math.abs(SwerveS.getXError()) < 3 && !RobotContainer.manipController.getAButton() && Math.abs(output) < 0.1) {
+        if (SwerveS.robotInRange() && OutakeS.getFlywheelSpeedDifference() < 100 && timer.get() >= 0.3 && outakeS.shooterPID.getPositionError() < 150 && Math.abs(SwerveS.getXError()) < 3 && !RobotContainer.manipController.getAButton() && IntakeS.getIntakePosition() >= IntakeConstants.deployIntakeOuterBound-2) {
             intakeS.setPrimaryIntake(-0.5);
             delay.start();
         }
 
-        
-      //  SmartDashboard.putNumber("Angle Output", output);
         SmartDashboard.putNumber("Angle Error", intakeS.anglePidController.getPositionError());
         SmartDashboard.putNumber("Flywheel Error", outakeS.shooterPID.getPositionError());
-        if (delay.get() < 0.2) {
-            DataLog.angleOutputDegrees = intakeS.getIntakeAngle();
-            DataLog.variableAngleDistance = SwerveS.getDistanceFromSpeakerUsingRobotPose();
-        }
-        intakeS.deployIntake(output);
+        
+        intakeS.deployIntake(0.5);
 
     }
 
