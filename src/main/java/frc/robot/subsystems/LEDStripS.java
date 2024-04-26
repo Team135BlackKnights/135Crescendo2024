@@ -38,7 +38,7 @@ public class LEDStripS extends SubsystemBase{
         schedulerCount +=1;
         //stops integer overflow (even though it'd take over a year of non-stop operation for that to happen)
         schedulerCount = schedulerCount%(LEDConstants.sineWaveUpdateCycles);
-        runSineWave = ( schedulerCount == 0);
+        runSineWave = (schedulerCount == 0);
         //if there is a note stored in the intake, set it to a constant note color
 
         // if it's disabled make it so LEDs are off unless navx is disconnected. If navx is disconnected run colorwave
@@ -55,6 +55,7 @@ public class LEDStripS extends SubsystemBase{
         } else { //if its enabled
             if (OutakeS.SysIDTestRunning){
                 setLEDSBreathing(LEDConstants.pinkHSV, runSineWave);
+            
             }
             //if it is trying to autolock
             else if (SwerveS.autoLock) {
@@ -153,7 +154,6 @@ public class LEDStripS extends SubsystemBase{
 
             
             //offset by one "notch" each time
-            System.out.println(breathingLoopValue);
             //Prevents any kind of integer overflow error happening (prob would take the robot running for a year straight or something like that to reach, )
     
         //sets data to buffer
