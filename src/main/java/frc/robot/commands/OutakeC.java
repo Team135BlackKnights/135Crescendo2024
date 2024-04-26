@@ -2,7 +2,6 @@ package frc.robot.commands;
 
 
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.OutakeS;
 
@@ -23,19 +22,7 @@ public class OutakeC extends Command {
 
     @Override
     public void execute() {
-        if (RobotContainer.manipController.getAButton() && RobotContainer.manipController.getStartButton()){
-            outakeS.sysIdQuasistatic(SysIdRoutine.Direction.kForward);
-        }
-        else if (RobotContainer.manipController.getBButton() && RobotContainer.manipController.getStartButton()){
-            outakeS.sysIdQuasistatic(SysIdRoutine.Direction.kReverse);
-        }
-        else if (RobotContainer.manipController.getXButton() && RobotContainer.manipController.getStartButton()){
-            outakeS.sysIdDynamic(SysIdRoutine.Direction.kForward);
-        }
-        else if (RobotContainer.manipController.getYButton() && RobotContainer.manipController.getStartButton()){
-            outakeS.sysIdDynamic(SysIdRoutine.Direction.kReverse);
-        }
-        //for amp
+
         if (RobotContainer.manipController.getRightBumper()){
             double topWheelSpeed = 2414; // 34%
             double bottomWheelSpeed = 2201; //31%

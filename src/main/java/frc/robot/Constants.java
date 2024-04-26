@@ -222,6 +222,7 @@ public final class Constants {
       map.put(Constants.OutakeConstants.topFlywheel,"topFlywheel");
       return map;
     }
+    public static int testRunSeconds = 10;
     public static double[][] variableAngleLog = new double[2][20];
     public static double variableAngleDistance = 0;
     public static double angleOutputDegrees = 0;

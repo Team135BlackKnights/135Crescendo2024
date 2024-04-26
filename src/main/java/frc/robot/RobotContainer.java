@@ -24,7 +24,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import frc.robot.commands.HangMacroC;
 import edu.wpi.first.wpilibj.XboxController;
-
+import frc.robot.commands.SysIDTests.OuttakeTestC;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -86,6 +86,9 @@ public class RobotContainer {
     }
     if (bButton.getAsBoolean() && !manipController.getStartButton()){
       new SetAngle(intakeS, outakeS, 13);
+    }
+    if((aButton.getAsBoolean() && manipController.getStartButton()) || (bButton.getAsBoolean() && manipController.getStartButton()) || (xButton.getAsBoolean() && manipController.getStartButton()) || (yButton.getAsBoolean() && manipController.getStartButton())){
+      new OuttakeTestC(outakeS);
     }
    //manipController.y().and(manipController.start().negate()).onTrue(new VariableSpeed(intakeS, outakeS, false));
     //manipController.b().and(manipController.start().negate()).onTrue(new SetAngle(intakeS, outakeS, 13));
