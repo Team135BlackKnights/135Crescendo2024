@@ -21,7 +21,7 @@ import static edu.wpi.first.units.Units.Volts;
 
 public class OutakeS extends SubsystemBase {
     //motor declarations
-   
+    public static boolean SysIDTestRunning = false;
     public PIDController shooterPID = new PIDController(Constants.OutakeConstants.kP, 0, 0);
     // Feedforward controller to run the shooter wheel in closed-loop, set the constants equal to
     // those calculated by SysId

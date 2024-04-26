@@ -17,6 +17,7 @@ public class OuttakeTestC extends Command{
     public void initialize() {
         timer.start();
         isFinished = false;
+        OutakeS.SysIDTestRunning = true;
     }
     @Override
     public void execute(){
@@ -44,7 +45,9 @@ public class OuttakeTestC extends Command{
     }
     @Override 
     public void end(boolean interrupted){
-
+        timer.stop();
+        timer.reset();
+        OutakeS.SysIDTestRunning = false;
     }
     public boolean isFinished(){
         return isFinished;

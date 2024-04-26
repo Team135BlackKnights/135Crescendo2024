@@ -46,15 +46,18 @@ public class LEDStripS extends SubsystemBase{
 
 
             if (!SwerveS.fieldOriented) {
-                setConstantColors(new int[]{0,0,0});
+                setConstantColors(LEDConstants.disabledHSV);
             } else {
                 setColorWave(LEDConstants.goldHSV, runSineWave);
             }
             
             
         } else { //if its enabled
+            if (OutakeS.SysIDTestRunning){
+                setLEDSBreathing(LEDConstants.pinkHSV, runSineWave);
+            }
             //if it is trying to autolock
-            if (SwerveS.autoLock) {
+            else if (SwerveS.autoLock) {
 
                 
                 //if its locked on, set to constant green
