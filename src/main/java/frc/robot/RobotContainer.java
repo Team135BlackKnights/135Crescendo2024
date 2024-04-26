@@ -41,6 +41,7 @@ public class RobotContainer {
   private final IntakeS intakeS = new IntakeS();
   private final OutakeS outakeS = new OutakeS();
   private final HangS hangS = new HangS();
+  @SuppressWarnings("unused")
   private final LEDStripS ledStripS = new LEDStripS();
   private final SendableChooser<Command> autoChooser;
 
