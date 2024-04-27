@@ -4,19 +4,22 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 
-import java.util.function.DoubleSupplier;
 
 import com.revrobotics.CANSparkBase.IdleMode;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.units.Measure;
+import edu.wpi.first.units.Time;
+import edu.wpi.first.units.Velocity;
 import edu.wpi.first.units.Voltage;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
+
+import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 
 public class OutakeS extends SubsystemBase {
@@ -37,8 +40,11 @@ public class OutakeS extends SubsystemBase {
     public static RelativeEncoder 
     topFlywheelEncoder,
     bottomFlywheelEncoder;
+    Measure<Velocity<Voltage>> rampRate = Volts.of(1).per(Seconds.of(1)); //for going FROM ZERO PER SECOND
+    Measure<Voltage> holdVoltage = Volts.of(7);
+    Measure<Time> timeout = Seconds.of(10);
     SysIdRoutine sysIdRoutine = new SysIdRoutine(
-        new SysIdRoutine.Config(),
+        new SysIdRoutine.Config(rampRate,holdVoltage,timeout),
         new SysIdRoutine.Mechanism(
             (Measure<Voltage> volts) -> {
                 topFlywheel.setVoltage(volts.in(Volts));
@@ -83,28 +89,7 @@ public class OutakeS extends SubsystemBase {
   public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
     return sysIdRoutine.quasistatic(direction);
   }
-  /**
-   * 
-   * @param shooterSpeed in RPM
-   * @return Command
-  */
-  public Command runShooter(DoubleSupplier shooterSpeed) {
-    // Run shooter wheel at the desired speed using a PID controller and feedforward.
-    return run(() -> {
-        topFlywheel.setVoltage(
-            shooterPID.calculate(topFlywheelEncoder.getVelocity(), shooterSpeed.getAsDouble()) 
-                + m_shooterFeedforward.calculate(shooterSpeed.getAsDouble()));
-        bottomFlywheel.setVoltage(
-            shooterPID.calculate(bottomFlywheelEncoder.getVelocity(), shooterSpeed.getAsDouble())
-                + m_shooterFeedforward.calculate(shooterSpeed.getAsDouble()));
-        })
-        .finallyDo(
-            () -> {
-              topFlywheel.stopMotor();
-              bottomFlywheel.stopMotor();
-            })
-        .withName("runShooter");
-  }
+
   /**
    * Returns a command that will execute a dynamic test in the given direction.
    *
@@ -130,21 +115,21 @@ public class OutakeS extends SubsystemBase {
      */
     public void setRPM(double rpm){
         topFlywheel.setVoltage(
-            shooterPID.calculate(topFlywheelEncoder.getVelocity(), rpm));
-               // + m_shooterFeedforward.calculate(rpm));
+            shooterPID.calculate(topFlywheelEncoder.getVelocity(), rpm)
+                + m_shooterFeedforward.calculate(rpm));
         bottomFlywheel.setVoltage(
-            shooterPID.calculate(bottomFlywheelEncoder.getVelocity(), rpm));
-                //+ m_shooterFeedforward.calculate(rpm));
+            shooterPID.calculate(bottomFlywheelEncoder.getVelocity(), rpm)
+                + m_shooterFeedforward.calculate(rpm));
     }
     /*
      **For shooting amp
      */
     public void setIndividualFlywheelSpeeds(double topWheelSpeed, double bottomWheelSpeed){
         topFlywheel.setVoltage(
-            shooterPID.calculate(topFlywheelEncoder.getVelocity(), topWheelSpeed));
-                //+ m_shooterFeedforward.calculate(topWheelSpeed));
+            shooterPID.calculate(topFlywheelEncoder.getVelocity(), topWheelSpeed)
+                + m_shooterFeedforward.calculate(topWheelSpeed));
         bottomFlywheel.setVoltage(
-            shooterPID.calculate(bottomFlywheelEncoder.getVelocity(), bottomWheelSpeed));
-                //+ m_shooterFeedforward.calculate(bottomWheelSpeed));
+            shooterPID.calculate(bottomFlywheelEncoder.getVelocity(), bottomWheelSpeed)
+                + m_shooterFeedforward.calculate(bottomWheelSpeed));
     }
 }
