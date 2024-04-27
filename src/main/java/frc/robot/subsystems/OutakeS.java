@@ -10,8 +10,6 @@ import com.revrobotics.CANSparkBase.IdleMode;
 import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.LinearQuadraticRegulator;
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.estimator.KalmanFilter;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.system.LinearSystem;
@@ -34,14 +32,6 @@ import static edu.wpi.first.units.Units.Volts;
 public class OutakeS extends SubsystemBase {
     //motor declarations
     public static boolean SysIDTestRunning = false;
-    public PIDController shooterPID = new PIDController(Constants.OutakeConstants.kP, 0, 0);
-    // Feedforward controller to run the shooter wheel in closed-loop, set the constants equal to
-    // those calculated by SysId
-    private final SimpleMotorFeedforward m_shooterFeedforward =
-      new SimpleMotorFeedforward(
-          Constants.OutakeConstants.kSVolts,
-          Constants.OutakeConstants.kVVoltSecondsPerRotation,
-          Constants.OutakeConstants.kAVoltSecondsSquaredPerRotation);
 
     public CANSparkMax topFlywheel = new CANSparkMax(Constants.OutakeConstants.topFlywheel, MotorType.kBrushless);
     public CANSparkMax bottomFlywheel = new CANSparkMax(Constants.OutakeConstants.bottomFlywheel, MotorType.kBrushless);
@@ -57,6 +47,7 @@ public class OutakeS extends SubsystemBase {
         new SysIdRoutine.Mechanism(
             (Measure<Voltage> volts) -> {
                 topFlywheel.setVoltage(volts.in(Volts));
+                bottomFlywheel.setVoltage(volts.in(Volts));
               },
           null // No log consumer, since data is recorded by URCL
     , this
@@ -70,22 +61,22 @@ public class OutakeS extends SubsystemBase {
     // Outputs (what we can measure): [velocity], in radians per second.
     //
     // The Kv and Ka constants are found using the FRC Characterization toolsuite
-    private final LinearSystem<N1, N1, N1> m_flywheelPlant =
+    private final static LinearSystem<N1, N1, N1> m_topFlywheelPlant =
         LinearSystemId.identifyVelocitySystem(Constants.OutakeConstants.kVVoltSecondsPerRotation, Constants.OutakeConstants.kAVoltSecondsSquaredPerRotation);
     //to reject noise, we use a kalman filter.
-    private final KalmanFilter<N1,N1,N1> m_observer = 
+    private final static KalmanFilter<N1,N1,N1> m_topObserver = 
         new KalmanFilter<>(
             Nat.N1(),
             Nat.N1(),
-            m_flywheelPlant,
+            m_topFlywheelPlant,
             VecBuilder.fill(3.0), // How accurate we think our model is in St.Devs, HIGHER = trust more.
             VecBuilder.fill(0.01), // How accurate we think each encoder value matters in St.Devs. 
             .02 //never touch, rio runs at 20 ms.
             );
      // A LQR is basically our PID controller, for ✨State Space✨
-    private final LinearQuadraticRegulator<N1, N1, N1> m_controller =
+    private final static LinearQuadraticRegulator<N1, N1, N1> m_topController =
     new LinearQuadraticRegulator<>(
-        m_flywheelPlant,
+        m_topFlywheelPlant,
         VecBuilder.fill(8.0), /* qelms. velocity error tolerances, in meters per second. Decrease this to more
         heavily penalize state excursion, or make the controller behave more aggressively. In
         this example we weight position much more highly than velocity, but this can be
@@ -93,8 +84,15 @@ public class OutakeS extends SubsystemBase {
         VecBuilder.fill(12.0), // voltage tolerance
         0.020);
     // The state-space loop combines a controller, observer, feedforward and plant for easy control.
-    private final LinearSystemLoop<N1, N1, N1> m_loop =
-    new LinearSystemLoop<>(m_flywheelPlant, m_controller, m_observer, 12.0, 0.020); //max physical voltage, not applied.
+    private final static LinearSystemLoop<N1, N1, N1> m_topLoop =
+    new LinearSystemLoop<>(m_topFlywheelPlant, m_topController, m_topObserver, 12.0, 0.020); //max physical voltage, not applied.
+    
+    
+    private final static LinearSystem<N1, N1, N1> m_bottomFlywheelPlant =LinearSystemId.identifyVelocitySystem(Constants.OutakeConstants.kVVoltSecondsPerRotation, Constants.OutakeConstants.kAVoltSecondsSquaredPerRotation);
+    private final static KalmanFilter<N1,N1,N1> m_bottomObserver = new KalmanFilter<>(Nat.N1(),Nat.N1(),m_bottomFlywheelPlant,VecBuilder.fill(3.0),VecBuilder.fill(0.01), .02 );
+    private final static LinearQuadraticRegulator<N1, N1, N1> m_bottomController =
+    new LinearQuadraticRegulator<>(m_bottomFlywheelPlant,VecBuilder.fill(8.0),VecBuilder.fill(12.0),0.020);
+    private final static LinearSystemLoop<N1, N1, N1> m_bottomLoop = new LinearSystemLoop<>(m_bottomFlywheelPlant, m_bottomController, m_bottomObserver, 12.0, 0.020);
     public OutakeS() {
         //checks to see if motors are inverted
         topFlywheel.setInverted(Constants.OutakeConstants.topFlywheelReversed);
@@ -114,7 +112,7 @@ public class OutakeS extends SubsystemBase {
 
         // Reset our loop to make sure it's in a known state.
         //  (sparks have exact 20ms delay so not needed) m_controller.latencyCompensate(m_flywheelPlant, .02, .025); //sensor delay
-        m_loop.reset(VecBuilder.fill(topFlywheelEncoder.getVelocity()));
+        m_topLoop.reset(VecBuilder.fill(topFlywheelEncoder.getVelocity()));
     }
 
     @Override
@@ -150,6 +148,12 @@ public class OutakeS extends SubsystemBase {
     public static double getFlywheelSpeedDifference() {
         return Math.abs(Math.abs(topFlywheelEncoder.getVelocity()) - Math.abs(bottomFlywheelEncoder.getVelocity()));
     }
+    public static double getBottomSpeedError(){
+        return m_bottomLoop.getError(0); //very low chance this is the wrong call
+    }
+    public static double getTopSpeedError(){
+        return m_topLoop.getError(0);
+    }
     /**
      * Runs motors at specific RPM.
      * 
@@ -157,11 +161,11 @@ public class OutakeS extends SubsystemBase {
      */
     public void setRPM(double rpm){
         //set setpoint
-        m_loop.setNextR(VecBuilder.fill(Units.rotationsPerMinuteToRadiansPerSecond(rpm)));
+        m_topLoop.setNextR(VecBuilder.fill(Units.rotationsPerMinuteToRadiansPerSecond(rpm)));
         //correct for error
-        m_loop.correct(VecBuilder.fill(getAverageFlywheelSpeed())); //maybe make two m_loops for top and bottom?
-        m_loop.predict(0.02); //basically the same as .calculate
-        double nextVoltage = m_loop.getU(0);
+        m_topLoop.correct(VecBuilder.fill(getAverageFlywheelSpeed())); //maybe make two m_loops for top and bottom?
+        m_topLoop.predict(0.02); //basically the same as .calculate
+        double nextVoltage = m_topLoop.getU(0);
         topFlywheel.setVoltage(nextVoltage);
         bottomFlywheel.setVoltage(nextVoltage);
         /*topFlywheel.setVoltage(
@@ -175,11 +179,18 @@ public class OutakeS extends SubsystemBase {
      **For shooting amp
      */
     public void setIndividualFlywheelSpeeds(double topWheelSpeed, double bottomWheelSpeed){
-        topFlywheel.setVoltage(
-            shooterPID.calculate(topFlywheelEncoder.getVelocity(), topWheelSpeed)
-                + m_shooterFeedforward.calculate(topWheelSpeed));
-        bottomFlywheel.setVoltage(
-            shooterPID.calculate(bottomFlywheelEncoder.getVelocity(), bottomWheelSpeed)
-                + m_shooterFeedforward.calculate(bottomWheelSpeed));
+        //set setpoint
+        m_topLoop.setNextR(VecBuilder.fill(Units.rotationsPerMinuteToRadiansPerSecond(topWheelSpeed)));
+        //correct for error
+        m_topLoop.correct(VecBuilder.fill(topFlywheelEncoder.getVelocity()));
+        m_topLoop.predict(0.02); //basically the same as .calculate
+        double topNextVoltage = m_topLoop.getU(0);
+        topFlywheel.setVoltage(topNextVoltage);
+
+        m_bottomLoop.setNextR(VecBuilder.fill(Units.rotationsPerMinuteToRadiansPerSecond(bottomWheelSpeed)));
+        m_bottomLoop.correct(VecBuilder.fill(bottomFlywheelEncoder.getVelocity()));
+        m_bottomLoop.predict(0.02); 
+        double bottomNextVoltage = m_bottomLoop.getU(0);
+        bottomFlywheel.setVoltage(bottomNextVoltage);
     }
 }

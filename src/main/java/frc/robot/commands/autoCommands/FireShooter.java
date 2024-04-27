@@ -37,8 +37,8 @@ public class FireShooter extends Command {
             isFinished = true;
         }
         //output velocity and error to smartDashboard
-        SmartDashboard.putNumber("Auto Velocity Error", outakeS.shooterPID.getPositionError());
-        if (Math.abs(outakeS.shooterPID.getPositionError()) <= 150) {
+        SmartDashboard.putNumber("Flywheel Error", OutakeS.getTopSpeedError());
+        if (Math.abs(OutakeS.getBottomSpeedError()) < 150 && Math.abs(OutakeS.getTopSpeedError()) <150) {
             //starts timer when within a certain position error, feeds to shoot
             timer.start();
             intakeS.setPrimaryIntake(-0.5);

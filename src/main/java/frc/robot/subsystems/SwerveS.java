@@ -108,7 +108,7 @@ public class SwerveS extends SubsystemBase {
     Measure<Velocity<Voltage>> rampRate = Volts.of(.5).per(Seconds.of(1)); //for going FROM ZERO PER SECOND
     Measure<Voltage> holdVoltage = Volts.of(7);
     Measure<Time> timeout = Seconds.of(15);
-    SysIdRoutine sysIdRoutine = new SysIdRoutine(
+    SysIdRoutine sysIdRoutineTurn = new SysIdRoutine(
         new SysIdRoutine.Config(rampRate,holdVoltage,timeout),
         new SysIdRoutine.Mechanism(
             (Measure<Voltage> volts) -> {
@@ -121,21 +121,40 @@ public class SwerveS extends SubsystemBase {
     , this
         )
     );
+    SysIdRoutine sysIdRoutineDrive = new SysIdRoutine(
+        new SysIdRoutine.Config(rampRate,holdVoltage,timeout),
+        new SysIdRoutine.Mechanism(
+            (Measure<Voltage> volts) -> {
+                frontLeft.setDriveTest(volts.in(Volts));
+                frontRight.setDriveTest(volts.in(Volts));
+                backLeft.setDriveTest(volts.in(Volts));
+                backRight.setDriveTest(volts.in(Volts));
+              },
+          null // No log consumer, since data is recorded by URCL
+    , this
+        )
+    );
     /**
    * Returns a command that will execute a quasistatic test in the given direction.
    *
    * @param direction The direction (forward or reverse) to run the test in
    */
-  public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
-    return sysIdRoutine.quasistatic(direction);
+  public Command sysIdQuasistaticTurn(SysIdRoutine.Direction direction) {
+        return sysIdRoutineTurn.quasistatic(direction);
   }
   /**
    * Returns a command that will execute a dynamic test in the given direction.
    *
    * @param direction The direction (forward or reverse) to run the test in
    */
-  public Command sysIdDynamic(SysIdRoutine.Direction direction) {
-    return sysIdRoutine.dynamic(direction);
+  public Command sysIdDynamicTurn(SysIdRoutine.Direction direction) {
+        return sysIdRoutineTurn.dynamic(direction);
+  }
+  public Command sysIdDynamicDrive(SysIdRoutine.Direction direction) {
+    return sysIdRoutineDrive.dynamic(direction);
+  }
+  public Command sysIdQuasistaticDrive(SysIdRoutine.Direction direction) {
+    return sysIdRoutineDrive.quasistatic(direction);
   }
     public static boolean autoLock = false;
 

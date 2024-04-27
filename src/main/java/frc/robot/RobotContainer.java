@@ -53,10 +53,15 @@ public class RobotContainer {
   JoystickButton yButton = new JoystickButton(manipController, 4);
   JoystickButton bButton = new JoystickButton(manipController, 2);
   JoystickButton startButton = new JoystickButton(manipController,8);
+  
   POVButton povUpManip = new POVButton(manipController, 0);
+  POVButton povUpRightManip = new POVButton(manipController, 45);
   POVButton povRightManip = new POVButton(manipController, 90);
+  POVButton povRightDownManip = new POVButton(manipController, 135);
   POVButton povDownManip = new POVButton(manipController, 180);
+  POVButton povDownLeftManip = new POVButton(manipController, 225);
   POVButton povLeftManip = new POVButton(manipController, 270);
+  POVButton povLeftUpManip = new POVButton(manipController, 315);
   POVButton povUp = new POVButton(driveController, 0);
  // POVButton manipPOVZero = new POVButton(manipController, 0);
  // POVButton manipPOV180 = new POVButton(manipController, 180);
@@ -99,10 +104,17 @@ public class RobotContainer {
     startButton.and(xButton).whileTrue(outakeS.sysIdDynamic(SysIdRoutine.Direction.kForward));
     startButton.and(yButton).whileTrue(outakeS.sysIdDynamic(SysIdRoutine.Direction.kReverse));
     //swerve TURNING tests
-    startButton.and(povUpManip).whileTrue(swerveS.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-    startButton.and(povRightManip).whileTrue(swerveS.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-    startButton.and(povDownManip).whileTrue(swerveS.sysIdDynamic(SysIdRoutine.Direction.kForward));
-    startButton.and(povLeftManip).whileTrue(swerveS.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+
+    startButton.and(povUpRightManip).whileTrue(swerveS.sysIdQuasistaticTurn(SysIdRoutine.Direction.kForward));
+    startButton.and(povRightDownManip).whileTrue(swerveS.sysIdQuasistaticTurn(SysIdRoutine.Direction.kReverse));
+    startButton.and(povDownLeftManip).whileTrue(swerveS.sysIdDynamicTurn(SysIdRoutine.Direction.kForward));
+    startButton.and(povLeftUpManip).whileTrue(swerveS.sysIdDynamicTurn(SysIdRoutine.Direction.kReverse));
+    //swerve DRIVE tests
+    startButton.and(povUpManip).whileTrue(swerveS.sysIdQuasistaticDrive(SysIdRoutine.Direction.kForward));
+    startButton.and(povRightManip).whileTrue(swerveS.sysIdQuasistaticDrive(SysIdRoutine.Direction.kReverse));
+    startButton.and(povDownManip).whileTrue(swerveS.sysIdDynamicDrive(SysIdRoutine.Direction.kForward));
+    startButton.and(povLeftManip).whileTrue(swerveS.sysIdDynamicDrive(SysIdRoutine.Direction.kReverse));
+
    //manipController.y().and(manipController.start().negate()).onTrue(new VariableSpeed(intakeS, outakeS, false));
     //manipController.b().and(manipController.start().negate()).onTrue(new SetAngle(intakeS, outakeS, 13));
     if (povUp.getAsBoolean() && !manipController.getStartButton()){
