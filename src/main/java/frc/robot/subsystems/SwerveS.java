@@ -40,6 +40,9 @@ import frc.robot.LimelightHelpers;
 import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 
+import org.littletonrobotics.junction.AutoLogOutput;
+import org.littletonrobotics.junction.Logger;
+
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.LimelightConstants;
@@ -109,7 +112,7 @@ public class SwerveS extends SubsystemBase {
     Measure<Voltage> holdVoltage = Volts.of(7);
     Measure<Time> timeout = Seconds.of(15);
     SysIdRoutine sysIdRoutineTurn = new SysIdRoutine(
-        new SysIdRoutine.Config(rampRate,holdVoltage,timeout),
+        new SysIdRoutine.Config(rampRate,holdVoltage,timeout,(state) -> Logger.recordOutput("SysIdTestState", state.toString())),
         new SysIdRoutine.Mechanism(
             (Measure<Voltage> volts) -> {
                 frontLeft.setTurningTest(volts.in(Volts));
@@ -122,7 +125,7 @@ public class SwerveS extends SubsystemBase {
         )
     );
     SysIdRoutine sysIdRoutineDrive = new SysIdRoutine(
-        new SysIdRoutine.Config(rampRate,holdVoltage,timeout),
+        new SysIdRoutine.Config(rampRate,holdVoltage,timeout,(state) -> Logger.recordOutput("SysIdTestState", state.toString())),
         new SysIdRoutine.Mechanism(
             (Measure<Voltage> volts) -> {
                 frontLeft.setDriveTest(volts.in(Volts));
@@ -279,18 +282,21 @@ public class SwerveS extends SubsystemBase {
 
         PathPlannerLogging.setLogCurrentPoseCallback((pose) -> {
             // Do whatever you want with the pose here
+            Logger.recordOutput("Odometry/CurrentPose", pose);
             robotField.setRobotPose(pose);
         });
 
         // Logging callback for target robot pose
         PathPlannerLogging.setLogTargetPoseCallback((pose) -> {
             // Do whatever you want with the pose here
+            Logger.recordOutput("Odometry/TrajectorySetpoint", pose);
             robotField.getObject("target pose").setPose(pose);
         });
 
         // Logging callback for the active path, this is sent as a list of poses
         PathPlannerLogging.setLogActivePathCallback((poses) -> {
             // Do whatever you want with the poses here
+            Logger.recordOutput("Odometry/Trajectory", poses.toArray(new Pose2d[poses.size()]));
             robotField.getObject("path").setPoses(poses);
         });
         navXDisconnectProtocol();
@@ -314,7 +320,7 @@ public class SwerveS extends SubsystemBase {
     public static boolean aprilTagVisible() {
         return xError != 0.0;
     }
-    
+    @AutoLogOutput(key = "Odometry/Robot")
     public static Pose2d getPose() {
         return robotPosition;
     }

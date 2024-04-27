@@ -29,6 +29,8 @@ import frc.robot.Constants;
 import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 
+import org.littletonrobotics.junction.Logger;
+
 public class OutakeS extends SubsystemBase {
     //motor declarations
     public static boolean SysIDTestRunning = false;
@@ -43,7 +45,7 @@ public class OutakeS extends SubsystemBase {
     Measure<Voltage> holdVoltage = Volts.of(7);
     Measure<Time> timeout = Seconds.of(10);
     SysIdRoutine sysIdRoutine = new SysIdRoutine(
-        new SysIdRoutine.Config(rampRate,holdVoltage,timeout),
+        new SysIdRoutine.Config(rampRate,holdVoltage,timeout,(state) -> Logger.recordOutput("SysIdTestState", state.toString())        ),
         new SysIdRoutine.Mechanism(
             (Measure<Voltage> volts) -> {
                 topFlywheel.setVoltage(volts.in(Volts));
@@ -117,6 +119,8 @@ public class OutakeS extends SubsystemBase {
 
     @Override
     public void periodic() {
+        Logger.recordOutput("Outake/Top Flywheel Speed",topFlywheelEncoder.getVelocity());
+        Logger.recordOutput("Outake/Bottom Flywheel Speed",bottomFlywheelEncoder.getVelocity());
         SmartDashboard.putNumber("Top Flywheel Speed", topFlywheelEncoder.getVelocity());
         SmartDashboard.putNumber("Bottom Flywheel Speed", bottomFlywheelEncoder.getVelocity());
         SmartDashboard.putNumber("Average Flywheel Speed", getAverageFlywheelSpeed());
