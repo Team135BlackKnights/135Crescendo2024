@@ -10,11 +10,12 @@ import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.SparkAnalogSensor.Mode;
 
-import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 //import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.RobotController;
 import frc.robot.Constants;
@@ -27,7 +28,7 @@ public class SwerveModule {
     private final RelativeEncoder driveEncoder;
     private final RelativeEncoder turningEncoder;
 
-    private final PIDController turningPidController;
+    private final ProfiledPIDController turningPidController;
 
     private final SimpleMotorFeedforward turningFeedForward =
     new SimpleMotorFeedforward(
@@ -77,7 +78,8 @@ public class SwerveModule {
         turningEncoder.setPositionConversionFactor(Constants.SwerveConstants.kTurningEncoderRot2Rad);
         turningEncoder.setVelocityConversionFactor(Constants.SwerveConstants.kTurningEncoderRPM2RadPerSec);
         //creates pidController, used exclusively for turning because that has to be precise
-        turningPidController = new PIDController(Constants.SwerveConstants.kTurningP, 0, 0);
+        //must test updated 
+        turningPidController = new ProfiledPIDController(Constants.SwerveConstants.kTurningP, 0, 0,new TrapezoidProfile.Constraints(Constants.DriveConstants.kMaxTurningSpeedRadPerSec,Constants.DriveConstants.kTeleTurningMaxAcceleration));
         //makes the value loop around
         turningPidController.enableContinuousInput(-Math.PI, Math.PI);
     }
@@ -150,6 +152,7 @@ public class SwerveModule {
     }
 
     public void setDesiredState(SwerveModuleState state) {
+        var encoderRotation = new Rotation2d(getTurningPosition());
         // Stops the motors if the desired state is too small
         if (Math.abs(state.speedMetersPerSecond) < 0.001 && !SwerveS.autoLock) {
             stop();
@@ -159,9 +162,29 @@ public class SwerveModule {
         // Optimizing finds the shortest path to the desired angle
         state = SwerveModuleState.optimize(state, getState().angle);
 
+        //scales DOWN movement perpendicular to desired direction that occurs when modules change directions. makes smoother.
+        //basically, when NOT facing the right direction, turn down our speed so we dont do weird S curves.
+        state.speedMetersPerSecond *= state.angle.minus(encoderRotation).getCos(); //confirm good idea
         driveMotor.set(state.speedMetersPerSecond / Constants.DriveConstants.kMaxSpeedMetersPerSecond);
         turningMotor.setVoltage(turningPidController.calculate(getAbsoluteEncoderRad(),state.angle.getRadians()) 
             + turningFeedForward.calculate(state.angle.getRadians()));
+        /* TODO: Run sysID on these, and get feedforwards for both
+        // Calculate the drive output from the drive PID controller.
+        final double driveOutput =
+        m_drivePIDController.calculate(m_driveEncoder.getRate(), state.speedMetersPerSecond);
+
+        final double driveFeedforward = m_driveFeedforward.calculate(state.speedMetersPerSecond);
+
+        // Calculate the turning motor output from the turning PID controller.
+        final double turnOutput =
+            m_turningPIDController.calculate(m_turningEncoder.getDistance(), state.angle.getRadians());
+
+        final double turnFeedforward =
+            m_turnFeedforward.calculate(m_turningPIDController.getSetpoint().velocity);
+
+        m_driveMotor.setVoltage(driveOutput + driveFeedforward);
+        m_turningMotor.setVoltage(turnOutput + turnFeedforward);
+        */
     }
 
     public void stop() {

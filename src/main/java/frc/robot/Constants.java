@@ -104,7 +104,7 @@ public final class Constants {
       kMaxSpeedMetersPerSecond = Units.feetToMeters(15.1),
       kMaxTurningSpeedRadPerSec = 3.914667 * 2 * Math.PI, // 1.33655 *2 *Math.PI
       kTeleDriveMaxAcceleration = Units.feetToMeters(12), //guess
-      kTeleTurningMaxAcceleration = 5, //guess
+      kTeleTurningMaxAcceleration = 2 * Math.PI, //guess
       
       // To find these set them to zero, then turn the robot on and manually set the wheels straight.
       // The encoder values being read are then your new Offset values
