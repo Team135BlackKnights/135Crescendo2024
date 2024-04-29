@@ -107,7 +107,9 @@ public class OutakeS extends SubsystemBase {
         bottomFlywheelEncoder = bottomFlywheel.getEncoder();
         //makes encoders work with the gear ratio (basically means that one turn of the wheel will be one turn of the encoder)
         topFlywheelEncoder.setVelocityConversionFactor(Constants.OutakeConstants.flywheelGearRatio);
+        topFlywheelEncoder.setPositionConversionFactor(Constants.OutakeConstants.flywheelGearRatio);
         bottomFlywheelEncoder.setVelocityConversionFactor(Constants.OutakeConstants.flywheelGearRatio);
+        topFlywheelEncoder.setPositionConversionFactor(Constants.OutakeConstants.flywheelGearRatio);
         //sets changes to the motors' controllers
         topFlywheel.burnFlash();
         bottomFlywheel.burnFlash();
