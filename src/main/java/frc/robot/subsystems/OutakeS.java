@@ -105,11 +105,15 @@ public class OutakeS extends SubsystemBase {
         bottomFlywheelEncoder = bottomFlywheel.getEncoder();
         //makes encoders work with the gear ratio (basically means that one turn of the wheel will be one turn of the encoder)
         topFlywheelEncoder.setVelocityConversionFactor(Constants.OutakeConstants.flywheelGearRatio);
+        topFlywheelEncoder.setPositionConversionFactor(Constants.OutakeConstants.flywheelGearRatio);
         bottomFlywheelEncoder.setVelocityConversionFactor(Constants.OutakeConstants.flywheelGearRatio);
+        topFlywheelEncoder.setPositionConversionFactor(Constants.OutakeConstants.flywheelGearRatio);
         //sets changes to the motors' controllers
         topFlywheel.burnFlash();
-        bottomFlywheel.burnFlash();
-
+        bottomFlywheel.burnFlash(); 
+        //BELOW MAY BE REMOVED IF GRAPHS ARE FUNKY
+        m_bottomController.latencyCompensate(m_bottomFlywheelPlant, 0.02, 0.0195); //accounting for 19.5 ms encoder delay (SPARK MAX delay)
+        m_topController.latencyCompensate(m_topFlywheelPlant, 0.02, 0.0195); 
         // Reset our loop to make sure it's in a known state.
         //  (sparks have exact 20ms delay so not needed) m_controller.latencyCompensate(m_flywheelPlant, .02, .025); //sensor delay
         m_topLoop.reset(VecBuilder.fill(topFlywheelEncoder.getVelocity()));
