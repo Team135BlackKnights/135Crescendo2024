@@ -79,7 +79,7 @@ public class OutakeS extends SubsystemBase {
     private final static LinearQuadraticRegulator<N1, N1, N1> m_topController =
     new LinearQuadraticRegulator<>(
         m_topFlywheelPlant,
-        VecBuilder.fill(8.0), /* qelms. velocity error tolerances, in meters per second. Decrease this to more
+        VecBuilder.fill(8.0), /* qelms. velocity error tolerances, in revs per min. Decrease this to more
         heavily penalize state excursion, or make the controller behave more aggressively. In
         this example we weight position much more highly than velocity, but this can be
         tuned to balance the two.*/
@@ -111,9 +111,10 @@ public class OutakeS extends SubsystemBase {
         //sets changes to the motors' controllers
         topFlywheel.burnFlash();
         bottomFlywheel.burnFlash();
+        m_bottomController.latencyCompensate(m_bottomFlywheelPlant, 0.02, 0.0195); //accounting for 19.5 ms encoder delay (SPARK MAX delay)
+        m_topController.latencyCompensate(m_topFlywheelPlant, 0.02, 0.0195); 
 
         // Reset our loop to make sure it's in a known state.
-        //  (sparks have exact 20ms delay so not needed) m_controller.latencyCompensate(m_flywheelPlant, .02, .025); //sensor delay
         m_topLoop.reset(VecBuilder.fill(topFlywheelEncoder.getVelocity()));
     }
 
