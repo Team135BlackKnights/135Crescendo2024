@@ -145,8 +145,8 @@ public class OutakeS extends SubsystemBase {
                 topVelocity = topFlywheelEncoder.getVelocity();
                 bottomVelocity = bottomFlywheelEncoder.getVelocity();    
             }else{
-                topFlywheelSim.setInputVoltage(topNextVoltage);
-                bottomFlywheelSim.setInputVoltage(bottomNextVoltage);
+                topFlywheelSim.setInput(topNextVoltage);
+                bottomFlywheelSim.setInput(bottomNextVoltage);
                 topFlywheelSim.update(.02);
                 bottomFlywheelSim.update(.02);
                 topVelocity = topFlywheelSim.getAngularVelocityRPM();

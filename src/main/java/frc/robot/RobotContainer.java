@@ -94,6 +94,7 @@ public class RobotContainer {
     if (bButton.getAsBoolean() && isDriving()){
       new SetAngle(intakeS, outakeS, 13);
     }
+    
     //outake Tests
     startButton.and(aButton).whileTrue(outakeS.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
     startButton.and(bButton).whileTrue(outakeS.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
