@@ -15,7 +15,6 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.system.LinearSystem;
 import edu.wpi.first.math.system.LinearSystemLoop;
 import edu.wpi.first.math.system.plant.LinearSystemId;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.Measure;
 import edu.wpi.first.units.Time;
 import edu.wpi.first.units.Velocity;
@@ -93,6 +92,7 @@ public class OutakeS extends SubsystemBase {
     private final static LinearQuadraticRegulator<N1, N1, N1> m_bottomController =
     new LinearQuadraticRegulator<>(m_bottomFlywheelPlant,VecBuilder.fill(8.0),VecBuilder.fill(12.0),0.020);
     private final static LinearSystemLoop<N1, N1, N1> m_bottomLoop = new LinearSystemLoop<>(m_bottomFlywheelPlant, m_bottomController, m_bottomObserver, 12.0, 0.020);
+    private double topNextVoltage,bottomNextVoltage;
     public OutakeS() {
         //checks to see if motors are inverted
         topFlywheel.setInverted(Constants.OutakeConstants.topFlywheelReversed);
@@ -114,13 +114,29 @@ public class OutakeS extends SubsystemBase {
         //BELOW MAY BE REMOVED IF GRAPHS ARE FUNKY
         m_bottomController.latencyCompensate(m_bottomFlywheelPlant, 0.02, 0.0195); //accounting for 19.5 ms encoder delay (SPARK MAX delay)
         m_topController.latencyCompensate(m_topFlywheelPlant, 0.02, 0.0195); 
+        //DISABLE
+        m_topLoop.setNextR(0);
+        m_bottomLoop.setNextR(0);
         // Reset our loop to make sure it's in a known state.
         //  (sparks have exact 20ms delay so not needed) m_controller.latencyCompensate(m_flywheelPlant, .02, .025); //sensor delay
         m_topLoop.reset(VecBuilder.fill(topFlywheelEncoder.getVelocity()));
+        m_bottomLoop.reset(VecBuilder.fill(bottomFlywheelEncoder.getVelocity()));
+
+        
     }
 
     @Override
     public void periodic() {
+        //correct for error
+        m_topLoop.correct(VecBuilder.fill(topFlywheelEncoder.getVelocity()));
+        m_bottomLoop.correct(VecBuilder.fill(bottomFlywheelEncoder.getVelocity()));
+        m_topLoop.predict(0.02); //basically the same as .calculate
+        m_bottomLoop.predict(0.02); 
+        topNextVoltage = m_topLoop.getU(0);
+        bottomNextVoltage = m_bottomLoop.getU(0);
+
+        topFlywheel.setVoltage(topNextVoltage);
+        bottomFlywheel.setVoltage(bottomNextVoltage);
         SmartDashboard.putNumber("Top Flywheel Speed", topFlywheelEncoder.getVelocity());
         SmartDashboard.putNumber("Bottom Flywheel Speed", bottomFlywheelEncoder.getVelocity());
         SmartDashboard.putNumber("Average Flywheel Speed", getAverageFlywheelSpeed());
@@ -164,14 +180,8 @@ public class OutakeS extends SubsystemBase {
      * @param speed The RPM of the flywheels.
      */
     public void setRPM(double rpm){
-        //set setpoint
-        m_topLoop.setNextR(VecBuilder.fill(Units.rotationsPerMinuteToRadiansPerSecond(rpm)));
-        //correct for error
-        m_topLoop.correct(VecBuilder.fill(getAverageFlywheelSpeed())); //maybe make two m_loops for top and bottom?
-        m_topLoop.predict(0.02); //basically the same as .calculate
-        double nextVoltage = m_topLoop.getU(0);
-        topFlywheel.setVoltage(nextVoltage);
-        bottomFlywheel.setVoltage(nextVoltage);
+        m_topLoop.setNextR(VecBuilder.fill(rpm));
+        m_bottomLoop.setNextR(VecBuilder.fill(rpm));
         /*topFlywheel.setVoltage(
             shooterPID.calculate(topFlywheelEncoder.getVelocity(), rpm)
                 + m_shooterFeedforward.calculate(rpm));
@@ -184,17 +194,7 @@ public class OutakeS extends SubsystemBase {
      */
     public void setIndividualFlywheelSpeeds(double topWheelSpeed, double bottomWheelSpeed){
         //set setpoint
-        m_topLoop.setNextR(VecBuilder.fill(Units.rotationsPerMinuteToRadiansPerSecond(topWheelSpeed)));
-        //correct for error
-        m_topLoop.correct(VecBuilder.fill(topFlywheelEncoder.getVelocity()));
-        m_topLoop.predict(0.02); //basically the same as .calculate
-        double topNextVoltage = m_topLoop.getU(0);
-        topFlywheel.setVoltage(topNextVoltage);
-
-        m_bottomLoop.setNextR(VecBuilder.fill(Units.rotationsPerMinuteToRadiansPerSecond(bottomWheelSpeed)));
-        m_bottomLoop.correct(VecBuilder.fill(bottomFlywheelEncoder.getVelocity()));
-        m_bottomLoop.predict(0.02); 
-        double bottomNextVoltage = m_bottomLoop.getU(0);
-        bottomFlywheel.setVoltage(bottomNextVoltage);
+        m_topLoop.setNextR(VecBuilder.fill(topWheelSpeed));
+        m_bottomLoop.setNextR(VecBuilder.fill(bottomWheelSpeed));
     }
 }
