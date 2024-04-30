@@ -116,6 +116,7 @@ public class SwerveModule {
         turningMotor.setVoltage(volts);
     }
     public void setDriveTest(double volts){
+        System.out.println("DRIVNIG");
         driveMotor.setVoltage(volts);
     }
     public double getAbsoluteEncoderRad() {
@@ -176,10 +177,10 @@ public class SwerveModule {
         //scales DOWN movement perpendicular to desired direction that occurs when modules change directions. makes smoother.
         //basically, when NOT facing the right direction, turn down our speed so we dont do weird S curves.
         state.speedMetersPerSecond *= state.angle.minus(encoderRotation).getCos(); //confirm good idea
-
+        
         // TODO: Run sysID on these, and get feedforwards for both
         // Calculate the drive output from the drive PID controller.
-        final double driveOutput =
+         final double driveOutput =
         drivePIDController.calculate(getDriveVelocity(), state.speedMetersPerSecond);
 
         final double driveFeedforward = driveFeedForward.calculate(state.speedMetersPerSecond);
@@ -193,6 +194,7 @@ public class SwerveModule {
 
         driveMotor.setVoltage(driveOutput + driveFeedforward);
         turningMotor.setVoltage(turnOutput + turnFeedforward);
+        
     }
 
     public void stop() {

@@ -65,7 +65,7 @@ public class OutakeS extends SubsystemBase {
     //
     // The Kv and Ka constants are found using the FRC Characterization toolsuite
     private final static LinearSystem<N1, N1, N1> m_topFlywheelPlant =
-        LinearSystemId.identifyVelocitySystem(Constants.OutakeConstants.kVVoltSecondsPerRotation, Constants.OutakeConstants.kAVoltSecondsSquaredPerRotation*2.5);
+        LinearSystemId.identifyVelocitySystem(Constants.OutakeConstants.kVVoltSecondsPerRotation, Constants.OutakeConstants.kAVoltSecondsSquaredPerRotation);
     //to reject noise, we use a kalman filter.
     private final static KalmanFilter<N1,N1,N1> m_topObserver = 
         new KalmanFilter<>(
@@ -80,7 +80,7 @@ public class OutakeS extends SubsystemBase {
     private final static LinearQuadraticRegulator<N1, N1, N1> m_topController =
     new LinearQuadraticRegulator<>(
         m_topFlywheelPlant,
-        VecBuilder.fill(2.0), /* qelms. velocity error tolerances, in meters per second. Decrease this to more
+        VecBuilder.fill(8), /* qelms. velocity error tolerances, in meters per second. Decrease this to more
         heavily penalize state excursion, or make the controller behave more aggressively. In
         this example we weight position much more highly than velocity, but this can be
         tuned to balance the two.*/
@@ -94,7 +94,7 @@ public class OutakeS extends SubsystemBase {
     private final static LinearSystem<N1, N1, N1> m_bottomFlywheelPlant =LinearSystemId.identifyVelocitySystem(Constants.OutakeConstants.kVVoltSecondsPerRotation, Constants.OutakeConstants.kAVoltSecondsSquaredPerRotation);
     private final static KalmanFilter<N1,N1,N1> m_bottomObserver = new KalmanFilter<>(Nat.N1(),Nat.N1(),m_bottomFlywheelPlant,VecBuilder.fill(3.0),VecBuilder.fill(0.01), .02 );
     private final static LinearQuadraticRegulator<N1, N1, N1> m_bottomController =
-    new LinearQuadraticRegulator<>(m_bottomFlywheelPlant,VecBuilder.fill(2.0),VecBuilder.fill(12.0),0.020);
+    new LinearQuadraticRegulator<>(m_bottomFlywheelPlant,VecBuilder.fill(8.0),VecBuilder.fill(12.0),0.020);
     private final static LinearSystemLoop<N1, N1, N1> m_bottomLoop = new LinearSystemLoop<>(m_bottomFlywheelPlant, m_bottomController, m_bottomObserver, 12.0, 0.020);
     private double topNextVoltage,bottomNextVoltage;
     private final FlywheelSim topFlywheelSim = new FlywheelSim(m_topFlywheelPlant,DCMotor.getNEO(1),1/Constants.OutakeConstants.flywheelGearRatio);
@@ -217,7 +217,7 @@ public class OutakeS extends SubsystemBase {
             m_topLoop.setNextR(VecBuilder.fill(topWheelSpeed));
             m_bottomLoop.setNextR(VecBuilder.fill(bottomWheelSpeed));
         }else{
-            m_topLoop.setNextR(VecBuilder.fill(Units.rotationsPerMinuteToRadiansPerSecond(topWheelSpeed)));
+            m_topLoop.setNextR(VecBuilder.fill(Units.rotationsPerMinuteToRadiansPerSecond(topWheelSpeed))); //because it uses radians..?
             m_bottomLoop.setNextR(VecBuilder.fill(Units.rotationsPerMinuteToRadiansPerSecond(bottomWheelSpeed)));
 
         }
