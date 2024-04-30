@@ -80,11 +80,11 @@ public class OutakeS extends SubsystemBase {
     private final static LinearQuadraticRegulator<N1, N1, N1> m_topController =
     new LinearQuadraticRegulator<>(
         m_topFlywheelPlant,
-        VecBuilder.fill(8), /* qelms. velocity error tolerances, in meters per second. Decrease this to more
+        VecBuilder.fill(2), /* qelms. velocity error tolerances, in meters per second. Decrease this to more
         heavily penalize state excursion, or make the controller behave more aggressively. In
         this example we weight position much more highly than velocity, but this can be
         tuned to balance the two.*/
-        VecBuilder.fill(12.0), // voltage tolerance
+        VecBuilder.fill(12), // voltage tolerance
         0.020);
     // The state-space loop combines a controller, observer, feedforward and plant for easy control.
     private final static LinearSystemLoop<N1, N1, N1> m_topLoop =
