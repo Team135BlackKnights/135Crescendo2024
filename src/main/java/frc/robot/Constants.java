@@ -160,6 +160,15 @@ public final class Constants {
       kBackRigthAbsEncoderReversed = false;
 
   }
+  public static class DriveSimConstants{
+    //These are placeholder values
+    public static double[] 
+    driveMotorKa = new double[]{3,3,3,3},
+    turnMotorKa = new double[]{3,3,3,3},
+    driveMotorKv = new double[]{3,3,3,3},
+    turnMotorKv = new double[]{3,3,3,3},
+    turnMotorKs = new double[]{3,3,3,3};
+  }
 
   public static class LEDConstants{
     //basically anything pertaining to the LEDs go in here
