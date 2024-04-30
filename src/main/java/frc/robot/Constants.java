@@ -23,10 +23,21 @@ import edu.wpi.first.wpilibj2.command.Command;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+
   public static class AutoConstants {
     public static HashMap<String, Command> eventMap = new HashMap<>();
   }
+  public static final Mode currentMode = Mode.SIM;
+  public static enum Mode {
+    /** Running on a real robot. */
+    REAL,
 
+    /** Running a physics simulator. */
+    SIM,
+
+    /** Replaying from a log file. */
+    REPLAY
+  }
   public static class IntakeConstants {
 
     public static I2C.Port colorSensorPort = I2C.Port.kOnboard;

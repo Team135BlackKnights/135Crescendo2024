@@ -105,9 +105,9 @@ public class SwerveS extends SubsystemBase {
     SwerveModulePosition[] m_modulePositions = new SwerveModulePosition[]{frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()};
     
     
-    Measure<Velocity<Voltage>> rampRate = Volts.of(.5).per(Seconds.of(1)); //for going FROM ZERO PER SECOND
+    Measure<Velocity<Voltage>> rampRate = Volts.of(1).per(Seconds.of(1)); //for going FROM ZERO PER SECOND
     Measure<Voltage> holdVoltage = Volts.of(7);
-    Measure<Time> timeout = Seconds.of(15);
+    Measure<Time> timeout = Seconds.of(5);
     SysIdRoutine sysIdRoutineTurn = new SysIdRoutine(
         new SysIdRoutine.Config(rampRate,holdVoltage,timeout),
         new SysIdRoutine.Mechanism(
