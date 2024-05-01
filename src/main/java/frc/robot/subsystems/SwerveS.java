@@ -222,6 +222,7 @@ public class SwerveS extends SubsystemBase {
  
     @Override
     public void periodic() {
+
         periodicUpdateCycle +=1;
 
         if (limelight.getEntry("pipeline").getDouble(0) != 1) {

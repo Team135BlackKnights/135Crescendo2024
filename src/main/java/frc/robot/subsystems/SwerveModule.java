@@ -255,6 +255,21 @@ public class SwerveModule {
             }
 
     }
+    public double getDrivePosRadiansSim(){
+        return swerveModuleSim.getDrivePosRadiansSim();
+    }
+
+    public double getTurningPosRadiansSim(){
+        return swerveModuleSim.getTurningPosRadiansSim();
+    }
+
+    public double getDriveVelocityMetersPerSecond(){
+        return swerveModuleSim.getDriveVelocityMetersPerSecond();
+    }
+    
+    public double getTurningVelocityMetersPerSecond(){
+        return swerveModuleSim.getTurningVelocityMetersPerSecond();
+    }
 
     public void stop() {
         driveMotor.set(0);
