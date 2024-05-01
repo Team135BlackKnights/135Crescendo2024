@@ -11,7 +11,11 @@ import frc.robot.Constants.DriveSimConstants;
 import edu.wpi.first.wpilibj.Notifier;
 
 public class SwerveModuleSim {
-    
+    public static double 
+    drivePos = 0,
+    steerPos = 0,
+    driveSpeed = 0;
+
     private static double dt = .02;
     
     private static Matrix<N1,N1> 
@@ -46,7 +50,7 @@ public class SwerveModuleSim {
         
     }
     /*Outputs as drivePos, steerPos, driveSpeed */
-    public static double[] updateModuleStates(double driveMotorPercent, double steerMotorPercent){
+    public static void updateModuleStates(double driveMotorPercent, double steerMotorPercent){
         
         //Update voltages
         driveMotorVoltageMatrix = VecBuilder.fill(driveMotorPercent*DriveSimConstants.motorMaxVoltage);
@@ -65,7 +69,9 @@ public class SwerveModuleSim {
         steerMotorPosMatrix = VecBuilder.fill(steerMotorPosLinearSystem.calculateX(steerMotorPosStates, driveMotorVoltageMatrix, dt).get(0,0));
         
         //Moduluses the positions, outputs all 3
-        return new double[]{driveMotorPosMatrix.get(0,0)%(2*Math.PI), steerMotorPosMatrix.get(0,0)%(2*Math.PI), driveMotorSpeedMatrix.get(0,0)};
+        drivePos = driveMotorPosMatrix.get(0,0)%(2*Math.PI);
+        steerPos = steerMotorPosMatrix.get(0,0)%(2*Math.PI);
+        driveSpeed = driveMotorSpeedMatrix.get(0,0);
     }
 
 }
