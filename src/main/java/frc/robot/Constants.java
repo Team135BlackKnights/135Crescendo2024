@@ -99,6 +99,9 @@ public final class Constants {
   }
 
   public static class DriveConstants {
+
+    public static double 
+    motorMaxVoltage = 12;
     public static double
       kChassisWidth = Units.inchesToMeters(24.25), // Distance between Left and Right wheels
       kChassisLength = Units.inchesToMeters(24.25), // Distance betwwen Front and Back wheels
@@ -161,12 +164,7 @@ public final class Constants {
 
   }
   public static class DriveSimConstants{
-    //These are placeholder values
-    public static double[] 
-    
-    driveMotorsKsKvKa = new double[]{3,3,3},
-    steerMotorsKsKvKa = new double[]{3,3,3};
-    public static double motorMaxVoltage = 12;
+
   }
 
   public static class LEDConstants{

@@ -10,81 +10,92 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N2;
 import edu.wpi.first.math.system.LinearSystem;
 import edu.wpi.first.math.system.plant.LinearSystemId;
-import frc.robot.Constants.DriveSimConstants;
+import frc.robot.Constants.DriveConstants;
 
 public class SwerveModuleSim {
-    private static double 
+    private double 
     drivePos = 0,
-    steerPos = 0,
-    driveVelocity = 0;
-
+    turningPos = 0,
+    driveVelocity = 0,
+    turningVelocity = 0;
+    
     private static double dt = .02;
     
     private static Matrix<N2,N1> 
-    steerMotorPosMatrix = VecBuilder.fill(0,0),
+    turningMotorPosMatrix = VecBuilder.fill(0,0),
     driveMotorPosMatrix = VecBuilder.fill(0,0);
     
    
     private static Matrix<N1,N1> 
     driveMotorVoltageMatrix = VecBuilder.fill(0),
-    steerMotorVoltageMatrix = VecBuilder.fill(0);
+    turningMotorVoltageMatrix = VecBuilder.fill(0);
     
     
 
     private static LinearSystem<N2, N1, N1> 
-    steerMotorPosLinearSystem,
+    turningMotorPosLinearSystem,
     driveMotorPosLinearSystem;
     
-    public SwerveModuleSim(double[] driveKsKvKa, double[] steerKsKvKa, double updateRate){
+    public SwerveModuleSim(double[] driveKsKvKa, double[] turningKsKvKa, double updateRate){
         
         //We should need one position linear system and one velocity linear system
         //TODO: Custom update rate
-        steerMotorPosLinearSystem = LinearSystemId.identifyPositionSystem(steerKsKvKa[1], steerKsKvKa[2]); 
+        turningMotorPosLinearSystem = LinearSystemId.identifyPositionSystem(turningKsKvKa[1], turningKsKvKa[2]); 
         driveMotorPosLinearSystem = LinearSystemId.identifyPositionSystem(driveKsKvKa[1], driveKsKvKa[2]);
         
         
     }
-    /*Outputs as drivePos, steerPos, driveVelocity. Call in periodic */
-    public static void updateModuleStates(double driveMotorPercent, double steerMotorPercent){
+    /*Outputs as drivePos, turningPos, driveVelocity. Call in periodic */
+    public void updateModuleStates(double driveMotorPercent, double turningMotorPercent){
         
         //Create voltage matrices
-        driveMotorVoltageMatrix = VecBuilder.fill(driveMotorPercent*DriveSimConstants.motorMaxVoltage);
-        steerMotorVoltageMatrix = VecBuilder.fill(steerMotorPercent*DriveSimConstants.motorMaxVoltage);
+        driveMotorVoltageMatrix = VecBuilder.fill(driveMotorPercent*DriveConstants.motorMaxVoltage);
+        turningMotorVoltageMatrix = VecBuilder.fill(turningMotorPercent*DriveConstants.motorMaxVoltage);
 
 
         
         //Input [position, velocity] and voltage matrices
         driveMotorPosMatrix = driveMotorPosLinearSystem.calculateX(driveMotorPosMatrix, driveMotorVoltageMatrix, dt);
-        steerMotorPosMatrix = steerMotorPosLinearSystem.calculateX(steerMotorPosMatrix, steerMotorVoltageMatrix, dt);
+        turningMotorPosMatrix = turningMotorPosLinearSystem.calculateX(turningMotorPosMatrix, turningMotorVoltageMatrix, dt);
         
         //Converts those matrices to actual simulated inputs (since it moduluses at 2pi, check if this is right)
         drivePos = driveMotorPosMatrix.get(0,0)%(2*Math.PI);
-        steerPos = steerMotorPosMatrix.get(0,0)%(2*Math.PI);
+        turningPos = turningMotorPosMatrix.get(0,0)%(2*Math.PI);
         driveVelocity = driveMotorPosMatrix.get(1,0);
+        turningVelocity = turningMotorPosMatrix.get(1,0);
 
         //Redoes the matrices to hold the modulused values back into the [position, velocity] matrices
         driveMotorPosMatrix = VecBuilder.fill(drivePos, driveMotorPosMatrix.get(1,0));
-        steerMotorPosMatrix = VecBuilder.fill(steerPos, steerMotorPosMatrix.get(1,0));
+        turningMotorPosMatrix = VecBuilder.fill(turningPos, turningMotorPosMatrix.get(1,0));
         
     }
 
-    public static SwerveModuleState getSimModuleState(){
-        return new SwerveModuleState(driveVelocity, new Rotation2d(steerPos));
+    public SwerveModuleState getSimModuleState(){
+        return new SwerveModuleState(driveVelocity, new Rotation2d(turningPos));
     }
 
-    public static SwerveModulePosition getSwerveModulePosition(){
-        return new SwerveModulePosition(drivePos, new Rotation2d(steerPos));
+    public SwerveModulePosition getSwerveModulePosition(){
+        return new SwerveModulePosition(drivePos, new Rotation2d(turningPos));
     }
 
-    public static double getDrivePosRadiansSim(){
+    public double getDrivePosRadiansSim(){
         return drivePos;
     }
 
-    public static double getSteerPosRadiansSim(){
-        return steerPos;
+    public double getTurningPosRadiansSim(){
+        return turningPos;
     }
 
-    public static double getDriveVelocityRadiansSim(){
+    public double getDriveVelocityMetersPerSecond(){
         return driveVelocity;
+    }
+    
+    public double getTurningVelocityMetersPerSecond(){
+        return turningVelocity;
+    }
+    
+    public void resetEncoders(){
+        drivePos = 0;
+        turningPos = 0;
     }
 }
