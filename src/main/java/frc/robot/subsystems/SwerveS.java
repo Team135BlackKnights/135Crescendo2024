@@ -36,6 +36,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.LimelightHelpers;
+import frc.robot.Robot;
+
 import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 
@@ -222,7 +224,13 @@ public class SwerveS extends SubsystemBase {
  
     @Override
     public void periodic() {
-
+        if (Robot.isSimulation()){
+            frontLeft.updateSimModuleState();
+            frontRight.updateSimModuleState();
+            backLeft.updateSimModuleState();
+            backRight.updateSimModuleState();
+        }
+        SmartDashboard.putNumber("getName()", frontLeft.getTurningVelocityMetersPerSecond());
         periodicUpdateCycle +=1;
 
         if (limelight.getEntry("pipeline").getDouble(0) != 1) {

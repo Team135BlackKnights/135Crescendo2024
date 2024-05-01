@@ -16,8 +16,9 @@ public class SwerveModuleSim {
     drivePos = 0,
     turningPos = 0,
     driveVelocity = 0,
-    turningVelocity = 0;
-    
+    turningVelocity = 0,
+    driveMotorVoltage = 0,
+    turningMotorVoltage = 0;
     private static double dt = .02;
     
     private static Matrix<N2,N1> 
@@ -45,7 +46,7 @@ public class SwerveModuleSim {
         
     }
     /*Outputs as drivePos, turningPos, driveVelocity. Call in periodic */
-    public void updateModuleStates(double driveMotorVoltage, double turningMotorVoltage){
+    public void updateModuleState(){
         
         //Create voltage matrices
         driveMotorVoltageMatrix = VecBuilder.fill(driveMotorVoltage);
@@ -93,8 +94,13 @@ public class SwerveModuleSim {
         return turningVelocity;
     }
     
+
     public void resetEncoders(){
         drivePos = 0;
         turningPos = 0;
+    }
+    public void updateVoltage(double driveVolts, double steerVolts){
+        driveMotorVoltage = driveVolts;
+        turningMotorVoltage = steerVolts;
     }
 }

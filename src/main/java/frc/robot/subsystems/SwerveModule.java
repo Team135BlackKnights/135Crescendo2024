@@ -251,7 +251,7 @@ public class SwerveModule {
                 turningMotor.setVoltage(turnOutput + turnFeedforward);
             }
             else{
-                swerveModuleSim.updateModuleStates((driveOutput + driveFeedforward), (turnOutput + turnFeedforward));
+                swerveModuleSim.updateVoltage((driveOutput + driveFeedforward), (turnOutput + turnFeedforward));
             }
 
     }
@@ -274,5 +274,8 @@ public class SwerveModule {
     public void stop() {
         driveMotor.set(0);
         turningMotor.set(0);
+    }
+    public void updateSimModuleState(){
+        swerveModuleSim.updateModuleState();
     }
 }
