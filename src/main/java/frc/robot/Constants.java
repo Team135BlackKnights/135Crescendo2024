@@ -168,6 +168,7 @@ public final class Constants {
     driveMotorKv = new double[]{3,3,3,3},
     turnMotorKv = new double[]{3,3,3,3},
     turnMotorKs = new double[]{3,3,3,3};
+    public static double motorMaxVoltage = 12;
   }
 
   public static class LEDConstants{
