@@ -96,17 +96,9 @@ public final class Constants {
       kTurningEncoderRot2Rad = kTurningMotorGearRatio * 2 * Math.PI,
       kTurningEncoderRPM2RadPerSec = kTurningEncoderRot2Rad / 60,
       kDeadband = 0.1,
-      kAutoDeadband = 0.01,
+      kAutoDeadband = 0.01;
 
-      kTurningP = 10,
-      kSVolts = -0.24149,
-      kVVoltSecondsPerRotation= 0.0010486,
-      kAVoltSecondsSquaredPerRotation = 0.00034565,
-
-      kDriveP = 0.5,
-      kDriveSVolts = -0.24149,
-      kDriveVVoltSecondsPerRotation= 0.0010486,
-      kDriveAVoltSecondsSquaredPerRotation = 0.00034565;
+      
   }
 
   public static class DriveConstants {
@@ -172,22 +164,22 @@ public final class Constants {
       kBackRightTurningReversed = true,
       kBackRigthAbsEncoderReversed = false;
     public static double 
-      kFrontRightP = 4.2355, //2.4646 maybe
+      kFrontRightP = 2.4646, //2.4646 maybe
       kFrontRightSVolts = -0.040248,
       kFrontRightVVoltSecondsPerRotation = 2.9041,
       kFrontRightAVoltSecondsSquaredPerRotation = 1.52,
       
-      kFrontLeftP = 4.1054, //2.5896
+      kFrontLeftP = 2.5896, //2.5896 //4.1054
       kFrontLeftSVolts =-0.22934,
       kFrontLeftVVoltSecondsPerRotation = 2.8559,
       kFrontLeftAVoltSecondsSquaredPerRotation = 1.7338,
 
-      kBackRightP = 4.1688,//maybe 2.0873 or 1.4862
+      kBackRightP = 2.0873,//maybe 2.0873 or 1.4862 //4.1688
       kBackRightSVolts =0.070421,
       kBackRightVVoltSecondsPerRotation = 2.8607,
       kBackRightAVoltSecondsSquaredPerRotation =  1.1811,
 
-      kBackLeftP = 3.9698,//maybe 2.3375 or 1.5638
+      kBackLeftP = 2.3375,//maybe 2.3375 or 1.5638 //3.9698
       kBackLeftSVolts = 0.01842,
       kBackLeftVVoltSecondsPerRotation = 2.7005,
       kBackLeftAVoltSecondsSquaredPerRotation = 1.4511;

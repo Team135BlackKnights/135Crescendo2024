@@ -29,18 +29,10 @@ public class SwerveModule {
     private final RelativeEncoder driveEncoder;
     private final RelativeEncoder turningEncoder;
 
-    private final ProfiledPIDController turningPIDController;
-    private final PIDController drivePIDController; //not using profiled cuz no angles
-    private final SimpleMotorFeedforward turningFeedForward =
-    new SimpleMotorFeedforward(
-        Constants.SwerveConstants.kSVolts,
-        Constants.SwerveConstants.kVVoltSecondsPerRotation,
-        Constants.SwerveConstants.kAVoltSecondsSquaredPerRotation);
-    private final SimpleMotorFeedforward driveFeedForward = 
-    new SimpleMotorFeedforward(
-        Constants.SwerveConstants.kDriveSVolts,
-        Constants.SwerveConstants.kDriveVVoltSecondsPerRotation,
-        Constants.SwerveConstants.kDriveAVoltSecondsSquaredPerRotation);
+    private ProfiledPIDController turningPIDController;
+    private PIDController drivePIDController; //not using profiled cuz no angles
+    private SimpleMotorFeedforward turningFeedForward;
+    private SimpleMotorFeedforward driveFeedForward;
     private final SparkAnalogSensor absoluteEncoder;
     //private final AnalogInput absoluteEncoder; // Use either AnalogInput or CANCoder depending on the absolute encoder
     //private final CANCoder absoluteEncoder;
@@ -85,11 +77,23 @@ public class SwerveModule {
         turningEncoder.setVelocityConversionFactor(Constants.SwerveConstants.kTurningEncoderRPM2RadPerSec);
         //creates pidController, used exclusively for turning because that has to be precise
         //must test updated 
-        turningPIDController = new ProfiledPIDController(Constants.SwerveConstants.kTurningP, 0, 0,new TrapezoidProfile.Constraints(Constants.DriveConstants.kMaxTurningSpeedRadPerSec,Constants.DriveConstants.kTeleTurningMaxAcceleration));
+        if (driveMotorId == 10){
+            driveFeedForward = new SimpleMotorFeedforward(Constants.DriveConstants.kFrontRightSVolts,Constants.DriveConstants.kFrontRightVVoltSecondsPerRotation,Constants.DriveConstants.kFrontRightAVoltSecondsSquaredPerRotation);
+            drivePIDController = new PIDController(Constants.DriveConstants.kFrontRightP, 0, 0);
+        }else if (driveMotorId == 12){
+            driveFeedForward = new SimpleMotorFeedforward(Constants.DriveConstants.kBackRightSVolts,Constants.DriveConstants.kBackRightVVoltSecondsPerRotation,Constants.DriveConstants.kBackRightAVoltSecondsSquaredPerRotation);
+            drivePIDController = new PIDController(Constants.DriveConstants.kBackRightP, 0, 0);
+        }else if (driveMotorId == 14){
+            driveFeedForward = new SimpleMotorFeedforward(Constants.DriveConstants.kBackLeftSVolts,Constants.DriveConstants.kBackLeftVVoltSecondsPerRotation,Constants.DriveConstants.kBackLeftAVoltSecondsSquaredPerRotation);
+            drivePIDController = new PIDController(Constants.DriveConstants.kBackLeftP, 0, 0);
+        }else if (driveMotorId == 16){
+            driveFeedForward = new SimpleMotorFeedforward(Constants.DriveConstants.kFrontLeftSVolts,Constants.DriveConstants.kFrontLeftVVoltSecondsPerRotation,Constants.DriveConstants.kFrontLeftAVoltSecondsSquaredPerRotation);
+            drivePIDController = new PIDController(Constants.DriveConstants.kFrontLeftP, 0, 0);
+        }
+        turningPIDController = new ProfiledPIDController(.5, 0, 0,new TrapezoidProfile.Constraints(Constants.DriveConstants.kMaxTurningSpeedRadPerSec,Constants.DriveConstants.kTeleTurningMaxAcceleration));
         //makes the value loop around
         turningPIDController.enableContinuousInput(-Math.PI, Math.PI);
 
-        drivePIDController = new PIDController(Constants.SwerveConstants.kDriveP, 0, 0);
     }
 
     public double getDrivePosition() {
@@ -177,7 +181,7 @@ public class SwerveModule {
 
         //scales DOWN movement perpendicular to desired direction that occurs when modules change directions. makes smoother.
         //basically, when NOT facing the right direction, turn down our speed so we dont do weird S curves.
-        state.speedMetersPerSecond *= state.angle.minus(encoderRotation).getCos(); //confirm good idea
+       // state.speedMetersPerSecond *= state.angle.minus(encoderRotation).getCos(); //confirm good idea
         
         // TODO: Run sysID on these, and get feedforwards for both
         // Calculate the drive output from the drive PID controller.
@@ -190,11 +194,11 @@ public class SwerveModule {
         final double turnOutput =
             turningPIDController.calculate(getAbsoluteEncoderRad(), state.angle.getRadians());
 
-        final double turnFeedforward =
-            turningFeedForward.calculate(turningPIDController.getSetpoint().velocity);
+       // final double turnFeedforward =
+        //    turningFeedForward.calculate(turningPIDController.getSetpoint().velocity);
 
         driveMotor.setVoltage(driveOutput + driveFeedforward);
-        turningMotor.setVoltage(turnOutput + turnFeedforward);
+        turningMotor.setVoltage(turnOutput); //+ turnFeedforward);
         
     }
 
