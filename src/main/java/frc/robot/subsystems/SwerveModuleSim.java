@@ -34,14 +34,14 @@ public class SwerveModuleSim {
     steerMotorPosLinearSystem,
     driveMotorPosLinearSystem;
     
-    public SwerveModuleSim(double driveKa, double steerKa, double driveKv, double steerKv, double updateRate){
+    public SwerveModuleSim(double[] driveKsKvKa, double[] steerKsKvKa, double updateRate){
         
         //We should need one position linear system and one velocity linear system
         //TODO: Custom update rate
-        steerMotorSpeedLinearSystem = LinearSystemId.identifyVelocitySystem(steerKv, steerKa);
-        driveMotorSpeedLinearSystem = LinearSystemId.identifyVelocitySystem(steerKv, steerKa);
-        steerMotorPosLinearSystem = LinearSystemId.identifyPositionSystem(driveKv, driveKa); 
-        driveMotorPosLinearSystem = LinearSystemId.identifyPositionSystem(steerKv, steerKa);
+        steerMotorSpeedLinearSystem = LinearSystemId.identifyVelocitySystem(steerKsKvKa[1], steerKsKvKa[2]);
+        driveMotorSpeedLinearSystem = LinearSystemId.identifyVelocitySystem(driveKsKvKa[1], driveKsKvKa[2]);
+        steerMotorPosLinearSystem = LinearSystemId.identifyPositionSystem(steerKsKvKa[1], steerKsKvKa[2]); 
+        driveMotorPosLinearSystem = LinearSystemId.identifyPositionSystem(driveKsKvKa[1], driveKsKvKa[2]);
         
         
     }
