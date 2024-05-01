@@ -10,7 +10,6 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N2;
 import edu.wpi.first.math.system.LinearSystem;
 import edu.wpi.first.math.system.plant.LinearSystemId;
-import frc.robot.Constants.DriveConstants;
 
 public class SwerveModuleSim {
     private double 
@@ -46,11 +45,11 @@ public class SwerveModuleSim {
         
     }
     /*Outputs as drivePos, turningPos, driveVelocity. Call in periodic */
-    public void updateModuleStates(double driveMotorPercent, double turningMotorPercent){
+    public void updateModuleStates(double driveMotorVoltage, double turningMotorVoltage){
         
         //Create voltage matrices
-        driveMotorVoltageMatrix = VecBuilder.fill(driveMotorPercent*DriveConstants.motorMaxVoltage);
-        turningMotorVoltageMatrix = VecBuilder.fill(turningMotorPercent*DriveConstants.motorMaxVoltage);
+        driveMotorVoltageMatrix = VecBuilder.fill(driveMotorVoltage);
+        turningMotorVoltageMatrix = VecBuilder.fill(turningMotorVoltage);
 
 
         

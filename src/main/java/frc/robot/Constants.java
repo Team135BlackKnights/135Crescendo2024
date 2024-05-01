@@ -100,8 +100,6 @@ public final class Constants {
 
   public static class DriveConstants {
 
-    public static double 
-    motorMaxVoltage = 12;
     public static double
       kChassisWidth = Units.inchesToMeters(24.25), // Distance between Left and Right wheels
       kChassisLength = Units.inchesToMeters(24.25), // Distance betwwen Front and Back wheels

@@ -216,6 +216,7 @@ public class SwerveModule {
         return new SwerveModuleState(getDriveVelocity(), new Rotation2d(getTurningPosition()));
     }
 
+
     public void setDesiredState(SwerveModuleState state) {
         var encoderRotation = new Rotation2d(getTurningPosition());
         // Stops the motors if the desired state is too small
@@ -245,8 +246,14 @@ public class SwerveModule {
         final double turnFeedforward =
             turningFeedForward.calculate(turningPIDController.getSetpoint().velocity);
 
-        driveMotor.setVoltage(driveOutput + driveFeedforward);
-        turningMotor.setVoltage(turnOutput + turnFeedforward);
+            if (Robot.isReal()){
+                driveMotor.setVoltage(driveOutput + driveFeedforward);
+                turningMotor.setVoltage(turnOutput + turnFeedforward);
+            }
+            else{
+                swerveModuleSim.updateModuleStates((driveOutput + driveFeedforward), (turnOutput + turnFeedforward));
+            }
+
     }
 
     public void stop() {
