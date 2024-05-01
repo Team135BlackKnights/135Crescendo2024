@@ -80,7 +80,7 @@ public class OutakeS extends SubsystemBase {
     private final static LinearQuadraticRegulator<N1, N1, N1> m_topController =
     new LinearQuadraticRegulator<>(
         m_topFlywheelPlant,
-        VecBuilder.fill(2), /* qelms. velocity error tolerances, in meters per second. Decrease this to more
+        VecBuilder.fill(8), /* qelms. velocity error tolerances, in meters per second. Decrease this to more
         heavily penalize state excursion, or make the controller behave more aggressively. In
         this example we weight position much more highly than velocity, but this can be
         tuned to balance the two.*/
@@ -91,10 +91,10 @@ public class OutakeS extends SubsystemBase {
     new LinearSystemLoop<>(m_topFlywheelPlant, m_topController, m_topObserver, 12.0, 0.020); //max physical voltage, not applied.
     
     
-    private final static LinearSystem<N1, N1, N1> m_bottomFlywheelPlant =LinearSystemId.identifyVelocitySystem(Constants.OutakeConstants.kVVoltSecondsPerRotation, Constants.OutakeConstants.kAVoltSecondsSquaredPerRotation);
+    private final static LinearSystem<N1, N1, N1> m_bottomFlywheelPlant =LinearSystemId.identifyVelocitySystem(Constants.OutakeConstants.kVVoltSecondsPerRotation*.995, Constants.OutakeConstants.kAVoltSecondsSquaredPerRotation);
     private final static KalmanFilter<N1,N1,N1> m_bottomObserver = new KalmanFilter<>(Nat.N1(),Nat.N1(),m_bottomFlywheelPlant,VecBuilder.fill(3.0),VecBuilder.fill(0.01), .02 );
     private final static LinearQuadraticRegulator<N1, N1, N1> m_bottomController =
-    new LinearQuadraticRegulator<>(m_bottomFlywheelPlant,VecBuilder.fill(8.0),VecBuilder.fill(12.0),0.020);
+    new LinearQuadraticRegulator<>(m_bottomFlywheelPlant,VecBuilder.fill(8),VecBuilder.fill(12.0),0.020);
     private final static LinearSystemLoop<N1, N1, N1> m_bottomLoop = new LinearSystemLoop<>(m_bottomFlywheelPlant, m_bottomController, m_bottomObserver, 12.0, 0.020);
     private double topNextVoltage,bottomNextVoltage;
     private final FlywheelSim topFlywheelSim = new FlywheelSim(m_topFlywheelPlant,DCMotor.getNEO(1),1/Constants.OutakeConstants.flywheelGearRatio);

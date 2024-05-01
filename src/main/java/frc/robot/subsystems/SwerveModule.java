@@ -116,7 +116,8 @@ public class SwerveModule {
         turningMotor.setVoltage(volts);
     }
     public void setDriveTest(double volts){
-        System.out.println("DRIVNIG");
+        double turnOutput = turningPIDController.calculate(getAbsoluteEncoderRad(), 0);
+        turningMotor.setVoltage(turnOutput);
         driveMotor.setVoltage(volts);
     }
     public double getAbsoluteEncoderRad() {

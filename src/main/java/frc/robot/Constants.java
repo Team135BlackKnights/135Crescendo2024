@@ -98,7 +98,7 @@ public final class Constants {
       kDeadband = 0.1,
       kAutoDeadband = 0.01,
 
-      kTurningP = 0.5,
+      kTurningP = 10,
       kSVolts = -0.24149,
       kVVoltSecondsPerRotation= 0.0010486,
       kAVoltSecondsSquaredPerRotation = 0.00034565,
@@ -145,6 +145,8 @@ public final class Constants {
       kFrontRightTurningPort = 11, //21
       kFrontRightAbsEncoderPort = 0, //2
 
+      
+
       kBackLeftDrivePort = 14, //13
       kBackLeftTurningPort = 15, //23
       kBackLeftAbsEncoderPort = 3, //3
@@ -169,7 +171,27 @@ public final class Constants {
       kBackRightDriveReversed = false,
       kBackRightTurningReversed = true,
       kBackRigthAbsEncoderReversed = false;
+    public static double 
+      kFrontRightP = 4.2355, //2.4646 maybe
+      kFrontRightSVolts = -0.040248,
+      kFrontRightVVoltSecondsPerRotation = 2.9041,
+      kFrontRightAVoltSecondsSquaredPerRotation = 1.52,
+      
+      kFrontLeftP = 4.1054, //2.5896
+      kFrontLeftSVolts =-0.22934,
+      kFrontLeftVVoltSecondsPerRotation = 2.8559,
+      kFrontLeftAVoltSecondsSquaredPerRotation = 1.7338,
 
+      kBackRightP = 4.1688,//maybe 2.0873 or 1.4862
+      kBackRightSVolts =0.070421,
+      kBackRightVVoltSecondsPerRotation = 2.8607,
+      kBackRightAVoltSecondsSquaredPerRotation =  1.1811,
+
+      kBackLeftP = 3.9698,//maybe 2.3375 or 1.5638
+      kBackLeftSVolts = 0.01842,
+      kBackLeftVVoltSecondsPerRotation = 2.7005,
+      kBackLeftAVoltSecondsSquaredPerRotation = 1.4511;
+      ;
   }
 
   public static class LEDConstants{
