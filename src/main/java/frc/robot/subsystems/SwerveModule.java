@@ -205,15 +205,27 @@ public class SwerveModule {
     }
 
     public SwerveModulePosition getPosition() {
-        //basically creates a new swervemoduleposition based on the current positions of the drive and turning encoders
-        return new SwerveModulePosition(
+         //basically creates a new swervemoduleposition based on the current positions of the drive and turning encoders
+
+        if (Robot.isReal()){
+            return new SwerveModulePosition(
             driveEncoder.getPosition(), new Rotation2d(getAbsoluteEncoderRad()));
+        }
+       
+        else{
+            return swerveModuleSim.getSwerveModuleSimPosition();
+        }
     }
     
 
     public SwerveModuleState getState() {
         //creates new swerveModuleState based on drive speed and turn motor position (speed and direction)
-        return new SwerveModuleState(getDriveVelocity(), new Rotation2d(getTurningPosition()));
+        if (Robot.isReal()){
+            return new SwerveModuleState(getDriveVelocity(), new Rotation2d(getTurningPosition()));
+        }
+        else{
+            return swerveModuleSim.getSimModuleState();
+        }
     }
 
 

@@ -89,13 +89,13 @@ public final class Constants {
 
       kTurningP = 0.5,
       kSVolts = -0.24149,
-      kVVoltSecondsPerRotation= 0.0010486,
-      kAVoltSecondsSquaredPerRotation = 0.00034565,
+      kVVoltSecondsPerRotation= 0.10486,
+      kAVoltSecondsSquaredPerRotation = 0.034565,
 
       kDriveP = 0.5,
       kDriveSVolts = -0.24149,
-      kDriveVVoltSecondsPerRotation= 0.0010486,
-      kDriveAVoltSecondsSquaredPerRotation = 0.00034565;
+      kDriveVVoltSecondsPerRotation= 0.10486,
+      kDriveAVoltSecondsSquaredPerRotation = 0.034565;
   }
 
   public static class DriveConstants {

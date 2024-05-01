@@ -74,7 +74,7 @@ public class SwerveModuleSim {
         return new SwerveModuleState(driveVelocity, new Rotation2d(turningPos));
     }
 
-    public SwerveModulePosition getSwerveModulePosition(){
+    public SwerveModulePosition getSwerveModuleSimPosition(){
         return new SwerveModulePosition(drivePos, new Rotation2d(turningPos));
     }
 
