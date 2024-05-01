@@ -36,14 +36,11 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.LimelightHelpers;
-import frc.robot.Robot;
-
 
 import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 
 import frc.robot.Constants.DriveConstants;
-import frc.robot.Constants.DriveSimConstants;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.LimelightConstants;
 import frc.robot.Constants.OutakeConstants;
@@ -87,16 +84,6 @@ public class SwerveS extends SubsystemBase {
         Constants.DriveConstants.kBackRightAbsEncoderPort, 
         Constants.DriveConstants.kBackRightAbsEncoderOffsetRad, 
         Constants.DriveConstants.kBackRightDriveReversed);
-
-    
-    private static SwerveModuleSim 
-    frontLeftModuleSim = null,
-    frontRightModuleSim = null,
-    backLeftModuleSim = null,
-    backRightModuleSim = null;
-
-
-
 
     private static AHRS gyro = new AHRS(Port.kUSB1);
     NetworkTableEntry pipeline;
@@ -215,12 +202,6 @@ public class SwerveS extends SubsystemBase {
 
         SmartDashboard.putData("Field", robotField);
     
-        if (Robot.isSimulation()){
-            frontLeftModuleSim = new SwerveModuleSim(DriveSimConstants.driveMotorsKsKvKa, DriveSimConstants.steerMotorsKsKvKa, 0);
-            frontLeftModuleSim = new SwerveModuleSim(DriveSimConstants.driveMotorsKsKvKa, DriveSimConstants.steerMotorsKsKvKa, 0);
-            frontLeftModuleSim = new SwerveModuleSim(DriveSimConstants.driveMotorsKsKvKa, DriveSimConstants.steerMotorsKsKvKa, 0);
-            frontLeftModuleSim = new SwerveModuleSim(DriveSimConstants.driveMotorsKsKvKa, DriveSimConstants.steerMotorsKsKvKa, 0);
-        }
     }
     
     public void zeroHeading() {
