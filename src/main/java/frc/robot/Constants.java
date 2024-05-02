@@ -163,27 +163,58 @@ public final class Constants {
       kBackRightDriveReversed = false,
       kBackRightTurningReversed = true,
       kBackRigthAbsEncoderReversed = false;
-    public static double 
-      kFrontRightP = 2.4646, //2.4646 maybe
-      kFrontRightSVolts = -0.040248,
-      kFrontRightVVoltSecondsPerRotation = 2.9041,
-      kFrontRightAVoltSecondsSquaredPerRotation = 1.52,
       
-      kFrontLeftP = 2.5896, //2.5896 //4.1054
-      kFrontLeftSVolts =-0.22934,
-      kFrontLeftVVoltSecondsPerRotation = 2.8559,
-      kFrontLeftAVoltSecondsSquaredPerRotation = 1.7338,
+      //Unused
+      public static double 
+      kOverallP = 2.36975,
+      kOverallSVolts = -.180747,
+      kOverallVVoltSecondsPerRotation = 2.8303,
+      kOverallAVoltSecondsSquaredPerRotation = 1.4715,
 
-      kBackRightP = 2.0873,//maybe 2.0873 or 1.4862 //4.1688
-      kBackRightSVolts =0.070421,
-      kBackRightVVoltSecondsPerRotation = 2.8607,
-      kBackRightAVoltSecondsSquaredPerRotation =  1.1811,
+      kFrontRightDriveP = 2.4646, //2.4646 maybe
+      kFrontRightDriveSVolts = -0.040248,
+      kFrontRightDriveVVoltSecondsPerRotation = 2.9041,
+      kFrontRightDriveAVoltSecondsSquaredPerRotation = 1.52,
+      
+      kFrontLeftDriveP = 2.5896, //2.5896 //4.1054
+      kFrontLeftDriveSVolts =-0.22934,
+      kFrontLeftDriveVVoltSecondsPerRotation = 2.8559,
+      kFrontLeftDriveAVoltSecondsSquaredPerRotation = 1.7338,
 
-      kBackLeftP = 2.3375,//maybe 2.3375 or 1.5638 //3.9698
-      kBackLeftSVolts = 0.01842,
-      kBackLeftVVoltSecondsPerRotation = 2.7005,
-      kBackLeftAVoltSecondsSquaredPerRotation = 1.4511;
-      ;
+      kBackRightDriveP = 2.0873,//maybe 2.0873 or 1.4862 //4.1688
+      kBackRightDriveSVolts =0.070421,
+      kBackRightDriveVVoltSecondsPerRotation = 2.8607,
+      kBackRightDriveAVoltSecondsSquaredPerRotation =  1.1811,
+
+      kBackLeftDriveP = 2.3375,//maybe 2.3375 or 1.5638 //3.9698
+      kBackLeftDriveSVolts = 0.01842,
+      kBackLeftDriveVVoltSecondsPerRotation = 2.7005,
+      kBackLeftDriveAVoltSecondsSquaredPerRotation = 1.4511,
+
+      //TODO:11 15 and 13 need to be redone with position instead of velocity. Window size is 1, velocity threshold is 75.
+      //Motor ID 17 
+      kFrontLeftTurnP = 1.0181, //maybe 0
+      kFrontLeftTurnKs = 0.34809,
+      kFrontLeftTurnKv = 0.0021885,
+      kFrontLeftTurnKa = 0.00019056,
+
+      //Motor ID 11
+      kFrontRightTurnP = 0.99768, //maybe 0
+      kFrontRightTurnKs = 0.28984,
+      kFrontRightTurnKv = 0.0021057,
+      kFrontRightTurnKa = 0.00018697,
+
+      //Motor ID 15
+      kBackLeftTurningP = 1.0521,
+      kBackLeftTurningKs = 0.26615,
+      kBackLeftTurningKv = 0.0021315,
+      kBackLeftTurningKa = 0.00019805,
+
+      //Motor ID 13
+      kBackRightTurningP = 1.2362,
+      kBackRightTurningKs = 0.25885,
+      kBackRightTurningKv = 0.0021008,
+      kBackRightTurningKa = 0.0002368;
   }
 
   public static class LEDConstants{

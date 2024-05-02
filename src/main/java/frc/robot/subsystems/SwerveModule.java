@@ -29,7 +29,7 @@ public class SwerveModule {
     private final RelativeEncoder driveEncoder;
     private final RelativeEncoder turningEncoder;
 
-    private ProfiledPIDController turningPIDController;
+    private PIDController turningPIDController;
     private PIDController drivePIDController; //not using profiled cuz no angles
     private SimpleMotorFeedforward turningFeedForward;
     private SimpleMotorFeedforward driveFeedForward;
@@ -78,19 +78,19 @@ public class SwerveModule {
         //creates pidController, used exclusively for turning because that has to be precise
         //must test updated 
         if (driveMotorId == 10){
-            driveFeedForward = new SimpleMotorFeedforward(Constants.DriveConstants.kFrontRightSVolts,Constants.DriveConstants.kFrontRightVVoltSecondsPerRotation,Constants.DriveConstants.kFrontRightAVoltSecondsSquaredPerRotation);
-            drivePIDController = new PIDController(Constants.DriveConstants.kFrontRightP, 0, 0);
+            driveFeedForward = new SimpleMotorFeedforward(Constants.DriveConstants.kFrontRightDriveSVolts,Constants.DriveConstants.kFrontRightDriveVVoltSecondsPerRotation,Constants.DriveConstants.kFrontRightDriveAVoltSecondsSquaredPerRotation);
+            drivePIDController = new PIDController(Constants.DriveConstants.kFrontRightDriveP, 0, 0);
         }else if (driveMotorId == 12){
-            driveFeedForward = new SimpleMotorFeedforward(Constants.DriveConstants.kBackRightSVolts,Constants.DriveConstants.kBackRightVVoltSecondsPerRotation,Constants.DriveConstants.kBackRightAVoltSecondsSquaredPerRotation);
-            drivePIDController = new PIDController(Constants.DriveConstants.kBackRightP, 0, 0);
+            driveFeedForward = new SimpleMotorFeedforward(Constants.DriveConstants.kBackRightDriveSVolts,Constants.DriveConstants.kBackRightDriveVVoltSecondsPerRotation,Constants.DriveConstants.kBackRightDriveAVoltSecondsSquaredPerRotation);
+            drivePIDController = new PIDController(Constants.DriveConstants.kBackRightDriveP, 0, 0);
         }else if (driveMotorId == 14){
-            driveFeedForward = new SimpleMotorFeedforward(Constants.DriveConstants.kBackLeftSVolts,Constants.DriveConstants.kBackLeftVVoltSecondsPerRotation,Constants.DriveConstants.kBackLeftAVoltSecondsSquaredPerRotation);
-            drivePIDController = new PIDController(Constants.DriveConstants.kBackLeftP, 0, 0);
+            driveFeedForward = new SimpleMotorFeedforward(Constants.DriveConstants.kBackLeftDriveSVolts,Constants.DriveConstants.kBackLeftDriveVVoltSecondsPerRotation,Constants.DriveConstants.kBackLeftDriveAVoltSecondsSquaredPerRotation);
+            drivePIDController = new PIDController(Constants.DriveConstants.kBackLeftDriveP, 0, 0);
         }else if (driveMotorId == 16){
-            driveFeedForward = new SimpleMotorFeedforward(Constants.DriveConstants.kFrontLeftSVolts,Constants.DriveConstants.kFrontLeftVVoltSecondsPerRotation,Constants.DriveConstants.kFrontLeftAVoltSecondsSquaredPerRotation);
-            drivePIDController = new PIDController(Constants.DriveConstants.kFrontLeftP, 0, 0);
+            driveFeedForward = new SimpleMotorFeedforward(Constants.DriveConstants.kFrontLeftDriveSVolts,Constants.DriveConstants.kFrontLeftDriveVVoltSecondsPerRotation,Constants.DriveConstants.kFrontLeftDriveAVoltSecondsSquaredPerRotation);
+            drivePIDController = new PIDController(Constants.DriveConstants.kFrontLeftDriveP, 0, 0);
         }
-        turningPIDController = new ProfiledPIDController(.5, 0, 0,new TrapezoidProfile.Constraints(Constants.DriveConstants.kMaxTurningSpeedRadPerSec,Constants.DriveConstants.kTeleTurningMaxAcceleration));
+        turningPIDController = new PIDController(.5, 0, 0);
         //makes the value loop around
         turningPIDController.enableContinuousInput(-Math.PI, Math.PI);
 

@@ -106,8 +106,8 @@ public class SwerveS extends SubsystemBase {
     
     
     Measure<Velocity<Voltage>> rampRate = Volts.of(1).per(Seconds.of(1)); //for going FROM ZERO PER SECOND
-    Measure<Voltage> holdVoltage = Volts.of(3);
-    Measure<Time> timeout = Seconds.of(5);
+    Measure<Voltage> holdVoltage = Volts.of(8);
+    Measure<Time> timeout = Seconds.of(10);
     SysIdRoutine sysIdRoutineTurn = new SysIdRoutine(
         new SysIdRoutine.Config(rampRate,holdVoltage,timeout),
         new SysIdRoutine.Mechanism(
