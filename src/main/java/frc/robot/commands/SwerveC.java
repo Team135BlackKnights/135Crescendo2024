@@ -74,9 +74,9 @@ public class SwerveC extends Command {
 
     // Convert ChassisSpeeds into the ChassisSpeeds type
     if (SwerveS.fieldOriented) {
-      chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, turningSpeed, SwerveS.getRotation2d());
+      chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(3, ySpeed, turningSpeed, SwerveS.getRotation2d());
     } else {
-      chassisSpeeds = new ChassisSpeeds(xSpeed, ySpeed, turningSpeed);
+      chassisSpeeds = new ChassisSpeeds(3, ySpeed, turningSpeed);
     }
     
     // Convert ChassisSpeeds into individual module states
