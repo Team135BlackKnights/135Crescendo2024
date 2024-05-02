@@ -96,7 +96,7 @@ public final class Constants {
       kTurningEncoderRot2Rad = kTurningMotorGearRatio * 2 * Math.PI,
       kTurningEncoderRPM2RadPerSec = kTurningEncoderRot2Rad / 60,
       kDeadband = 0.1,
-      kAutoDeadband = 0.01;
+      kAutoDeadband = 0.01,
 
       kOverallP = 2.36975,
       kOverallSVolts = -.180747,
