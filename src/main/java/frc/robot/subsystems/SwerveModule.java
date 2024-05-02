@@ -29,7 +29,7 @@ public class SwerveModule {
     private final RelativeEncoder driveEncoder;
     private final RelativeEncoder turningEncoder;
 
-    private PIDController turningPIDController;
+    private ProfiledPIDController turningPIDController;
     private PIDController drivePIDController; //not using profiled cuz no angles
     private SimpleMotorFeedforward turningFeedForward;
     private SimpleMotorFeedforward driveFeedForward;
@@ -90,7 +90,7 @@ public class SwerveModule {
             driveFeedForward = new SimpleMotorFeedforward(Constants.DriveConstants.kFrontLeftDriveSVolts,Constants.DriveConstants.kFrontLeftDriveVVoltSecondsPerRotation,Constants.DriveConstants.kFrontLeftDriveAVoltSecondsSquaredPerRotation);
             drivePIDController = new PIDController(Constants.DriveConstants.kFrontLeftDriveP, 0, 0);
         }
-        turningPIDController = new PIDController(.5, 0, 0);
+        turningPIDController = new ProfiledPIDController(.5, 0, 0, new TrapezoidProfile.Constraints(Constants.DriveConstants.kMaxTurningSpeedRadPerSec,Constants.DriveConstants.kTeleTurningMaxAcceleration));
         //makes the value loop around
         turningPIDController.enableContinuousInput(-Math.PI, Math.PI);
 
@@ -194,11 +194,11 @@ public class SwerveModule {
         final double turnOutput =
             turningPIDController.calculate(getAbsoluteEncoderRad(), state.angle.getRadians());
 
-       // final double turnFeedforward =
-        //    turningFeedForward.calculate(turningPIDController.getSetpoint().velocity);
+        final double turnFeedforward =
+            turningFeedForward.calculate(turningPIDController.getSetpoint().velocity);
 
         driveMotor.setVoltage(driveOutput + driveFeedforward);
-        turningMotor.setVoltage(turnOutput); //+ turnFeedforward);
+        turningMotor.setVoltage(turnOutput + turnFeedforward); //+ turnFeedforward);
         
     }
 
