@@ -36,16 +36,10 @@ public class SwerveModule {
 
     private final ProfiledPIDController turningPIDController;
     private final PIDController drivePIDController; //not using profiled cuz no angles
-    private final SimpleMotorFeedforward turningFeedForward =
-    new SimpleMotorFeedforward(
-        Constants.SwerveConstants.kSVolts,
-        Constants.SwerveConstants.kVVoltSecondsPerRotation,
-        Constants.SwerveConstants.kAVoltSecondsSquaredPerRotation);
-    private final SimpleMotorFeedforward driveFeedForward = 
-    new SimpleMotorFeedforward(
-        Constants.SwerveConstants.kDriveSVolts,
-        Constants.SwerveConstants.kDriveVVoltSecondsPerRotation,
-        Constants.SwerveConstants.kDriveAVoltSecondsSquaredPerRotation);
+    private SimpleMotorFeedforward turningFeedForward = null;
+    
+    private SimpleMotorFeedforward driveFeedForward = null;
+    
     private final SparkAnalogSensor absoluteEncoder;
     //private final AnalogInput absoluteEncoder; // Use either AnalogInput or CANCoder depending on the absolute encoder
     //private final CANCoder absoluteEncoder;
@@ -62,8 +56,15 @@ public class SwerveModule {
      * @param absoluteEncoderOffset Offset of Absolute Encoder in Radians
      * @param absoluteEncoderReversed True if Encoder is Reversed
      */
-    public SwerveModule(int driveMotorId, int turningMotorId, boolean driveMotorReversed, boolean turningMotorReversed, int absoluteEncoderId, double absoluteEncoderOffset, boolean absoluteEncoderReversed) {
-       //sets values of the encoder offset and whether its reversed
+    public SwerveModule(int driveMotorId, int turningMotorId, boolean driveMotorReversed, boolean turningMotorReversed, int absoluteEncoderId, double absoluteEncoderOffset, boolean absoluteEncoderReversed, double[] driveKpKsKvKa, double[] turningKpKsKvKa) {
+       turningFeedForward = new SimpleMotorFeedforward(
+        turningKpKsKvKa[1], turningKpKsKvKa[2], turningKpKsKvKa[3]);
+        driveFeedForward = new SimpleMotorFeedforward(
+        driveKpKsKvKa[1], driveKpKsKvKa[2], driveKpKsKvKa[3]);
+       
+       
+       
+        //sets values of the encoder offset and whether its reversed
         this.absoluteEncoderOffsetRad = absoluteEncoderOffset;
         this.absoluteEncoderReversed = absoluteEncoderReversed;
         //absoluteEncoder = new AnalogInput(absoluteEncoderId);
@@ -90,25 +91,13 @@ public class SwerveModule {
         turningEncoder.setVelocityConversionFactor(Constants.SwerveConstants.kTurningEncoderRPM2RadPerSec);
         //creates pidController, used exclusively for turning because that has to be precise
         //must test updated 
-        turningPIDController = new ProfiledPIDController(Constants.SwerveConstants.kTurningP, 0, 0,new TrapezoidProfile.Constraints(Constants.DriveConstants.kMaxTurningSpeedRadPerSec,Constants.DriveConstants.kTeleTurningMaxAcceleration));
+        turningPIDController = new ProfiledPIDController(turningKpKsKvKa[0], 0, 0,new TrapezoidProfile.Constraints(Constants.DriveConstants.kMaxTurningSpeedRadPerSec,Constants.DriveConstants.kTeleTurningMaxAcceleration));
         //makes the value loop around
         turningPIDController.enableContinuousInput(-Math.PI, Math.PI);
 
-        drivePIDController = new PIDController(Constants.SwerveConstants.kDriveP, 0, 0);
+        drivePIDController = new PIDController(driveKpKsKvKa[0], 0, 0);
         if (Robot.isSimulation()){
-            swerveModuleSim = new SwerveModuleSim(
-
-                new double[]{
-                    Constants.SwerveConstants.kDriveSVolts, 
-                    Constants.SwerveConstants.kDriveVVoltSecondsPerRotation,
-                    Constants.SwerveConstants.kDriveAVoltSecondsSquaredPerRotation},
-
-                new double[]{
-                    Constants.SwerveConstants.kSVolts, 
-                    Constants.SwerveConstants.kVVoltSecondsPerRotation, 
-                    Constants.SwerveConstants.kAVoltSecondsSquaredPerRotation}, 
-
-                absoluteEncoderOffset); 
+            swerveModuleSim = new SwerveModuleSim(driveKpKsKvKa, turningKpKsKvKa, 3); 
         }
         else{
             swerveModuleSim = null;
