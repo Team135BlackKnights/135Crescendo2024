@@ -191,7 +191,6 @@ public final class Constants {
       kBackLeftDriveVVoltSecondsPerRotation = 2.7005,
       kBackLeftDriveAVoltSecondsSquaredPerRotation = 1.4511,
 
-      //TODO:11 15 and 13 need to be redone with position instead of velocity. Window size is 1, velocity threshold is 75.
       //Motor ID 17 
       kFrontLeftTurnP = 1.0181, //maybe 0
       kFrontLeftTurnKs = 0.34809,
