@@ -36,6 +36,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.LimelightHelpers;
+import frc.robot.Robot;
 
 import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
@@ -56,7 +57,8 @@ public class SwerveS extends SubsystemBase {
         Constants.DriveConstants.kFrontLeftTurningReversed, 
         Constants.DriveConstants.kFrontLeftAbsEncoderPort, 
         Constants.DriveConstants.kFrontLeftAbsEncoderOffsetRad, 
-        Constants.DriveConstants.kFrontLeftAbsEncoderReversed);
+        Constants.DriveConstants.kFrontLeftAbsEncoderReversed,
+        Constants.SwerveConstants.frontLeftDriveKpKsKvKa, Constants.SwerveConstants.frontLeftTurnKpKsKvKa);
 
     private final static SwerveModule frontRight = new SwerveModule(
         Constants.DriveConstants.kFrontRightDrivePort, 
@@ -65,7 +67,8 @@ public class SwerveS extends SubsystemBase {
         Constants.DriveConstants.kFrontRightTurningReversed, 
         Constants.DriveConstants.kFrontRightAbsEncoderPort, 
         Constants.DriveConstants.kFrontRightAbsEncoderOffsetRad, 
-        Constants.DriveConstants.kFrontRightAbsEncoderReversed);
+        Constants.DriveConstants.kFrontRightAbsEncoderReversed,
+        Constants.SwerveConstants.frontRightDriveKpKsKvKa, Constants.SwerveConstants.frontRightTurnKpKsKvKa);
 
     private final static SwerveModule backLeft = new SwerveModule(
         Constants.DriveConstants.kBackLeftDrivePort, 
@@ -74,7 +77,8 @@ public class SwerveS extends SubsystemBase {
         Constants.DriveConstants.kBackLeftTurningReversed, 
         Constants.DriveConstants.kBackLeftAbsEncoderPort, 
         Constants.DriveConstants.kBackLeftAbsEncoderOffsetRad, 
-        Constants.DriveConstants.kBackLeftAbsEncoderReversed);
+        Constants.DriveConstants.kBackLeftAbsEncoderReversed, 
+        Constants.SwerveConstants.backLeftDriveKpKsKvKa, Constants.SwerveConstants.backLeftTurnKpKsKvKa);
 
     private final static SwerveModule backRight = new SwerveModule(
         Constants.DriveConstants.kBackRightDrivePort, 
@@ -83,7 +87,8 @@ public class SwerveS extends SubsystemBase {
         Constants.DriveConstants.kBackRightTurningReversed, 
         Constants.DriveConstants.kBackRightAbsEncoderPort, 
         Constants.DriveConstants.kBackRightAbsEncoderOffsetRad, 
-        Constants.DriveConstants.kBackRightDriveReversed);
+        Constants.DriveConstants.kBackRightDriveReversed,
+        Constants.SwerveConstants.backRightDriveKpKsKvKa, Constants.SwerveConstants.backRightTurnKpKsKvKa);
 
     private static AHRS gyro = new AHRS(Port.kUSB1);
     NetworkTableEntry pipeline;
@@ -223,6 +228,14 @@ public class SwerveS extends SubsystemBase {
  
     @Override
     public void periodic() {
+        if (Robot.isSimulation()){
+            frontLeft.updateSimModuleState();
+            frontRight.updateSimModuleState();
+            backLeft.updateSimModuleState();
+            backRight.updateSimModuleState();
+            SmartDashboard.putNumber("Sim debug chassis x speed", m_ChassisSpeeds.vyMetersPerSecond);
+        }
+        SmartDashboard.putNumber("FrontLeft pos", frontLeft.getDriveMatrix(0));
         periodicUpdateCycle +=1;
 
         if (limelight.getEntry("pipeline").getDouble(0) != 1) {
