@@ -229,6 +229,7 @@ public class SwerveS extends SubsystemBase {
             frontRight.updateSimModuleState();
             backLeft.updateSimModuleState();
             backRight.updateSimModuleState();
+            SmartDashboard.putNumber("Sim debug chassis x speed", m_ChassisSpeeds.vyMetersPerSecond);
         }
         periodicUpdateCycle +=1;
 
