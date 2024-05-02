@@ -23,10 +23,21 @@ import edu.wpi.first.wpilibj2.command.Command;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+
   public static class AutoConstants {
     public static HashMap<String, Command> eventMap = new HashMap<>();
   }
+  public static final Mode currentMode = Mode.SIM;
+  public static enum Mode {
+    /** Running on a real robot. */
+    REAL,
 
+    /** Running a physics simulator. */
+    SIM,
+
+    /** Replaying from a log file. */
+    REPLAY
+  }
   public static class IntakeConstants {
 
     public static I2C.Port colorSensorPort = I2C.Port.kOnboard;
@@ -64,10 +75,10 @@ public final class Constants {
       flywheelGearRatio = 1.5,
       idealPercentTop = .34,
       idealPercentBottom = .31,
-      kP = 0.00035971,
-      kSVolts = -0.24149,
-      kVVoltSecondsPerRotation= 0.0010486,
-      kAVoltSecondsSquaredPerRotation = 0.00034565;
+      kP = 0.0021258,
+      kSVolts = -0.089838,
+      kVVoltSecondsPerRotation= 0.0015425*.928,
+      kAVoltSecondsSquaredPerRotation = 0.00039717*1;
 
     public static boolean
       topFlywheelReversed = false,
@@ -85,7 +96,7 @@ public final class Constants {
       kTurningEncoderRot2Rad = kTurningMotorGearRatio * 2 * Math.PI,
       kTurningEncoderRPM2RadPerSec = kTurningEncoderRot2Rad / 60,
       kDeadband = 0.1,
-      kAutoDeadband = 0.01,
+      kAutoDeadband = 0.01;
 
       kOverallP = 2.36975,
       kOverallSVolts = -.180747,
@@ -185,6 +196,8 @@ public final class Constants {
       kFrontRightTurningPort = 11, //21
       kFrontRightAbsEncoderPort = 0, //2
 
+      
+
       kBackLeftDrivePort = 14, //13
       kBackLeftTurningPort = 15, //23
       kBackLeftAbsEncoderPort = 3, //3
@@ -209,7 +222,57 @@ public final class Constants {
       kBackRightDriveReversed = false,
       kBackRightTurningReversed = true,
       kBackRigthAbsEncoderReversed = false;
+      
+      //Unused
+      public static double 
+      kOverallP = 2.36975,
+      kOverallSVolts = -.180747,
+      kOverallVVoltSecondsPerRotation = 2.8303,
+      kOverallAVoltSecondsSquaredPerRotation = 1.4715,
 
+      kFrontRightDriveP = 2.4646, //2.4646 maybe
+      kFrontRightDriveSVolts = -0.040248,
+      kFrontRightDriveVVoltSecondsPerRotation = 2.9041,
+      kFrontRightDriveAVoltSecondsSquaredPerRotation = 1.52,
+      
+      kFrontLeftDriveP = 2.5896, //2.5896 //4.1054
+      kFrontLeftDriveSVolts =-0.22934,
+      kFrontLeftDriveVVoltSecondsPerRotation = 2.8559,
+      kFrontLeftDriveAVoltSecondsSquaredPerRotation = 1.7338,
+
+      kBackRightDriveP = 2.0873,//maybe 2.0873 or 1.4862 //4.1688
+      kBackRightDriveSVolts =0.070421,
+      kBackRightDriveVVoltSecondsPerRotation = 2.8607,
+      kBackRightDriveAVoltSecondsSquaredPerRotation =  1.1811,
+
+      kBackLeftDriveP = 2.3375,//maybe 2.3375 or 1.5638 //3.9698
+      kBackLeftDriveSVolts = 0.01842,
+      kBackLeftDriveVVoltSecondsPerRotation = 2.7005,
+      kBackLeftDriveAVoltSecondsSquaredPerRotation = 1.4511,
+
+      //Motor ID 17 
+      kFrontLeftTurnP = 1.0181, //maybe 0
+      kFrontLeftTurnKs = 0.34809,
+      kFrontLeftTurnKv = 0.0021885,
+      kFrontLeftTurnKa = 0.00019056,
+
+      //Motor ID 11
+      kFrontRightTurnP = 0.99768, //maybe 0
+      kFrontRightTurnKs = 0.28984,
+      kFrontRightTurnKv = 0.0021057,
+      kFrontRightTurnKa = 0.00018697,
+
+      //Motor ID 15
+      kBackLeftTurningP = 1.0521,
+      kBackLeftTurningKs = 0.26615,
+      kBackLeftTurningKv = 0.0021315,
+      kBackLeftTurningKa = 0.00019805,
+
+      //Motor ID 13
+      kBackRightTurningP = 1.2362,
+      kBackRightTurningKs = 0.25885,
+      kBackRightTurningKv = 0.0021008,
+      kBackRightTurningKa = 0.0002368;
   }
   public static class DriveSimConstants{
 

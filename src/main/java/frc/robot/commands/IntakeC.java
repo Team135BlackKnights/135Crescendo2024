@@ -49,7 +49,7 @@ public class IntakeC extends Command {
 
         if (Math.abs(deployIntakeSpeed) < 0.1) deployIntakeSpeed = 0;
 
-        if ((RobotContainer.manipController.getXButton() || RobotContainer.manipController.getAButton() || RobotContainer.manipController.getRightBumper()) && !RobotContainer.manipController.getStartButton()) {
+        if ((RobotContainer.manipController.getXButton() || RobotContainer.manipController.getAButton() || RobotContainer.manipController.getRightBumper()) && RobotContainer.isDriving()) {
             deployIntakeSpeed = 0.25;
         }
 
