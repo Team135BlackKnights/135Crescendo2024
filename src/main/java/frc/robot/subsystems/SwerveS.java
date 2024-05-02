@@ -230,6 +230,7 @@ public class SwerveS extends SubsystemBase {
             backLeft.updateSimModuleState();
             backRight.updateSimModuleState();
         }
+        SmartDashboard.putNumber("FrontLeft pos", frontLeft.getDriveMatrix(0));
         periodicUpdateCycle +=1;
 
         if (limelight.getEntry("pipeline").getDouble(0) != 1) {
