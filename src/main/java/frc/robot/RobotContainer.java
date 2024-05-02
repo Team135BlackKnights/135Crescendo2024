@@ -51,7 +51,7 @@ public class RobotContainer {
   JoystickButton aButton = new JoystickButton(driveController, 1);
   JoystickButton bButton = new JoystickButton(manipController, 2);
   JoystickButton xButton = new JoystickButton(driveController, 3);
-  JoystickButton yButton = new JoystickButton(manipController, 4);
+  JoystickButton yButton = new JoystickButton(driveController, 4);
   static JoystickButton selectButton = new JoystickButton(driveController,7);
   static JoystickButton startButton = new JoystickButton(driveController,8);
   //POVButton povUpManip = new POVButton(driveController, 0);
