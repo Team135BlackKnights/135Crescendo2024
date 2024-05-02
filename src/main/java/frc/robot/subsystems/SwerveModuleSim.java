@@ -7,7 +7,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.numbers.N1;
-import edu.wpi.first.math.numbers.N2;
 import edu.wpi.first.math.system.LinearSystem;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 
@@ -21,9 +20,6 @@ public class SwerveModuleSim {
     turningMotorVoltage = 0;
     private static double dt = .02;
     
-    private static Matrix<N2,N1> 
-    turningMotorPosMatrix = VecBuilder.fill(0,0),
-    driveMotorPosMatrix = VecBuilder.fill(0,0);
     
    
     private static Matrix<N1,N1> 
@@ -32,20 +28,14 @@ public class SwerveModuleSim {
     driveMotorVelocityMatrix = VecBuilder.fill(0),
     turningMotorVelocityMatrix = VecBuilder.fill(0);
 
-    private static LinearSystem<N2, N1, N1> 
-    turningMotorPosLinearSystem,
-    driveMotorPosLinearSystem;
-
     private static LinearSystem<N1,N1,N1>
     driveMotorVelocityLinearSystem,
     turningMotorVelocityLinearSystem;
     
     public SwerveModuleSim(double[] driveKsKvKa, double[] turningKsKvKa, double updateRate){
         
-        //We should need one position linear system and one velocity linear system
+        //We use two flywheel linear sytems now
         //TODO: Custom update rate
-        turningMotorPosLinearSystem = LinearSystemId.identifyPositionSystem(turningKsKvKa[1], turningKsKvKa[2]); 
-        driveMotorPosLinearSystem = LinearSystemId.identifyPositionSystem(driveKsKvKa[1], driveKsKvKa[2]);
         driveMotorVelocityLinearSystem = LinearSystemId.identifyVelocitySystem(driveKsKvKa[1], driveKsKvKa[2]);
         turningMotorVelocityLinearSystem = LinearSystemId.identifyVelocitySystem(turningKsKvKa[1], turningKsKvKa[2]);
     }
@@ -59,16 +49,13 @@ public class SwerveModuleSim {
 
         
         //Input [position, velocity] and voltage matrices
-        driveMotorPosMatrix = driveMotorPosLinearSystem.calculateX(driveMotorPosMatrix, driveMotorVoltageMatrix, dt);
-        turningMotorPosMatrix = turningMotorPosLinearSystem.calculateX(turningMotorPosMatrix, turningMotorVoltageMatrix, dt);
         driveMotorVelocityMatrix = driveMotorVelocityLinearSystem.calculateX(driveMotorVelocityMatrix, driveMotorVoltageMatrix, dt);
         turningMotorVelocityMatrix = turningMotorVelocityLinearSystem.calculateX(turningMotorVelocityMatrix, turningMotorVoltageMatrix, dt);
         //Converts those matrices to actual simulated inputs (since it moduluses at 2pi, check if this is right)
-        drivePos = driveMotorPosLinearSystem.calculateY(driveMotorPosMatrix, driveMotorVoltageMatrix).get(0,0)%(2*Math.PI);
-        turningPos = turningMotorPosLinearSystem.calculateY(turningMotorPosMatrix, turningMotorVoltageMatrix).get(0,0)%(2*Math.PI);
         driveVelocity = driveMotorVelocityLinearSystem.calculateY(driveMotorVelocityMatrix, driveMotorVoltageMatrix).get(0,0);
         turningVelocity = turningMotorVelocityLinearSystem.calculateY(driveMotorVelocityMatrix, driveMotorVoltageMatrix).get(0,0);
-
+        drivePos = ((driveVelocity*1.02)%(2*Math.PI)-Math.PI);
+        turningPos = ((driveVelocity*1.02)%(2*Math.PI)-Math.PI);
         //Redoes the matrices to hold the modulused values back into the [position, velocity] matrices
         //driveMotorPosMatrix = VecBuilder.fill(drivePos, driveMotorPosMatrix.get(1,0));
         //turningMotorPosMatrix = VecBuilder.fill(turningPos, turningMotorPosMatrix.get(1,0));
@@ -107,8 +94,5 @@ public class SwerveModuleSim {
     public void updateVoltage(double driveVolts, double steerVolts){
         driveMotorVoltage = driveVolts;
         turningMotorVoltage = steerVolts;
-    }
-    public double returnDriveMatrix(int row){
-        return driveMotorPosMatrix.get(row,0);
     }
 }

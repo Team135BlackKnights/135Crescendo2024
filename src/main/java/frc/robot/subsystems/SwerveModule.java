@@ -287,8 +287,5 @@ public class SwerveModule {
     public void updateSimModuleState(){
         swerveModuleSim.updateModuleState();
     }
-    public double getDriveMatrix(int row){
-        return swerveModuleSim.returnDriveMatrix(row);
-    }
     
 }
