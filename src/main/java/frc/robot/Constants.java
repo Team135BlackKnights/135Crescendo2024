@@ -138,8 +138,8 @@ public final class Constants {
       kBackRightTurningKa = 0.0002368;
 
       public static double[] 
-      frontRightDriveKpKsKvKa = new double[]{2.4646, -.04248,2.9041,1.52},
-      frontLeftDriveKpKsKvKa = new double[]{2.5896, -.22934,2.8559,1.7338},
+      frontRightDriveKpKsKvKa = new double[]{2.4646, .04248,2.9041,1.52},
+      frontLeftDriveKpKsKvKa = new double[]{2.5896, .22934,2.8559,1.7338},
       backRightDriveKpKsKvKa = new double[]{2.0873, .070421,2.8607, 1.1811},
       backLeftDriveKpKsKvKa = new double[]{2.3375, .01842, 2.7005, 1.4511},
       frontLeftTurnKpKsKvKa = new double[]{1.0181, .34809,.0021885,.00019056},
