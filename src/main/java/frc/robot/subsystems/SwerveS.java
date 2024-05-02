@@ -58,7 +58,7 @@ public class SwerveS extends SubsystemBase {
         Constants.DriveConstants.kFrontLeftAbsEncoderPort, 
         Constants.DriveConstants.kFrontLeftAbsEncoderOffsetRad, 
         Constants.DriveConstants.kFrontLeftAbsEncoderReversed,
-        Constants.SwerveConstants.frontLeftDriveKpKsKvKa, Constants.SwerveConstants.frontLeftTurnKpKsKvKa);
+        Constants.SwerveConstants.frontLeftDriveKpKsKvKa, Constants.SwerveConstants.overallTurnkPkSkVkAkD);
 
     private final static SwerveModule frontRight = new SwerveModule(
         Constants.DriveConstants.kFrontRightDrivePort, 
@@ -68,7 +68,7 @@ public class SwerveS extends SubsystemBase {
         Constants.DriveConstants.kFrontRightAbsEncoderPort, 
         Constants.DriveConstants.kFrontRightAbsEncoderOffsetRad, 
         Constants.DriveConstants.kFrontRightAbsEncoderReversed,
-        Constants.SwerveConstants.frontRightDriveKpKsKvKa, Constants.SwerveConstants.frontRightTurnKpKsKvKa);
+        Constants.SwerveConstants.frontRightDriveKpKsKvKa, Constants.SwerveConstants.overallTurnkPkSkVkAkD);
 
     private final static SwerveModule backLeft = new SwerveModule(
         Constants.DriveConstants.kBackLeftDrivePort, 
@@ -78,7 +78,7 @@ public class SwerveS extends SubsystemBase {
         Constants.DriveConstants.kBackLeftAbsEncoderPort, 
         Constants.DriveConstants.kBackLeftAbsEncoderOffsetRad, 
         Constants.DriveConstants.kBackLeftAbsEncoderReversed, 
-        Constants.SwerveConstants.backLeftDriveKpKsKvKa, Constants.SwerveConstants.backLeftTurnKpKsKvKa);
+        Constants.SwerveConstants.backLeftDriveKpKsKvKa, Constants.SwerveConstants.overallTurnkPkSkVkAkD);
 
     private final static SwerveModule backRight = new SwerveModule(
         Constants.DriveConstants.kBackRightDrivePort, 
@@ -88,7 +88,7 @@ public class SwerveS extends SubsystemBase {
         Constants.DriveConstants.kBackRightAbsEncoderPort, 
         Constants.DriveConstants.kBackRightAbsEncoderOffsetRad, 
         Constants.DriveConstants.kBackRightDriveReversed,
-        Constants.SwerveConstants.backRightDriveKpKsKvKa, Constants.SwerveConstants.backRightTurnKpKsKvKa);
+        Constants.SwerveConstants.backRightDriveKpKsKvKa, Constants.SwerveConstants.overallTurnkPkSkVkAkD);
 
     private static AHRS gyro = new AHRS(Port.kUSB1);
     NetworkTableEntry pipeline;

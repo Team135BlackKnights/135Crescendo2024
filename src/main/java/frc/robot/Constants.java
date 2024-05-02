@@ -149,6 +149,8 @@ public final class Constants {
       kBackRightTurningKa = 0.0002368;
 
       public static double[] 
+      overallTurnkPkSkVkAkD = new double[]{Constants.DriveConstants.kOverallPTurn*4,Constants.DriveConstants.kOverallSVoltsTurn,Constants.DriveConstants.kOverallVVoltSecondsPerRotationTurn*2,Constants.DriveConstants.kOverallAVoltSecondsSquaredPerRotationTurn,Constants.DriveConstants.kOverallDTurn*1},
+      overallDrivekPkSkVkA = new double[]{Constants.DriveConstants.kOverallP,Constants.DriveConstants.kOverallSVolts,Constants.DriveConstants.kOverallVVoltSecondsPerRotation,Constants.DriveConstants.kOverallAVoltSecondsSquaredPerRotation},
       frontRightDriveKpKsKvKa = new double[]{2.4646, .04248,2.9041,1.52},
       frontLeftDriveKpKsKvKa = new double[]{2.5896, .22934,2.8559,1.7338},
       backRightDriveKpKsKvKa = new double[]{2.0873, .070421,2.8607, 1.1811},
@@ -230,46 +232,55 @@ public final class Constants {
       kOverallVVoltSecondsPerRotation = 2.8303,
       kOverallAVoltSecondsSquaredPerRotation = 1.4715,
 
-      kFrontRightDriveP = 2.4646, //2.4646 maybe
+      kFrontRightDriveP = 4.125, //2.4646 maybe
       kFrontRightDriveSVolts = -0.040248,
       kFrontRightDriveVVoltSecondsPerRotation = 2.9041,
       kFrontRightDriveAVoltSecondsSquaredPerRotation = 1.52,
       
-      kFrontLeftDriveP = 2.5896, //2.5896 //4.1054
+      kFrontLeftDriveP = 4.1054, //2.5896 //4.1054
       kFrontLeftDriveSVolts =-0.22934,
       kFrontLeftDriveVVoltSecondsPerRotation = 2.8559,
       kFrontLeftDriveAVoltSecondsSquaredPerRotation = 1.7338,
 
-      kBackRightDriveP = 2.0873,//maybe 2.0873 or 1.4862 //4.1688
+      kBackRightDriveP = 4.1688,//maybe 2.0873 or 1.4862 //4.1688
       kBackRightDriveSVolts =0.070421,
       kBackRightDriveVVoltSecondsPerRotation = 2.8607,
       kBackRightDriveAVoltSecondsSquaredPerRotation =  1.1811,
 
-      kBackLeftDriveP = 2.3375,//maybe 2.3375 or 1.5638 //3.9698
+      kBackLeftDriveP = 3.9698,//maybe 2.3375 or 1.5638 //3.9698
       kBackLeftDriveSVolts = 0.01842,
       kBackLeftDriveVVoltSecondsPerRotation = 2.7005,
       kBackLeftDriveAVoltSecondsSquaredPerRotation = 1.4511,
 
       //Motor ID 17 
+      kOverallSVoltsTurn = .2907325,
+      kOverallVVoltSecondsPerRotationTurn = .002131625,
+      kOverallAVoltSecondsSquaredPerRotationTurn =  .000203095,
+      kOverallPTurn = 1.07602,
+      kOverallDTurn = 0.019508,
       kFrontLeftTurnP = 1.0181, //maybe 0
+      kFrontLeftTurnD = 0.018265,
       kFrontLeftTurnKs = 0.34809,
       kFrontLeftTurnKv = 0.0021885,
       kFrontLeftTurnKa = 0.00019056,
 
       //Motor ID 11
       kFrontRightTurnP = 0.99768, //maybe 0
+      kFrontRightTurnD = 0.017936,
       kFrontRightTurnKs = 0.28984,
       kFrontRightTurnKv = 0.0021057,
       kFrontRightTurnKa = 0.00018697,
 
       //Motor ID 15
       kBackLeftTurningP = 1.0521,
+      kBackLeftTurningD = 0.019017,
       kBackLeftTurningKs = 0.26615,
       kBackLeftTurningKv = 0.0021315,
       kBackLeftTurningKa = 0.00019805,
 
       //Motor ID 13
       kBackRightTurningP = 1.2362,
+      kBackRightTurningD = 0.022814,
       kBackRightTurningKs = 0.25885,
       kBackRightTurningKv = 0.0021008,
       kBackRightTurningKa = 0.0002368;
