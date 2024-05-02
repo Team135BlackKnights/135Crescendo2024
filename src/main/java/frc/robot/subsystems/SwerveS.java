@@ -231,6 +231,7 @@ public class SwerveS extends SubsystemBase {
             backRight.updateSimModuleState();
             SmartDashboard.putNumber("Sim debug chassis x speed", m_ChassisSpeeds.vyMetersPerSecond);
         }
+        SmartDashboard.putNumber("FrontLeft pos", frontLeft.getDriveMatrix(0));
         periodicUpdateCycle +=1;
 
         if (limelight.getEntry("pipeline").getDouble(0) != 1) {
