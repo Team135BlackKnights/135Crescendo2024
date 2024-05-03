@@ -1,7 +1,6 @@
 package frc.robot.subsystems;
 
 
-import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -11,10 +10,13 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.system.LinearSystem;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.math.controller.LinearQuadraticRegulator;
 import edu.wpi.first.math.estimator.KalmanFilter;
 import edu.wpi.first.math.system.LinearSystemLoop;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
+import frc.robot.Constants.DriveConstants;
+import frc.robot.Constants.SwerveConstants;
 public class SwerveModuleSim {
     private double 
     drivePos = 0,
@@ -96,10 +98,20 @@ public class SwerveModuleSim {
         driveMotorSystemLoop.setNextR(driveMotorRPM);
         turningMotorSystemLoop.setNextR(turningMotorRPM);
         
-        //Outputs velocity TODO: post processing
-        driveVelocity = driveMotorSim.getAngularVelocityRPM();
-        turningVelocity = turningMotorSim.getAngularVelocityRPM();
+        //Outputs velocity, converts to rad per sec 
+        driveVelocity = Units.rotationsPerMinuteToRadiansPerSecond(driveMotorSim.getAngularVelocityRPM());
+        turningVelocity = Units.rotationsPerMinuteToRadiansPerSecond(turningMotorSim.getAngularVelocityRPM());
         
+        //Physics Formula: p = v0t+p0
+        drivePos += driveVelocity*dt;
+        turningPos += turningPos*dt;
+
+        //Modulus the positions by 2pi, subtract pi to make them accurate for the range of the actual kinematics (-pi to pi)
+        drivePos = (drivePos%(2*Math.PI))-Math.PI;
+        turningPos = (drivePos%(2*Math.PI))-Math.PI;
+
+        //Kinematics wants wheel speed in meters per second. V = angular speed * radius
+        driveVelocity = driveVelocity*SwerveConstants.kWheelDiameter/2;
     }
 
     public SwerveModuleState getSimModuleState(){
