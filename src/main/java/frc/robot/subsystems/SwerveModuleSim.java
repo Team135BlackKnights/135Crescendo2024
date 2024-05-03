@@ -79,7 +79,9 @@ public class SwerveModuleSim {
     }
     /*Outputs as drivePos, turningPos, driveVelocity. Call in periodic */
     public void updateModuleState(){
-        
+        //Predict next states
+        driveMotorSystemLoop.predict(dt);
+        turningMotorSystemLoop.predict(dt);
         //pulls current voltages
         driveMotorVolts = driveMotorSystemLoop.getU(0);
         turningMotorVolts = turningMotorSystemLoop.getU(0);
@@ -93,9 +95,7 @@ public class SwerveModuleSim {
         turningMotorSim.update(dt);
 
         
-        //sets next r
-        driveMotorSystemLoop.setNextR(driveMotorRPM);
-        turningMotorSystemLoop.setNextR(turningMotorRPM);
+
         
         //Outputs velocity, converts to rad per sec 
         driveVelocity = Units.rotationsPerMinuteToRadiansPerSecond(driveMotorSim.getAngularVelocityRPM());
@@ -146,5 +146,7 @@ public class SwerveModuleSim {
         //Ks is in volts/(m/s), so 1/ks give us (m/s)/v
         driveMotorRPM = driveVolts/driveKs;
         turningMotorRPM = steerVolts/turningKs;
+        driveMotorSystemLoop.setNextR(driveMotorRPM);
+        turningMotorSystemLoop.setNextR(turningMotorRPM);
     }
 }
