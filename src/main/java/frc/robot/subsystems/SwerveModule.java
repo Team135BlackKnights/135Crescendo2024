@@ -235,7 +235,6 @@ public class SwerveModule {
         //basically, when NOT facing the right direction, turn down our speed so we dont do weird S curves.
        // state.speedMetersPerSecond *= state.angle.minus(encoderRotation).getCos(); //confirm good idea
         //driveMotor.set(state.speedMetersPerSecond * Constants.DriveConstants.kTeleDriveMaxAcceleration);
-        // TODO: Run sysID on these, and get feedforwards for both
         // Calculate the drive output from the drive PID controller.
         final double driveOutput =
         drivePIDController.calculate(getDriveVelocity(), state.speedMetersPerSecond);
