@@ -10,7 +10,6 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.system.LinearSystem;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.math.controller.LinearQuadraticRegulator;
 import edu.wpi.first.math.estimator.KalmanFilter;
 import edu.wpi.first.math.system.LinearSystemLoop;
@@ -74,8 +73,10 @@ public class SwerveModuleSim {
         turningMotorSystemLoop = new LinearSystemLoop<>(turningMotorVelocityLinearSystem, turningMotorRegulator, turningMotorFilter, 12.0, dt);
 
         //Flywheel Simulations
-        driveMotorSim = new FlywheelSim(driveMotorVelocityLinearSystem, DCMotor.getNEO(1), dt);
-        turningMotorSim = new FlywheelSim(turningMotorVelocityLinearSystem, DCMotor.getNEO(1), dt);
+        driveMotorSim = new FlywheelSim(driveMotorVelocityLinearSystem, DCMotor.getNEO(1), SwerveConstants.kDriveMotorGearRatio);
+        turningMotorSim = new FlywheelSim(turningMotorVelocityLinearSystem, DCMotor.getNEO(1), SwerveConstants.kTurningMotorGearRatio);
+        driveMotorSystemLoop.setNextR(0);
+        turningMotorSystemLoop.setNextR(0);
     }
     /*Outputs as drivePos, turningPos, driveVelocity. Call in periodic */
     public void updateModuleState(){
@@ -98,8 +99,8 @@ public class SwerveModuleSim {
 
         
         //Outputs velocity, converts to rad per sec 
-        driveVelocity = Units.rotationsPerMinuteToRadiansPerSecond(driveMotorSim.getAngularVelocityRPM());
-        turningVelocity = Units.rotationsPerMinuteToRadiansPerSecond(turningMotorSim.getAngularVelocityRPM());
+        driveVelocity = driveMotorSim.getAngularVelocityRPM();
+        turningVelocity = turningMotorSim.getAngularVelocityRPM();
         
         //Physics Formula: p = v0t+p0
         drivePos += driveVelocity*dt;
