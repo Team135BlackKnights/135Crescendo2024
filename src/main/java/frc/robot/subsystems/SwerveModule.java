@@ -34,6 +34,7 @@ public class SwerveModule {
 
     private final PIDController turningPIDController;
     private final PIDController drivePIDController; //not using profiled cuz no angles
+    @SuppressWarnings("unused")
     private SimpleMotorFeedforward turningFeedForward = null;
     
     private SimpleMotorFeedforward driveFeedForward = null;
@@ -220,7 +221,7 @@ public class SwerveModule {
 
 
     public void setDesiredState(SwerveModuleState state) {
-        var encoderRotation = new Rotation2d(getTurningPosition());
+        //var encoderRotation = new Rotation2d(getTurningPosition());
         // Stops the motors if the desired state is too small
         if (Math.abs(state.speedMetersPerSecond) < 0.001 && !SwerveS.autoLock) {
             stop();

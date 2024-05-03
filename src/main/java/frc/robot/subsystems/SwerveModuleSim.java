@@ -15,7 +15,6 @@ import edu.wpi.first.math.controller.LinearQuadraticRegulator;
 import edu.wpi.first.math.estimator.KalmanFilter;
 import edu.wpi.first.math.system.LinearSystemLoop;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
-import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.SwerveConstants;
 public class SwerveModuleSim {
     private double 
