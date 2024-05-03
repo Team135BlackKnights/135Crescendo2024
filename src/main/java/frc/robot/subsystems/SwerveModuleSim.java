@@ -21,15 +21,15 @@ public class SwerveModuleSim {
     turningPos = 0,
     driveVelocity = 0,
     turningVelocity = 0,
-    driveMotorVoltage = 0,
-    turningMotorVoltage = 0;
+    driveMotorRPM = 0,
+    turningMotorRPM = 0,
+    driveMotorVolts = 0,
+    turningMotorVolts = 0;
     private static double dt = .02;
-    
+    double driveKs,
+    turningKs;
     
    
-    private static Matrix<N1,N1> 
-    driveMotorVoltageMatrix = VecBuilder.fill(0),
-    turningMotorVoltageMatrix = VecBuilder.fill(0);
 
     private static LinearSystem<N1,N1,N1>
     driveMotorVelocityLinearSystem,
@@ -51,13 +51,14 @@ public class SwerveModuleSim {
     driveMotorSim,
     turningMotorSim;
     
-    public SwerveModuleSim(double[] driveKsKvKa, double[] turningKsKvKa, double updateRate){
+    public SwerveModuleSim(double[] driveKpKsKvKa, double[] turningKpKsKvKa, double updateRate){
         
-
+        driveKs = driveKpKsKvKa[2];
+        turningKs = driveKpKsKvKa[2];
         //TODO: Custom update rate
         //Velocity Systems
-        driveMotorVelocityLinearSystem = LinearSystemId.identifyVelocitySystem(driveKsKvKa[1], driveKsKvKa[2]);
-        turningMotorVelocityLinearSystem = LinearSystemId.identifyVelocitySystem(turningKsKvKa[1], turningKsKvKa[2]);
+        driveMotorVelocityLinearSystem = LinearSystemId.identifyVelocitySystem(driveKpKsKvKa[1], driveKpKsKvKa[2]);
+        turningMotorVelocityLinearSystem = LinearSystemId.identifyVelocitySystem(turningKpKsKvKa[1], turningKpKsKvKa[2]);
 
         //KalmanFilters
         driveMotorFilter = new KalmanFilter<>(Nat.N1(), Nat.N1(), driveMotorVelocityLinearSystem, VecBuilder.fill(3.0), VecBuilder.fill(0.01), dt);
@@ -78,13 +79,26 @@ public class SwerveModuleSim {
     /*Outputs as drivePos, turningPos, driveVelocity. Call in periodic */
     public void updateModuleState(){
         
-        //Create voltage matrices
-        driveMotorVoltageMatrix = VecBuilder.fill(driveMotorVoltage);
-        turningMotorVoltageMatrix = VecBuilder.fill(turningMotorVoltage);
+        //pulls current voltages
+        driveMotorVolts = driveMotorSystemLoop.getU(0);
+        turningMotorVolts = turningMotorSystemLoop.getU(0);
 
+        //sets current states as input
+        driveMotorSim.setInput(driveMotorVolts);
+        turningMotorSim.setInput(turningMotorVolts);
+
+        //updates them with the dt
+        driveMotorSim.update(dt);
+        turningMotorSim.update(dt);
 
         
-       
+        //sets next r
+        driveMotorSystemLoop.setNextR(driveMotorRPM);
+        turningMotorSystemLoop.setNextR(turningMotorRPM);
+        
+        //Outputs velocity TODO: post processing
+        driveVelocity = driveMotorSim.getAngularVelocityRPM();
+        turningVelocity = turningMotorSim.getAngularVelocityRPM();
         
     }
 
@@ -118,7 +132,8 @@ public class SwerveModuleSim {
         turningPos = 0;
     }
     public void updateVoltage(double driveVolts, double steerVolts){
-        driveMotorVoltage = driveVolts;
-        turningMotorVoltage = steerVolts;
+        //Ks is in volts/(m/s), so 1/ks give us (m/s)/v
+        driveMotorRPM = driveVolts/driveKs;
+        turningMotorRPM = steerVolts/turningKs;
     }
 }
