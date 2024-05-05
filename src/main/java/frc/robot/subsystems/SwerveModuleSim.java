@@ -77,6 +77,11 @@ public class SwerveModuleSim {
         turningMotorSim = new FlywheelSim(turningMotorVelocityLinearSystem, DCMotor.getNEO(1), SwerveConstants.kTurningMotorGearRatio);
         driveMotorSystemLoop.setNextR(0);
         turningMotorSystemLoop.setNextR(0);
+        
+        //resets the initial states 
+        driveMotorSystemLoop.reset();
+        turningMotorSystemLoop.reset();
+
     }
     /*Outputs as drivePos, turningPos, driveVelocity. Call in periodic */
     public void updateModuleState(){
