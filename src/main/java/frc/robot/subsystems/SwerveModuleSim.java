@@ -79,8 +79,8 @@ public class SwerveModuleSim {
         turningMotorSystemLoop.setNextR(0);
         
         //resets the initial states 
-        driveMotorSystemLoop.reset();
-        turningMotorSystemLoop.reset();
+        driveMotorSystemLoop.reset(VecBuilder.fill(0));
+        turningMotorSystemLoop.reset(VecBuilder.fill(0));
 
     }
     /*Outputs as drivePos, turningPos, driveVelocity. Call in periodic */
@@ -107,16 +107,25 @@ public class SwerveModuleSim {
         driveVelocity = driveMotorSim.getAngularVelocityRPM();
         turningVelocity = turningMotorSim.getAngularVelocityRPM();
         
+        //Kinematics wants wheel speed in meters per second. V = angular speed * radius
+        driveVelocity = driveVelocity*SwerveConstants.kWheelDiameter/2;
+
         //Physics Formula: p = v0t+p0
         drivePos += driveVelocity*dt;
         turningPos += turningPos*dt;
 
+        //so it doesn't freak out when it equals 0
+        if (drivePos == 0){
+            drivePos = .001;
+        }
+        if (turningPos == 0){
+            turningPos = .001;
+        }
         //Modulus the positions by 2pi, subtract pi to make them accurate for the range of the actual kinematics (-pi to pi)
         drivePos = (drivePos%(2*Math.PI))-Math.PI;
         turningPos = (drivePos%(2*Math.PI))-Math.PI;
 
-        //Kinematics wants wheel speed in meters per second. V = angular speed * radius
-        driveVelocity = driveVelocity*SwerveConstants.kWheelDiameter/2;
+        
     }
 
     public SwerveModuleState getSimModuleState(){
