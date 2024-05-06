@@ -1,5 +1,6 @@
 package frc.robot.commands.autoCommands;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.subsystems.CameraS;
 import frc.robot.subsystems.SwerveS;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.Timer;
@@ -33,7 +34,7 @@ public class AutoLock extends Command{
             timer.start();
         }
         //takes x value of limelight as the distance nthat needs to be rotated, runs a chassisSpeedscommand to rotate until within an acceptable deadband
-        limelightTx = SwerveS.getXError();
+        limelightTx = CameraS.getXError();
         if (Math.abs(limelightTx)<limelightDeadBand){
             isFinished = true;
         }

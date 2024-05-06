@@ -1,6 +1,6 @@
 package frc.robot.subsystems;
 
-
+import frc.robot.DataHandler;
 import com.kauailabs.navx.frc.AHRS;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
@@ -12,11 +12,14 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
@@ -37,15 +40,13 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.LimelightHelpers;
 import frc.robot.Robot;
-
 import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 
-import frc.robot.Constants.DriveConstants;
-import frc.robot.Constants.FieldConstants;
-import frc.robot.Constants.LimelightConstants;
-import frc.robot.Constants.OutakeConstants;
+import frc.robot.LimelightHelpers;
 import frc.robot.LimelightHelpers.PoseEstimate;
+
+import static edu.wpi.first.units.Units.Volts;
 
 
 public class SwerveS extends SubsystemBase {
@@ -96,7 +97,7 @@ public class SwerveS extends SubsystemBase {
     public static boolean fieldOriented = true;
     int periodicUpdateCycle;
 
-    public static NetworkTable limelight = NetworkTableInstance.getDefault().getTable("limelight-swerve");
+    public static NetworkTable limelight = NetworkTableInstance.getDefault().getTable(Constants.LimelightConstants.limelightName);
     static NetworkTableEntry tx = limelight.getEntry("tx");
     static double xError = tx.getDouble(0.0);
 
@@ -106,7 +107,7 @@ public class SwerveS extends SubsystemBase {
     static double zAccel = 0;
     // LIST MODULES IN THE SAME EXACT ORDER USED WHEN DECLARING SwerveDriveKinematics
     ChassisSpeeds m_ChassisSpeeds = Constants.DriveConstants.kDriveKinematics.toChassisSpeeds(new SwerveModuleState[]{frontLeft.getState(), frontRight.getState(), backLeft.getState(), backRight.getState()});
-    SwerveDrivePoseEstimator poseEstimator = new SwerveDrivePoseEstimator(Constants.DriveConstants.kDriveKinematics, getRotation2d(), new SwerveModulePosition[]{frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()},robotPosition);
+    static SwerveDrivePoseEstimator poseEstimator = new SwerveDrivePoseEstimator(Constants.DriveConstants.kDriveKinematics, getRotation2d(), new SwerveModulePosition[]{frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()},robotPosition);
     SwerveModulePosition[] m_modulePositions = new SwerveModulePosition[]{frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()};
     
     
@@ -162,12 +163,46 @@ public class SwerveS extends SubsystemBase {
     return sysIdRoutineDrive.quasistatic(direction);
   }
     public static boolean autoLock = false;
-
+    public static boolean runningTest = false;
     public static boolean redIsAlliance = true;
 
-    static double distance = 0;
-
-    
+    SysIdRoutine sysIdRoutine = new SysIdRoutine(
+        new SysIdRoutine.Config(),
+        new SysIdRoutine.Mechanism(
+            (Measure<Voltage> volts) -> {
+                frontLeft.setTurningTest(volts.in(Volts));
+                frontRight.setTurningTest(volts.in(Volts));
+                backLeft.setTurningTest(volts.in(Volts));
+                backRight.setTurningTest(volts.in(Volts));
+              },
+          null // No log consumer, since data is recorded by URCL
+    , this
+        )
+      );
+    /**
+   * Returns a command that will execute a quasistatic test in the given direction.
+   *
+   * @param direction The direction (forward or reverse) to run the test in
+   */
+  public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
+    runningTest = true;
+    sysIdRoutine.quasistatic(direction).finallyDo(() -> {
+        runningTest = false;
+    });
+    return sysIdRoutine.quasistatic(direction);
+  }
+  /**
+   * Returns a command that will execute a dynamic test in the given direction.
+   *
+   * @param direction The direction (forward or reverse) to run the test in
+   */
+  public Command sysIdDynamic(SysIdRoutine.Direction direction) {
+    runningTest = true;
+    sysIdRoutine.quasistatic(direction).finallyDo(() -> {
+        runningTest = false;
+    });
+    return sysIdRoutine.dynamic(direction);
+  }
 
     public PIDController autoLockController = new PIDController(0.0044, 0.00135, 0.00001); //sadly cannot be system Id'd
 
@@ -199,14 +234,13 @@ public class SwerveS extends SubsystemBase {
             new PIDConstants(5, 0.0, 0.0), // Rotation PID constants
             Constants.DriveConstants.kMaxSpeedMetersPerSecond, // Max module speed, in m/s
             Constants.DriveConstants.kDriveBaseRadius, // Drive base radius in meters. Distance from robot center to furthest module.
-            new ReplanningConfig() // Default path replanning config. See the API for the options here
+            new ReplanningConfig(true,true) // Default path replanning config. See the API for the options here
         ),
         SwerveS::getAlliance,
         this // Reference to this subsystem to set requirements
         );
 
         SmartDashboard.putData("Field", robotField);
-    
     }
     
     public void zeroHeading() {
@@ -248,9 +282,9 @@ public class SwerveS extends SubsystemBase {
         }
         
 
-        if(periodicUpdateCycle%5 == 0){
+        /*if(periodicUpdateCycle%5 == 0){
             updatePoseEstimatorWithVisionBotPose();
-        }
+        }*/
         redIsAlliance = getAlliance();
         //puts values to smartDashboard
         SmartDashboard.putNumber("Robot Heading", getRotation2d().getDegrees());
@@ -262,16 +296,10 @@ public class SwerveS extends SubsystemBase {
         SmartDashboard.putBoolean("Auto Lock", autoLock);
         SmartDashboard.putBoolean("Red is Alliance", getAlliance());
         zAccel = gyro.getRawAccelZ();
-
         SmartDashboard.putNumber("Position X (getPose)", getPose().getX());
         SmartDashboard.putNumber("Position Y (getPose)", getPose().getY());
         SmartDashboard.putNumber("Robot Heading (getPose)", getPose().getRotation().getDegrees());
-        SmartDashboard.putNumber("April Tag Distance", getDistanceFromSpeakerInMeters());
-        SmartDashboard.putNumber("Odometry Distance", getDistanceFromSpeakerUsingRobotPose());
-
-        SmartDashboard.putNumber("Desired Intake Lower Bound", getDesiredShooterLowerBound());
-        SmartDashboard.putNumber("Desired Intake Upper Bound", getDesiredShooterUpperBound());
-        SmartDashboard.putNumber("Desired Intake Angle", getDesiredShooterAngle());
+        
 
 
         xError = tx.getDouble(0.0);
@@ -287,7 +315,6 @@ public class SwerveS extends SubsystemBase {
         robotPosition = poseEstimator.update(getRotation2d(), m_modulePositions);
 
         robotField.setRobotPose(getPose());
-
 
         PathPlannerLogging.setLogCurrentPoseCallback((pose) -> {
             // Do whatever you want with the pose here
@@ -306,6 +333,9 @@ public class SwerveS extends SubsystemBase {
             robotField.getObject("path").setPoses(poses);
         });
         navXDisconnectProtocol();
+        if (periodicUpdateCycle %10 == 0){
+            DataHandler.logData(periodicUpdateCycle);
+        }
     }
 
 
@@ -369,7 +399,7 @@ public class SwerveS extends SubsystemBase {
         
         //computes latency
         
-        poseEstimate = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight-swerve");
+        poseEstimate = LimelightHelpers.getBotPoseEstimate_wpiBlue(Constants.LimelightConstants.limelightName);
         int count = poseEstimate.tagCount;
         Pose2d poseLimelight = poseEstimate.pose;
         double latency = Timer.getFPGATimestamp() - (limelight.getEntry("tl").getDouble(0.0)/1000.0) - (limelight.getEntry("cl").getDouble(0.0)/1000.0);
@@ -412,119 +442,14 @@ public class SwerveS extends SubsystemBase {
             return;
         }
        
-        //sanity check, ends if we're getting some unreasonable value (or aprilTags not detected)
         
 
         }
-        /*computes distance from current pose to limelight pose
-         * Note: I'm pretty sure pathPlanner (and by extension our odometry)'s coordinate system has its origin at the blue side
-         * To avoid issues, we call the blue origin based
-        */
-
-        
-    
-
-        public static double getDistanceFromSpeakerUsingRobotPose() {
-            if (getAlliance()) {
-                return robotPosition.getTranslation().getDistance(FieldConstants.redSpeaker);
-            } else {
-                return robotPosition.getTranslation().getDistance(FieldConstants.blueSpeaker);
-            }
-        }
-        
-    
-    public static boolean robotInRange() {
-        return getDistanceFromSpeakerUsingRobotPose() > 1.9 && getDistanceFromSpeakerUsingRobotPose() < 2.2;
-    }
 
 
 
 
-
-    public static double getDistanceFromSpeakerInMeters(){
-         //resets value so it doesn't output last value
-
-        /* if apriltag is detected, uses formula given here https://docs.limelightvision.io/docs/docs-limelight/tutorials/tutorial-estimating-distance
-        formula is d =(h2-h1)/tan(h2+h1)*/
-
-        if (aprilTagVisible()){
-        
-            // computing the angle
-            double theta = Units.degreesToRadians(LimelightConstants.limeLightAngleOffsetDegrees+limelight.getEntry("ty").getDouble(0.0));
-        
-            //computes distance
-            distance = Units.inchesToMeters(FieldConstants.targetHeightoffFloorInches-LimelightConstants.limelightLensHeightoffFloorInches)/Math.tan(theta);
-        }
-        return distance;
-    }
-
-    public static double getDesiredShooterUpperBound() {
-        double upperBoundHeight = 0;
-        double upperBoundDistance = 0;
-        if (getDistanceFromSpeakerUsingRobotPose() > 5) {
-            upperBoundHeight = 1.09*FieldConstants.speakerUpperLipHeight-FieldConstants.noteHeight-OutakeConstants.shooterHeight;
-            upperBoundDistance = getDistanceFromSpeakerUsingRobotPose() - FieldConstants.speakerOpeningDepth - DriveConstants.kChassisLength;
-        } else if (getDistanceFromSpeakerUsingRobotPose() > 4) {
-            upperBoundHeight = 1.02*FieldConstants.speakerUpperLipHeight-FieldConstants.noteHeight-OutakeConstants.shooterHeight;
-            upperBoundDistance = getDistanceFromSpeakerUsingRobotPose() - FieldConstants.speakerOpeningDepth - DriveConstants.kChassisLength;
-        } else if (getDistanceFromSpeakerUsingRobotPose() > 3) {
-            upperBoundHeight = 0.916*FieldConstants.speakerUpperLipHeight-FieldConstants.noteHeight-OutakeConstants.shooterHeight;
-            upperBoundDistance = getDistanceFromSpeakerUsingRobotPose() - FieldConstants.speakerOpeningDepth - DriveConstants.kChassisLength;
-        } else if (getDistanceFromSpeakerUsingRobotPose() > 2.4) {
-            upperBoundHeight = 0.82*FieldConstants.speakerUpperLipHeight-FieldConstants.noteHeight-OutakeConstants.shooterHeight;
-            upperBoundDistance = getDistanceFromSpeakerUsingRobotPose() - FieldConstants.speakerOpeningDepth - DriveConstants.kChassisLength;
-        } else {
-            return 44;
-        }
-        /* if (getDistanceFromSpeakerInMeters() > 6.5) {
-            upperBoundHeight = 1.236*FieldConstants.speakerUpperLipHeight-FieldConstants.noteHeight-Units.inchesToMeters(LimelightConstants.limelightLensHeightoffFloorInches);
-            upperBoundDistance = 0.764*getDistanceFromSpeakerInMeters() - FieldConstants.speakerOpeningDepth + OutakeConstants.limelightToShooter;
-        } else if (getDistanceFromSpeakerInMeters() > 5) {
-            upperBoundHeight = 1.2*FieldConstants.speakerUpperLipHeight-FieldConstants.noteHeight-Units.inchesToMeters(LimelightConstants.limelightLensHeightoffFloorInches);
-            upperBoundDistance = 0.8*getDistanceFromSpeakerInMeters() - FieldConstants.speakerOpeningDepth + OutakeConstants.limelightToShooter;
-        } else {
-            upperBoundHeight = 1.12*FieldConstants.speakerUpperLipHeight-FieldConstants.noteHeight-Units.inchesToMeters(LimelightConstants.limelightLensHeightoffFloorInches);
-            upperBoundDistance = 0.87*getDistanceFromSpeakerInMeters() - FieldConstants.speakerOpeningDepth + OutakeConstants.limelightToShooter;
-        } */
-        return Units.radiansToDegrees(Math.atan(upperBoundHeight/upperBoundDistance));
-    }
-
-    public static double getDesiredShooterLowerBound() {
-        double lowerBoundHeight = 0;
-        double lowerBoundDistance = 0;
-        if (getDistanceFromSpeakerUsingRobotPose() > 5) {
-            lowerBoundHeight = 1.1*FieldConstants.speakerLowerLipHeight + FieldConstants.noteHeight-OutakeConstants.shooterHeight;
-            lowerBoundDistance = getDistanceFromSpeakerUsingRobotPose() - DriveConstants.kChassisLength;
-        } else if (getDistanceFromSpeakerUsingRobotPose() > 4) {
-            lowerBoundHeight = 1.036*FieldConstants.speakerLowerLipHeight + FieldConstants.noteHeight-OutakeConstants.shooterHeight;
-            lowerBoundDistance = getDistanceFromSpeakerUsingRobotPose() - DriveConstants.kChassisLength;
-        } else if (getDistanceFromSpeakerUsingRobotPose() > 3) {
-            lowerBoundHeight = 0.96*FieldConstants.speakerLowerLipHeight + FieldConstants.noteHeight-OutakeConstants.shooterHeight;
-            lowerBoundDistance = getDistanceFromSpeakerUsingRobotPose() - DriveConstants.kChassisLength;
-        } else if (getDistanceFromSpeakerUsingRobotPose() > 2.4) {
-            lowerBoundHeight = 0.95*FieldConstants.speakerLowerLipHeight + FieldConstants.noteHeight-OutakeConstants.shooterHeight;
-            lowerBoundDistance = getDistanceFromSpeakerUsingRobotPose() - DriveConstants.kChassisLength;
-        } else {
-            return 42;
-        }
-        /* if (getDistanceFromSpeakerInMeters() > 6) {
-            lowerBoundHeight = 1.242*FieldConstants.speakerLowerLipHeight+FieldConstants.noteHeight-Units.inchesToMeters(LimelightConstants.limelightLensHeightoffFloorInches);
-            lowerBoundDistance = 0.758*getDistanceFromSpeakerInMeters() + OutakeConstants.limelightToShooter;
-        } else if (getDistanceFromSpeakerInMeters() > 4) {
-            lowerBoundHeight = 1.2*FieldConstants.speakerLowerLipHeight+FieldConstants.noteHeight-Units.inchesToMeters(LimelightConstants.limelightLensHeightoffFloorInches);
-            lowerBoundDistance = 0.8*getDistanceFromSpeakerInMeters() + OutakeConstants.limelightToShooter;
-        } else {
-            lowerBoundHeight = 1.12*FieldConstants.speakerLowerLipHeight+FieldConstants.noteHeight-Units.inchesToMeters(LimelightConstants.limelightLensHeightoffFloorInches);
-            lowerBoundDistance = 0.87*getDistanceFromSpeakerInMeters() + OutakeConstants.limelightToShooter;
-        } */
-        return Units.radiansToDegrees(Math.atan(lowerBoundHeight/lowerBoundDistance));
-    }
-
-    public static double getDesiredShooterAngle() {
-        double angle = (getDesiredShooterUpperBound() + getDesiredShooterLowerBound())/2;
-        if (angle > 42) angle = 43;
-        return angle;
-    }
+  
 
     public InstantCommand toggleAutoLockCommand() {
         return new InstantCommand(this::toggleAutoLock, this);
@@ -560,5 +485,14 @@ public class SwerveS extends SubsystemBase {
             debounce = -1;
             fieldOriented = false;
         }
+    }
+
+    public static void addVisionMeasurement(Pose2d visionMeasurement, double timestampSeconds) {
+        poseEstimator.addVisionMeasurement(visionMeasurement, timestampSeconds);
+    }
+
+    public static void addVisionMeasurement(
+            Pose2d visionMeasurement, double timestampSeconds, Matrix<N3, N1> stdDevs) {
+        poseEstimator.addVisionMeasurement(visionMeasurement, timestampSeconds, stdDevs);
     }
 }

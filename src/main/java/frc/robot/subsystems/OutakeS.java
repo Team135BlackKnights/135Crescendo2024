@@ -35,9 +35,9 @@ import static edu.wpi.first.units.Units.Volts;
 public class OutakeS extends SubsystemBase {
     //motor declarations
     public static boolean SysIDTestRunning = false;
-
     public CANSparkMax topFlywheel = new CANSparkMax(Constants.OutakeConstants.topFlywheel, MotorType.kBrushless);
     public CANSparkMax bottomFlywheel = new CANSparkMax(Constants.OutakeConstants.bottomFlywheel, MotorType.kBrushless);
+    
     //encoder declarations
     public static RelativeEncoder 
     topFlywheelEncoder,
@@ -130,7 +130,7 @@ public class OutakeS extends SubsystemBase {
         m_topLoop.reset(VecBuilder.fill(topFlywheelEncoder.getVelocity()));
         m_bottomLoop.reset(VecBuilder.fill(bottomFlywheelEncoder.getVelocity()));
 
-        
+   
     }
     public static double topVelocity = 0,bottomVelocity = 0;
     @Override
@@ -166,6 +166,10 @@ public class OutakeS extends SubsystemBase {
    * @param direction The direction (forward or reverse) to run the test in
    */
   public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
+    runningTest = true;
+    sysIdRoutine.quasistatic(direction).finallyDo(() -> {
+        runningTest = false;
+    });
     return sysIdRoutine.quasistatic(direction);
   }
   public double getDrawnCurrentAmps(){
@@ -177,6 +181,10 @@ public class OutakeS extends SubsystemBase {
    * @param direction The direction (forward or reverse) to run the test in
    */
   public Command sysIdDynamic(SysIdRoutine.Direction direction) {
+    runningTest = true;
+    sysIdRoutine.quasistatic(direction).finallyDo(() -> {
+        runningTest = false;
+    });
     return sysIdRoutine.dynamic(direction);
   }
     public static double getAverageFlywheelSpeed() {
@@ -214,6 +222,7 @@ public class OutakeS extends SubsystemBase {
      **For shooting amp
      */
     public void setIndividualFlywheelSpeeds(double topWheelSpeed, double bottomWheelSpeed){
+
         //set setpoint
         if (Robot.isReal()){
             m_topLoop.setNextR(VecBuilder.fill(topWheelSpeed));
@@ -223,6 +232,5 @@ public class OutakeS extends SubsystemBase {
             m_bottomLoop.setNextR(VecBuilder.fill(Units.rotationsPerMinuteToRadiansPerSecond(bottomWheelSpeed)));
 
         }
-
     }
 }

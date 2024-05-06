@@ -44,7 +44,7 @@ public class SwerveModule {
     //private final CANCoder absoluteEncoder;
     private final boolean absoluteEncoderReversed;
     private final double absoluteEncoderOffsetRad;
-
+    
     /**
      * 
      * @param driveMotorId Drive CANSparkMax Motor ID

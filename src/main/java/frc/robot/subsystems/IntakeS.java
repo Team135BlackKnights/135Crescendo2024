@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj.Timer;
+
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.ColorMatch;
 import com.revrobotics.ColorMatchResult;
@@ -89,7 +91,7 @@ public class IntakeS extends SubsystemBase {
     }
 
     public boolean intakeWithinBounds() {
-        return getIntakeAngle() > SwerveS.getDesiredShooterLowerBound() && getIntakeAngle() < SwerveS.getDesiredShooterUpperBound() || (getIntakeAngle() > 42 && SwerveS.getDesiredShooterAngle() > 42);
+        return getIntakeAngle() > CameraS.getDesiredShooterLowerBound() && getIntakeAngle() < CameraS.getDesiredShooterUpperBound() || (getIntakeAngle() > 42 && CameraS.getDesiredShooterAngle() > 42);
     }
     
 
@@ -131,5 +133,15 @@ public class IntakeS extends SubsystemBase {
        // SmartDashboard.putNumber("Deploy Intake Percentage", power);
 
         deployIntake.set(power);
+    }
+    public void pullBackNote(){
+        new Thread(() -> {
+            Timer timer = new Timer();
+            timer.start();
+            while (timer.get() < .15) {
+                setPrimaryIntake(0.2);
+            }
+            setPrimaryIntake(0);
+        }).start();
     }
     }
