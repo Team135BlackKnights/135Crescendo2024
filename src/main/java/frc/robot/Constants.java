@@ -75,6 +75,7 @@ public final class Constants {
       flywheelGearRatio = 1.5,
       idealPercentTop = .34,
       idealPercentBottom = .31,
+      kFlywheelMomentOfInertia = .00066, //0.00006502025 //.001086
       kP = 0.0021258,
       kSVolts = -0.089838,
       kVVoltSecondsPerRotation= 0.0015425*.928,

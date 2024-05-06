@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -90,6 +91,9 @@ public class SwerveModuleSim {
         turningMotorSystemLoop.predict(dt);
         //pulls current voltages
         driveMotorVolts = driveMotorSystemLoop.getU(0);
+       // var error = turningMotorSystemLoop.getNextR().minus(x);
+       // error.set(0, 0, MathUtil.angleModulus(error.get(0, 0)));
+      //  turningMotorVolts = turningMotorSystemLoop.getK().times(error);
         turningMotorVolts = turningMotorSystemLoop.getU(0);
 
         //sets current states as input
