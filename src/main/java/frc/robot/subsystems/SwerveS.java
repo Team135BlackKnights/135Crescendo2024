@@ -236,7 +236,7 @@ public class SwerveS extends SubsystemBase {
         this // Reference to this subsystem to set requirements
         );
 
-        SmartDashboard.putData("Field", robotField);
+        //SmartDashboard.putData("Field", robotField);
     }
     
     public void zeroHeading() {
@@ -282,8 +282,9 @@ public class SwerveS extends SubsystemBase {
             updatePoseEstimatorWithVisionBotPose();
         }*/
         redIsAlliance = getAlliance();
+                zAccel = gyro.getRawAccelZ();
         //puts values to smartDashboard
-        SmartDashboard.putNumber("Robot Heading", getRotation2d().getDegrees());
+        /*SmartDashboard.putNumber("Robot Heading", getRotation2d().getDegrees());
         SmartDashboard.putNumber("FrontLeft Abs Encoder", frontLeft.getAbsoluteEncoderRad());
         SmartDashboard.putNumber("FrontRight Abs Encoder", frontRight.getAbsoluteEncoderRad());
         SmartDashboard.putNumber("BackLeft Abs Encoder", backLeft.getAbsoluteEncoderRad());
@@ -291,11 +292,10 @@ public class SwerveS extends SubsystemBase {
         SmartDashboard.putNumber("xError", xError);
         SmartDashboard.putBoolean("Auto Lock", autoLock);
         SmartDashboard.putBoolean("Red is Alliance", getAlliance());
-        zAccel = gyro.getRawAccelZ();
         SmartDashboard.putNumber("Position X (getPose)", getPose().getX());
         SmartDashboard.putNumber("Position Y (getPose)", getPose().getY());
         SmartDashboard.putNumber("Robot Heading (getPose)", getPose().getRotation().getDegrees());
-        
+        */
 
 
         xError = tx.getDouble(0.0);

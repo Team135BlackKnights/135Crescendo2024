@@ -18,10 +18,11 @@ public class AutonIntake extends Command {
     private boolean loaded = false;
     public static boolean allClear = false;
     public static boolean takeOver = false;
+    private static boolean close = false;
     private ChassisSpeeds speeds;
+    double ty;
     Timer timer = new Timer();
     Timer delayTimer = new Timer();
-     PIDController autoIntakeController = new PIDController(0.00135, 0.00135, 0.00001); //sadly cannot be system Id'd
     public AutonIntake(IntakeS intakeS, SwerveS swerveS) {
         this.intakeS = intakeS;
         this.swerveS = swerveS;
@@ -31,11 +32,13 @@ public class AutonIntake extends Command {
     @Override
     public void initialize() {
         isFinished = false;
-        LimelightHelpers.setPipelineIndex(Constants.LimelightConstants.limelightName, 2);
+        LimelightHelpers.setPipelineIndex(Constants.LimelightConstants.limelightName, 1); //TODO: Make this base Pipe, cuz error swapping back and forth
         delayTimer.reset();
         delayTimer.start();
         allClear = false;
+        close = false;
         takeOver = true;
+        ty = 0;
     }
 
     @Override
@@ -47,12 +50,19 @@ public class AutonIntake extends Command {
         intakeS.deployIntake(1);
         double tx = LimelightHelpers.getTX(Constants.LimelightConstants.limelightName);
         boolean tv = LimelightHelpers.getTV(Constants.LimelightConstants.limelightName);
-        if (tv == false && loaded==false) {
+        ty = LimelightHelpers.getTY(Constants.LimelightConstants.limelightName);
+        SmartDashboard.putNumber("TY", ty);
+        if (ty >18.5){
+            close =true;
+        }
+            if (tv == false && loaded==false && close == false) {
         // We don't see the target, seek for the target by spinning in place at a safe speed.
         speeds = new ChassisSpeeds(0,0,0.1*Constants.DriveConstants.kMaxTurningSpeedRadPerSec);
-        } else if (loaded==false) {
+        } else if (loaded==false && close == false) {
             double moveSpeed = Constants.IntakeConstants.macroMoveSpeed * Constants.DriveConstants.kMaxSpeedMetersPerSecond;
-            speeds = new ChassisSpeeds(moveSpeed,0,autoIntakeController.calculate(tx,0)*Constants.DriveConstants.kMaxTurningSpeedRadPerSec);
+            speeds = new ChassisSpeeds(moveSpeed,0,IntakeS.autoIntakeController.calculate(tx,0)*Constants.DriveConstants.kMaxTurningSpeedRadPerSec);
+        }else{
+            speeds = new ChassisSpeeds(0,0,0);
         }
         swerveS.setChassisSpeeds(speeds);
         intakeS.setPrimaryIntake(-0.5);
@@ -73,8 +83,8 @@ public class AutonIntake extends Command {
         delayTimer.reset();
         speeds = new ChassisSpeeds(0,0,0);
         swerveS.setChassisSpeeds(speeds);
-        allClear = true;
         intakeS.pullBackNote(); 
+        close = false;
     }
 
     @Override

@@ -46,7 +46,12 @@ public final class Constants {
     REPLAY
   }
   public static class IntakeConstants {
-
+    public static class PIDConstants{
+      public static double 
+        P = .00135,
+        I = .00135,
+        D = .00001;
+    }
     public static I2C.Port colorSensorPort = I2C.Port.kOnboard;
     public static Color noteColor = new Color(0.55, 0.36, .08);
 
