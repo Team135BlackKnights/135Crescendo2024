@@ -9,19 +9,22 @@ import com.revrobotics.SparkAnalogSensor;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.SparkAnalogSensor.Mode;
-
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
 //import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.RobotController;
 import frc.robot.Constants;
+import frc.robot.Robot;
+
 
 public class SwerveModule {
+
+    private final SwerveModuleSim swerveModuleSim;
+
+
 
     private final CANSparkMax driveMotor;
     private final CANSparkMax turningMotor;
@@ -29,18 +32,13 @@ public class SwerveModule {
     private final RelativeEncoder driveEncoder;
     private final RelativeEncoder turningEncoder;
 
-    private final ProfiledPIDController turningPIDController;
+    private final PIDController turningPIDController;
     private final PIDController drivePIDController; //not using profiled cuz no angles
-    private final SimpleMotorFeedforward turningFeedForward =
-    new SimpleMotorFeedforward(
-        Constants.SwerveConstants.kSVolts,
-        Constants.SwerveConstants.kVVoltSecondsPerRotation,
-        Constants.SwerveConstants.kAVoltSecondsSquaredPerRotation);
-    private final SimpleMotorFeedforward driveFeedForward = 
-    new SimpleMotorFeedforward(
-        Constants.SwerveConstants.kDriveSVolts,
-        Constants.SwerveConstants.kDriveVVoltSecondsPerRotation,
-        Constants.SwerveConstants.kDriveAVoltSecondsSquaredPerRotation);
+    @SuppressWarnings("unused")
+    private SimpleMotorFeedforward turningFeedForward = null;
+    
+    private SimpleMotorFeedforward driveFeedForward = null;
+    
     private final SparkAnalogSensor absoluteEncoder;
     //private final AnalogInput absoluteEncoder; // Use either AnalogInput or CANCoder depending on the absolute encoder
     //private final CANCoder absoluteEncoder;
@@ -57,8 +55,15 @@ public class SwerveModule {
      * @param absoluteEncoderOffset Offset of Absolute Encoder in Radians
      * @param absoluteEncoderReversed True if Encoder is Reversed
      */
-    public SwerveModule(int driveMotorId, int turningMotorId, boolean driveMotorReversed, boolean turningMotorReversed, int absoluteEncoderId, double absoluteEncoderOffset, boolean absoluteEncoderReversed) {
-       //sets values of the encoder offset and whether its reversed
+    public SwerveModule(int driveMotorId, int turningMotorId, boolean driveMotorReversed, boolean turningMotorReversed, int absoluteEncoderId, double absoluteEncoderOffset, boolean absoluteEncoderReversed, double[] driveKpKsKvKa, double[] turningKpKsKvKa) {
+       turningFeedForward = new SimpleMotorFeedforward(
+        turningKpKsKvKa[1], turningKpKsKvKa[2], turningKpKsKvKa[3]);
+        driveFeedForward = new SimpleMotorFeedforward(
+        driveKpKsKvKa[1], driveKpKsKvKa[2], driveKpKsKvKa[3]);
+       
+       
+       
+        //sets values of the encoder offset and whether its reversed
         this.absoluteEncoderOffsetRad = absoluteEncoderOffset;
         this.absoluteEncoderReversed = absoluteEncoderReversed;
         //absoluteEncoder = new AnalogInput(absoluteEncoderId);
@@ -84,38 +89,72 @@ public class SwerveModule {
         turningEncoder.setPositionConversionFactor(Constants.SwerveConstants.kTurningEncoderRot2Rad);
         turningEncoder.setVelocityConversionFactor(Constants.SwerveConstants.kTurningEncoderRPM2RadPerSec);
         //creates pidController, used exclusively for turning because that has to be precise
-        //must test updated 
-        turningPIDController = new ProfiledPIDController(Constants.SwerveConstants.kTurningP, 0, 0,new TrapezoidProfile.Constraints(Constants.DriveConstants.kMaxTurningSpeedRadPerSec,Constants.DriveConstants.kTeleTurningMaxAcceleration));
+        //must test updated
+        turningPIDController = new PIDController(.5, 0, 0);
+    //turningPIDController = new ProfiledPIDController(.5, 0, 0,new TrapezoidProfile.Constraints(Constants.DriveConstants.kMaxTurningSpeedRadPerSec,Constants.DriveConstants.kTeleTurningMaxAcceleration));
         //makes the value loop around
         turningPIDController.enableContinuousInput(-Math.PI, Math.PI);
 
-        drivePIDController = new PIDController(Constants.SwerveConstants.kDriveP, 0, 0);
+        drivePIDController = new PIDController(driveKpKsKvKa[0], 0, 0);
+        if (Robot.isSimulation()){
+            swerveModuleSim = new SwerveModuleSim(driveKpKsKvKa, turningKpKsKvKa, 3); 
+        }
+        else{
+            swerveModuleSim = null;
+        }
     }
 
     public double getDrivePosition() {
         //returns the position of the drive wheel
-        return driveEncoder.getPosition();
+        if (Robot.isReal()){
+            return driveEncoder.getPosition();
+        }
+        else{
+            return swerveModuleSim.getDrivePosRadiansSim();
+        }
+        
     }
 
     public double getTurningPosition() {
         //returns the heading of the swerve module (turning motor position)
-        return getAbsoluteEncoderRad();
+        if (Robot.isReal()){
+            return getAbsoluteEncoderRad();
+        }
+        else{
+            return swerveModuleSim.getTurningPosRadiansSim();
+        }
+        
     }
 
     public double getDriveVelocity() {
         //returns velocity of drive wheel
-        return driveEncoder.getVelocity();
+        if (Robot.isReal()){
+            return driveEncoder.getVelocity();
+        }
+        else{
+            return swerveModuleSim.getDriveVelocityMetersPerSecond();
+        }
+        
     }
 
     public double getTurningVelocity() {
         //returns velocity of turning motor
-        return turningEncoder.getVelocity();
+        if (Robot.isReal()){
+            return turningEncoder.getVelocity();
+        }
+        else{
+            return swerveModuleSim.getTurningVelocityMetersPerSecond();
+        }
+        
+        
     }
 
     public void setTurningTest(double volts){
         turningMotor.setVoltage(volts);
     }
     public void setDriveTest(double volts){
+        double turnOutput = turningPIDController.calculate(getAbsoluteEncoderRad(),0);
+        turningMotor.setVoltage(turnOutput);
         driveMotor.setVoltage(volts);
     }
     public double getAbsoluteEncoderRad() {
@@ -146,24 +185,43 @@ public class SwerveModule {
 
     public void resetEncoders() {
         //resets the encoders, (drive motor becomes zero, turning encoder becomes the module heading from the absolute encoder)
-        driveEncoder.setPosition(0);
-        turningEncoder.setPosition(getAbsoluteEncoderRad());
+        if (Robot.isReal()){
+            driveEncoder.setPosition(0);
+            turningEncoder.setPosition(getAbsoluteEncoderRad()); 
+        }
+        else{
+            swerveModuleSim.resetEncoders();
+        }
+        
     }
 
     public SwerveModulePosition getPosition() {
-        //basically creates a new swervemoduleposition based on the current positions of the drive and turning encoders
-        return new SwerveModulePosition(
+         //basically creates a new swervemoduleposition based on the current positions of the drive and turning encoders
+
+        if (Robot.isReal()){
+            return new SwerveModulePosition(
             driveEncoder.getPosition(), new Rotation2d(getAbsoluteEncoderRad()));
+        }
+       
+        else{
+            return swerveModuleSim.getSwerveModuleSimPosition();
+        }
     }
     
 
     public SwerveModuleState getState() {
         //creates new swerveModuleState based on drive speed and turn motor position (speed and direction)
-        return new SwerveModuleState(getDriveVelocity(), new Rotation2d(getTurningPosition()));
+        if (Robot.isReal()){
+            return new SwerveModuleState(getDriveVelocity(), new Rotation2d(getTurningPosition()));
+        }
+        else{
+            return swerveModuleSim.getSimModuleState();
+        }
     }
 
+
     public void setDesiredState(SwerveModuleState state) {
-        var encoderRotation = new Rotation2d(getTurningPosition());
+        //var encoderRotation = new Rotation2d(getTurningPosition());
         // Stops the motors if the desired state is too small
         if (Math.abs(state.speedMetersPerSecond) < 0.001 && !SwerveS.autoLock) {
             stop();
@@ -175,9 +233,8 @@ public class SwerveModule {
 
         //scales DOWN movement perpendicular to desired direction that occurs when modules change directions. makes smoother.
         //basically, when NOT facing the right direction, turn down our speed so we dont do weird S curves.
-        state.speedMetersPerSecond *= state.angle.minus(encoderRotation).getCos(); //confirm good idea
-
-        // TODO: Run sysID on these, and get feedforwards for both
+       // state.speedMetersPerSecond *= state.angle.minus(encoderRotation).getCos(); //confirm good idea
+        //driveMotor.set(state.speedMetersPerSecond * Constants.DriveConstants.kTeleDriveMaxAcceleration);
         // Calculate the drive output from the drive PID controller.
         final double driveOutput =
         drivePIDController.calculate(getDriveVelocity(), state.speedMetersPerSecond);
@@ -188,15 +245,41 @@ public class SwerveModule {
         final double turnOutput =
             turningPIDController.calculate(getAbsoluteEncoderRad(), state.angle.getRadians());
 
-        final double turnFeedforward =
-            turningFeedForward.calculate(turningPIDController.getSetpoint().velocity);
+//        final double turnFeedforward =
+  //         turningFeedForward.calculate(turningPIDController.getSetpoint().velocity);
 
-        driveMotor.setVoltage(driveOutput + driveFeedforward);
-        turningMotor.setVoltage(turnOutput + turnFeedforward);
+            if (Robot.isReal()){
+                driveMotor.setVoltage(driveOutput + driveFeedforward);
+                turningMotor.set(turnOutput);
+            }
+            else{
+              //  swerveModuleSim.updateVoltage((driveOutput + driveFeedforward), (turnOutput + turnFeedforward));
+            }
+
+    }
+    public double getDrivePosRadiansSim(){
+        return swerveModuleSim.getDrivePosRadiansSim();
+    }
+
+    public double getTurningPosRadiansSim(){
+        return swerveModuleSim.getTurningPosRadiansSim();
+    }
+
+    public double getDriveVelocityMetersPerSecond(){
+        return swerveModuleSim.getDriveVelocityMetersPerSecond();
+    }
+    
+    public double getTurningVelocityMetersPerSecond(){
+        return swerveModuleSim.getTurningVelocityMetersPerSecond();
     }
 
     public void stop() {
         driveMotor.set(0);
         turningMotor.set(0);
     }
+    public void updateSimModuleState(){
+        swerveModuleSim.updateModuleState();
+    }
+    
+
 }
