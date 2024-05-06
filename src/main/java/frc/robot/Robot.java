@@ -37,7 +37,13 @@ public class Robot extends TimedRobot {
     DriverStation.startDataLog(DataLogManager.getLog());
     URCL.start(Constants.DataLog.manCanIdsToNames());
     m_robotContainer = new RobotContainer();
-    
+
+    if (Robot.isReal()){
+      DataHandler.createLogFileOnRIOUSB();
+    }
+    else if (Robot.isSimulation()){
+      DataHandler.createLogFileinSimulation("E:");
+    }
   }
 
   /**
@@ -116,5 +122,8 @@ public class Robot extends TimedRobot {
 
   /** This function is called periodically whilst in simulation. */
   @Override
-  public void simulationPeriodic() {}
+  public void simulationPeriodic() {
+    DataHandler.updateHandlerState();
+   
+  }
 }

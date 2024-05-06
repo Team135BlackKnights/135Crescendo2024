@@ -53,7 +53,6 @@ public class OutakeC extends Command {
         }  
     }
     outakeS.setIndividualFlywheelSpeeds(outakeSpeed, outakeSpeed);
-
     }
 
     @Override
