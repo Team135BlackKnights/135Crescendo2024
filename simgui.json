@@ -1,12 +1,7 @@
 {
   "HALProvider": {
-    "Addressable LEDs": {
-      "window": {
-        "visible": true
-      }
-    },
     "Other Devices": {
-      "SPARK MAX [10]": {
+      "SPARK MAX [30]": {
         "header": {
           "open": true
         }
@@ -71,7 +66,7 @@
   "NetworkTables Info": {
     "Server": {
       "Publishers": {
-        "open": true
+        "open": false
       },
       "Subscribers": {
         "open": true
@@ -79,8 +74,5 @@
       "open": true
     },
     "visible": true
-  },
-  "NetworkTables View": {
-    "visible": false
   }
 }

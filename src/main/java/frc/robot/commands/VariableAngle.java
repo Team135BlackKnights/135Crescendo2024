@@ -61,8 +61,7 @@ public class VariableAngle extends Command {
             intakeS.setPrimaryIntake(-0.5);
             delay.start();
         }
-
-        if (OutakeS.getFlywheelSpeedDifference() < 100 && timer.get() >= 0.3 && (intakeS.intakeWithinBounds() || Math.abs(intakeS.anglePidController.getPositionError()) < 0.5) && outakeS.shooterPID.getPositionError() < 150 && Math.abs(CameraS.getXError()) < 3 && !RobotContainer.manipController.getAButton() && Math.abs(output) < 0.1) {
+        if (OutakeS.getFlywheelSpeedDifference() < 100 && timer.get() >= 0.3 && (intakeS.intakeWithinBounds() || Math.abs(intakeS.anglePidController.getPositionError()) < 0.5) && OutakeS.getBottomSpeedError() < 150 && OutakeS.getTopSpeedError() < 150  && Math.abs(CameraS.getXError()) < 3 && !RobotContainer.manipController.getAButton() && Math.abs(output) < 0.1) {
             intakeS.setPrimaryIntake(-0.5);
             delay.start();
         }
@@ -70,8 +69,7 @@ public class VariableAngle extends Command {
         
       //  SmartDashboard.putNumber("Angle Output", output);
         SmartDashboard.putNumber("Angle Error", intakeS.anglePidController.getPositionError());
-        SmartDashboard.putNumber("Flywheel Top", OutakeS.topFlywheelEncoder.getVelocity());
-        SmartDashboard.putNumber("Flywheel Bottom ", OutakeS.bottomFlywheelEncoder.getVelocity());
+        SmartDashboard.putNumber("Flywheel Error", OutakeS.getTopSpeedError());
         if (delay.get() < 0.2) {
             //stores values of the intake and distance. Updates every time command is called
             SwerveC.angleOutputDegrees = intakeS.getIntakeAngle();

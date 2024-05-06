@@ -25,6 +25,8 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.units.Measure;
+import edu.wpi.first.units.Time;
+import edu.wpi.first.units.Velocity;
 import edu.wpi.first.units.Voltage;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
@@ -36,6 +38,10 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
+import frc.robot.LimelightHelpers;
+import frc.robot.Robot;
+import static edu.wpi.first.units.Units.Seconds;
+import static edu.wpi.first.units.Units.Volts;
 
 import frc.robot.LimelightHelpers;
 import frc.robot.LimelightHelpers.PoseEstimate;
@@ -52,7 +58,8 @@ public class SwerveS extends SubsystemBase {
         Constants.DriveConstants.kFrontLeftTurningReversed, 
         Constants.DriveConstants.kFrontLeftAbsEncoderPort, 
         Constants.DriveConstants.kFrontLeftAbsEncoderOffsetRad, 
-        Constants.DriveConstants.kFrontLeftAbsEncoderReversed);
+        Constants.DriveConstants.kFrontLeftAbsEncoderReversed,
+        Constants.SwerveConstants.frontLeftDriveKpKsKvKa, Constants.SwerveConstants.overallTurnkPkSkVkAkD);
 
     private final static SwerveModule frontRight = new SwerveModule(
         Constants.DriveConstants.kFrontRightDrivePort, 
@@ -61,7 +68,8 @@ public class SwerveS extends SubsystemBase {
         Constants.DriveConstants.kFrontRightTurningReversed, 
         Constants.DriveConstants.kFrontRightAbsEncoderPort, 
         Constants.DriveConstants.kFrontRightAbsEncoderOffsetRad, 
-        Constants.DriveConstants.kFrontRightAbsEncoderReversed);
+        Constants.DriveConstants.kFrontRightAbsEncoderReversed,
+        Constants.SwerveConstants.frontRightDriveKpKsKvKa, Constants.SwerveConstants.overallTurnkPkSkVkAkD);
 
     private final static SwerveModule backLeft = new SwerveModule(
         Constants.DriveConstants.kBackLeftDrivePort, 
@@ -70,7 +78,8 @@ public class SwerveS extends SubsystemBase {
         Constants.DriveConstants.kBackLeftTurningReversed, 
         Constants.DriveConstants.kBackLeftAbsEncoderPort, 
         Constants.DriveConstants.kBackLeftAbsEncoderOffsetRad, 
-        Constants.DriveConstants.kBackLeftAbsEncoderReversed);
+        Constants.DriveConstants.kBackLeftAbsEncoderReversed, 
+        Constants.SwerveConstants.backLeftDriveKpKsKvKa, Constants.SwerveConstants.overallTurnkPkSkVkAkD);
 
     private final static SwerveModule backRight = new SwerveModule(
         Constants.DriveConstants.kBackRightDrivePort, 
@@ -79,7 +88,8 @@ public class SwerveS extends SubsystemBase {
         Constants.DriveConstants.kBackRightTurningReversed, 
         Constants.DriveConstants.kBackRightAbsEncoderPort, 
         Constants.DriveConstants.kBackRightAbsEncoderOffsetRad, 
-        Constants.DriveConstants.kBackRightDriveReversed);
+        Constants.DriveConstants.kBackRightDriveReversed,
+        Constants.SwerveConstants.backRightDriveKpKsKvKa, Constants.SwerveConstants.overallTurnkPkSkVkAkD);
 
     private static AHRS gyro = new AHRS(Port.kUSB1);
     NetworkTableEntry pipeline;
@@ -99,7 +109,59 @@ public class SwerveS extends SubsystemBase {
     ChassisSpeeds m_ChassisSpeeds = Constants.DriveConstants.kDriveKinematics.toChassisSpeeds(new SwerveModuleState[]{frontLeft.getState(), frontRight.getState(), backLeft.getState(), backRight.getState()});
     static SwerveDrivePoseEstimator poseEstimator = new SwerveDrivePoseEstimator(Constants.DriveConstants.kDriveKinematics, getRotation2d(), new SwerveModulePosition[]{frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()},robotPosition);
     SwerveModulePosition[] m_modulePositions = new SwerveModulePosition[]{frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()};
-
+    
+    
+    Measure<Velocity<Voltage>> rampRate = Volts.of(1).per(Seconds.of(1)); //for going FROM ZERO PER SECOND
+    Measure<Voltage> holdVoltage = Volts.of(8);
+    Measure<Time> timeout = Seconds.of(10);
+    SysIdRoutine sysIdRoutineTurn = new SysIdRoutine(
+        new SysIdRoutine.Config(rampRate,holdVoltage,timeout),
+        new SysIdRoutine.Mechanism(
+            (Measure<Voltage> volts) -> {
+                frontLeft.setTurningTest(volts.in(Volts));
+                frontRight.setTurningTest(volts.in(Volts));
+                backLeft.setTurningTest(volts.in(Volts));
+                backRight.setTurningTest(volts.in(Volts));
+              },
+          null // No log consumer, since data is recorded by URCL
+    , this
+        )
+    );
+    SysIdRoutine sysIdRoutineDrive = new SysIdRoutine(
+        new SysIdRoutine.Config(rampRate,holdVoltage,timeout),
+        new SysIdRoutine.Mechanism(
+            (Measure<Voltage> volts) -> {
+                frontLeft.setDriveTest(volts.in(Volts));
+                frontRight.setDriveTest(volts.in(Volts));
+                backLeft.setDriveTest(volts.in(Volts));
+                backRight.setDriveTest(volts.in(Volts));
+              },
+          null // No log consumer, since data is recorded by URCL
+    , this
+        )
+    );
+    /**
+   * Returns a command that will execute a quasistatic test in the given direction.
+   *
+   * @param direction The direction (forward or reverse) to run the test in
+   */
+  public Command sysIdQuasistaticTurn(SysIdRoutine.Direction direction) {
+        return sysIdRoutineTurn.quasistatic(direction);
+  }
+  /**
+   * Returns a command that will execute a dynamic test in the given direction.
+   *
+   * @param direction The direction (forward or reverse) to run the test in
+   */
+  public Command sysIdDynamicTurn(SysIdRoutine.Direction direction) {
+        return sysIdRoutineTurn.dynamic(direction);
+  }
+  public Command sysIdDynamicDrive(SysIdRoutine.Direction direction) {
+    return sysIdRoutineDrive.dynamic(direction);
+  }
+  public Command sysIdQuasistaticDrive(SysIdRoutine.Direction direction) {
+    return sysIdRoutineDrive.quasistatic(direction);
+  }
     public static boolean autoLock = false;
     public static boolean runningTest = false;
     public static boolean redIsAlliance = true;
@@ -142,7 +204,7 @@ public class SwerveS extends SubsystemBase {
     return sysIdRoutine.dynamic(direction);
   }
 
-    public PIDController autoLockController = new PIDController(0.0044, 0.00135, 0.00001);
+    public PIDController autoLockController = new PIDController(0.0044, 0.00135, 0.00001); //sadly cannot be system Id'd
 
     //so that the navXDisconnect command doesn't start twice
     int debounce = 0;
@@ -200,6 +262,13 @@ public class SwerveS extends SubsystemBase {
  
     @Override
     public void periodic() {
+        if (Robot.isSimulation()){
+            frontLeft.updateSimModuleState();
+            frontRight.updateSimModuleState();
+            backLeft.updateSimModuleState();
+            backRight.updateSimModuleState();
+            SmartDashboard.putNumber("Sim debug chassis x speed", m_ChassisSpeeds.vyMetersPerSecond);
+        }
         periodicUpdateCycle +=1;
 
         if (limelight.getEntry("pipeline").getDouble(0) != 1) {
