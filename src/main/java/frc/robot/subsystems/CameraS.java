@@ -5,7 +5,9 @@ import java.util.Optional;
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
+import org.photonvision.PhotonUtils;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
+import org.photonvision.proto.Photon;
 import org.photonvision.simulation.VisionSystemSim;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
@@ -72,13 +74,13 @@ public class CameraS extends SubsystemBase {
         Transform3d robotToBack = new Transform3d(backPos, backRot);
     //sim
         //frontEstimator = new PhotonPoseEstimator(Constants.FieldConstants.kTagLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, frontCam,robotToFront);
-        //frontEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
+        //frontEstimator.setMultiTagFallbackStrategy(PoseStrategy.CLOSEST_TO_REFERENCE_POSE);
         rightEstimator = new PhotonPoseEstimator(Constants.FieldConstants.kTagLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, rightCam,robotToRight);
-        rightEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);    
+        rightEstimator.setMultiTagFallbackStrategy(PoseStrategy.CLOSEST_TO_REFERENCE_POSE);    
         //leftEstimator = new PhotonPoseEstimator(Constants.FieldConstants.kTagLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, leftCam,robotToLeft);
-        //leftEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);    
+        //leftEstimator.setMultiTagFallbackStrategy(PoseStrategy.CLOSEST_TO_REFERENCE_POSE);    
         backEstimator = new PhotonPoseEstimator(Constants.FieldConstants.kTagLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, backCam,robotToBack);
-        backEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY); 
+        backEstimator.setMultiTagFallbackStrategy(PoseStrategy.CLOSEST_TO_REFERENCE_POSE); 
         //camEstimates = new PhotonPoseEstimator[]{frontEstimator,rightEstimator,leftEstimator,backEstimator};
         camEstimates = new PhotonPoseEstimator[]{rightEstimator,backEstimator};
         //cams = new PhotonCamera[]{frontCam,rightCam,leftCam,backCam};
@@ -91,7 +93,8 @@ public static boolean aprilTagVisible() {
     public PhotonPipelineResult getLatestResult(PhotonCamera camera) {
         return camera.getLatestResult();
     }
- public Optional<EstimatedRobotPose> getEstimatedGlobalPose( PhotonPoseEstimator photonEstimator,PhotonCamera camera) {
+ public Optional<EstimatedRobotPose> getEstimatedGlobalPose( PhotonPoseEstimator photonEstimator,PhotonCamera camera,Pose2d prevEstPose2d) {
+        photonEstimator.setReferencePose(prevEstPose2d);
         var visionEst = photonEstimator.update();
         double latestTimestamp = camera.getLatestResult().getTimestampSeconds();
         boolean newResult = false;
@@ -116,7 +119,7 @@ public static boolean aprilTagVisible() {
         for (int i = 0; i <2; i++){
             PhotonPoseEstimator cEstimator = camEstimates[i];
             PhotonCamera cCam = cams[i];
-            var visionEst = getEstimatedGlobalPose(cEstimator,cCam);
+            var visionEst = getEstimatedGlobalPose(cEstimator,cCam,SwerveS.getPose());
             visionEst.ifPresent(
                     est -> {
                         var estPose = est.estimatedPose.toPose2d();
@@ -157,11 +160,13 @@ public static boolean aprilTagVisible() {
         for (var tgt : targets) {
             var tagPose = photonEstimator.getFieldTags().getTagPose(tgt.getFiducialId());
             if (tagPose.isEmpty()) continue;
+            if (tgt.getPoseAmbiguity() >.25) continue; //give zero F's about bad tags
             numTags++;
+
             avgDist +=
                     tagPose.get().toPose2d().getTranslation().getDistance(estimatedPose.getTranslation());
         }
-        if (numTags == 0) return estStdDevs;
+        if (numTags == 0) return VecBuilder.fill(Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE); //BIG.
         avgDist /= numTags;
         // Decrease std devs if multiple targets are visible
         if (numTags > 1) estStdDevs = Constants.FieldConstants.kMultiTagStdDevs;

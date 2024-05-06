@@ -96,7 +96,7 @@ public class OutakeS extends SubsystemBase {
     //LinearSystemId.identifyVelocitySystem(Constants.OutakeConstants.kVVoltSecondsPerRotation*.995, Constants.OutakeConstants.kAVoltSecondsSquaredPerRotation);
     private final static KalmanFilter<N1,N1,N1> m_bottomObserver = new KalmanFilter<>(Nat.N1(),Nat.N1(),m_bottomFlywheelPlant,VecBuilder.fill(3.0),VecBuilder.fill(0.01), .02 );
     private final static LinearQuadraticRegulator<N1, N1, N1> m_bottomController =
-    new LinearQuadraticRegulator<>(m_bottomFlywheelPlant,VecBuilder.fill(8),VecBuilder.fill(12.0),0.020);
+    new LinearQuadraticRegulator<>(m_bottomFlywheelPlant,VecBuilder.fill(1),VecBuilder.fill(12.0),0.020);
     private final static LinearSystemLoop<N1, N1, N1> m_bottomLoop = new LinearSystemLoop<>(m_bottomFlywheelPlant, m_bottomController, m_bottomObserver, 12.0, 0.020);
     private double topNextVoltage,bottomNextVoltage;
     private final FlywheelSim topFlywheelSim = new FlywheelSim(m_topFlywheelPlant,DCMotor.getNEO(1),1/Constants.OutakeConstants.flywheelGearRatio);
@@ -166,10 +166,6 @@ public class OutakeS extends SubsystemBase {
    * @param direction The direction (forward or reverse) to run the test in
    */
   public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
-    runningTest = true;
-    sysIdRoutine.quasistatic(direction).finallyDo(() -> {
-        runningTest = false;
-    });
     return sysIdRoutine.quasistatic(direction);
   }
   public double getDrawnCurrentAmps(){
@@ -181,10 +177,6 @@ public class OutakeS extends SubsystemBase {
    * @param direction The direction (forward or reverse) to run the test in
    */
   public Command sysIdDynamic(SysIdRoutine.Direction direction) {
-    runningTest = true;
-    sysIdRoutine.quasistatic(direction).finallyDo(() -> {
-        runningTest = false;
-    });
     return sysIdRoutine.dynamic(direction);
   }
     public static double getAverageFlywheelSpeed() {
