@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.DataHandler;
 import frc.robot.RobotContainer;
+import frc.robot.commands.autoCommands.AutonIntake;
 import frc.robot.subsystems.CameraS;
 import frc.robot.subsystems.SwerveS;
 
@@ -41,6 +42,7 @@ public class SwerveC extends Command {
   
   @Override
   public void execute() {
+    if (!AutonIntake.takeOver){
     if (RobotContainer.manipController.getPOV() == 0 && RobotContainer.manipController.getStartButton() && !SwerveS.runningTest){
       swerveS.sysIdQuasistatic(SysIdRoutine.Direction.kForward);
     }
@@ -120,6 +122,7 @@ public class SwerveC extends Command {
       // Set our module states to our desired module states
       swerveS.setModuleStates(moduleStates);
         }
+      }
     
   }
   /*Use this link to compute the regression model:https://planetcalc.com/5992/#google_vignette 

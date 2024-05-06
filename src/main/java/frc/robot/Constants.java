@@ -63,7 +63,7 @@ public final class Constants {
       primaryIntakeGearRatio = 1/4.5,
       deployIntakeInnerBound = 0,
       deployIntakeOuterBound = 90,
-      macroMoveSpeed = .5;
+      macroMoveSpeed = 1;
 
     public static boolean
       primaryIntakeReversed = true,
