@@ -8,13 +8,18 @@ import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonUtils;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import org.photonvision.proto.Photon;
+import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import org.photonvision.simulation.VisionSystemSim;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
+import org.photonvision.simulation.PhotonCameraSim;
+import org.photonvision.simulation.SimCameraProperties;
 
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
@@ -25,6 +30,7 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.Robot;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.OutakeConstants;
 import frc.robot.Constants.VisionConstants;
@@ -51,6 +57,7 @@ public class CameraS extends SubsystemBase {
         leftCam;
     private static PhotonCamera backCam;
     public CameraS() {
+        AprilTagFieldLayout fieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2024Crescendo);
         //frontCam = new PhotonCamera(Constants.VisionConstants.frontCamName);
         rightCam = new PhotonCamera(Constants.VisionConstants.rightCamName);
         //leftCam = new PhotonCamera(Constants.VisionConstants.leftCamName);
@@ -72,6 +79,7 @@ public class CameraS extends SubsystemBase {
         Transform3d robotToRight = new Transform3d(rightPos, rightRot);
         Transform3d robotToLeft = new Transform3d(leftPos, leftRot);
         Transform3d robotToBack = new Transform3d(backPos, backRot);
+        Transform3d[] camTranslations = new Transform3d[]{robotToFront, robotToRight, robotToLeft, robotToBack};
     //sim
         //frontEstimator = new PhotonPoseEstimator(Constants.FieldConstants.kTagLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, frontCam,robotToFront);
         //frontEstimator.setMultiTagFallbackStrategy(PoseStrategy.CLOSEST_TO_REFERENCE_POSE);
@@ -85,6 +93,27 @@ public class CameraS extends SubsystemBase {
         camEstimates = new PhotonPoseEstimator[]{rightEstimator,backEstimator};
         //cams = new PhotonCamera[]{frontCam,rightCam,leftCam,backCam};
         cams = new PhotonCamera[]{rightCam,backCam};
+         
+        if (Robot.isSimulation()){
+
+            PhotonCameraSim[] cameraSims =  new PhotonCameraSim[]{new PhotonCameraSim(rightCam), new PhotonCameraSim(backCam)};
+            visionSim = new VisionSystemSim("Vision Sim");
+            visionSim.addAprilTags(fieldLayout);
+            //i think
+            SimCameraProperties[] properties = new SimCameraProperties[]{new SimCameraProperties(), new SimCameraProperties()};
+            for (var i = 0; i < cams.length; i++){
+                properties[i].setCalibration(VisionConstants.camResWidth, VisionConstants.camResHeight,VisionConstants.camFOV);
+                properties[i].setCalibError(VisionConstants.camAvgError[i], VisionConstants.camAvgStdDev[i]);
+                properties[i].setFPS(VisionConstants.camFPS);
+                properties[i].setAvgLatencyMs(VisionConstants.camAvgLatencyMs[i]);
+                properties[i].setLatencyStdDevMs(VisionConstants.camAvgLatencyStdDev[i]);
+                cameraSims[i] = new PhotonCameraSim(cams[i], properties[i]);
+                visionSim.addCamera(cameraSims[i], camTranslations[i]);
+            }
+
+            
+            
+        }
         
 }
 public static boolean aprilTagVisible() {
@@ -116,6 +145,9 @@ public static boolean aprilTagVisible() {
     }
     @Override
     public void periodic(){
+        if (Robot.isSimulation()){
+            visionSim.update(SwerveS.getPose());
+        }
         for (int i = 0; i <2; i++){
             PhotonPoseEstimator cEstimator = camEstimates[i];
             PhotonCamera cCam = cams[i];

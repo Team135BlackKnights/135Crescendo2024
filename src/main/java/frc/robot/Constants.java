@@ -11,6 +11,7 @@ import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -366,11 +367,13 @@ public final class Constants {
   public static class VisionConstants{ 
     //These are all placeholders
     //Camera names, from photonVision web interface
+
     public static String 
       frontCamName = "Front_Camera",
       backCamName = "Back_Camera",
       leftCamName = "Left_Camera",
       rightCamName = "Right_Camera";
+    public static String[] camNameStrings = new String[]{frontCamName, backCamName, leftCamName, rightCamName};
     //offset of each cam from robot center, in meters
     public static Translation3d 
       frontCamTranslation3d = new Translation3d(0, 0, 0),
@@ -382,12 +385,29 @@ public final class Constants {
       */
       leftCamTranslation3d = new Translation3d(Units.inchesToMeters(0), Units.inchesToMeters(0), Units.inchesToMeters(0)),
       backCamTranslation3d = new Translation3d(Units.inchesToMeters(12.75),Units.inchesToMeters(0),Units.inchesToMeters(25));
+
+  
     //Pitches of camera, in DEGREES, positive means UPWARD angle
     public static int 
       frontCamPitch = 15,
       rightCamPitch = 21, //MUST GET
       leftCamPitch = 15,
-      backCamPitch = 26;    
+      backCamPitch = 26,
+      camResWidth = 3,
+      camResHeight = 3,
+      camFPS = 60;
+    public static int[] camPitches = new int[]{frontCamPitch, rightCamPitch, leftCamPitch, backCamPitch};
+           
+      
+    
+    public static Rotation2d
+      camFOV = new Rotation2d(70);
+    public static int[] 
+    camAvgError = new int[]{0,0,0,0},
+    camAvgStdDev = new int[]{0,0,0,0},
+    camAvgLatencyMs = new int[]{35,35,35,35},
+    camAvgLatencyStdDev = new int[]{5,5,5,5};
+
   }
   public static class FieldConstants {
     public static final Matrix<N3, N1> kSingleTagStdDevs = VecBuilder.fill(4, 4, 8);
@@ -403,6 +423,9 @@ public final class Constants {
     public static Translation2d
       blueSpeaker = new Translation2d(0, 5.56),
       redSpeaker = new Translation2d(16.59128, 5.56);
+    
+
+
 
   }
   public static class DataLog{
