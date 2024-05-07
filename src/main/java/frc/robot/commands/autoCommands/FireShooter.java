@@ -49,6 +49,7 @@ public class FireShooter extends Command {
 
     @Override
     public void end(boolean interrupted) {
+        System.out.println("DONE SHOOTING HOPS");
         timer.stop();
     }
 

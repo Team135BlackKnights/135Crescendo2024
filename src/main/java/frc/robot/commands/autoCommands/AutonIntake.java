@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.LimelightHelpers;
+import frc.robot.Robot;
 import frc.robot.subsystems.CameraS;
 import frc.robot.subsystems.IntakeS;
 import frc.robot.subsystems.SwerveS;
@@ -43,34 +44,43 @@ public class AutonIntake extends Command {
 
     @Override
     public void execute() {
-        IntakeS.detected = IntakeS.colorSensorV3.getColor();
-        IntakeS.colorMatchResult = IntakeS.colorMatch.matchClosestColor(IntakeS.detected);
-        SmartDashboard.putBoolean("Note Loaded?", IntakeS.noteIsLoaded());
-        //when done, set timer.start().. and delayTimer.stop();
-        intakeS.deployIntake(1);
-        double tx = LimelightHelpers.getTX(Constants.LimelightConstants.limelightName);
-        boolean tv = LimelightHelpers.getTV(Constants.LimelightConstants.limelightName);
-        ty = LimelightHelpers.getTY(Constants.LimelightConstants.limelightName);
-        SmartDashboard.putNumber("TY", ty);
-        if (ty >18.5){
-            close =true;
-        }
-            if (tv == false && loaded==false && close == false) {
-        // We don't see the target, seek for the target by spinning in place at a safe speed.
-        speeds = new ChassisSpeeds(0,0,0.1*Constants.DriveConstants.kMaxTurningSpeedRadPerSec);
-        } else if (loaded==false && close == false) {
-            double moveSpeed = Constants.IntakeConstants.macroMoveSpeed * Constants.DriveConstants.kMaxSpeedMetersPerSecond;
-            speeds = new ChassisSpeeds(moveSpeed,0,IntakeS.autoIntakeController.calculate(tx,0)*Constants.DriveConstants.kMaxTurningSpeedRadPerSec);
+        if (Robot.isSimulation()){
+            if (delayTimer.get() > 1){
+                delayTimer.stop();
+                allClear = true;
+                isFinished = true;
+            }
         }else{
-            speeds = new ChassisSpeeds(0,0,0);
+            IntakeS.detected = IntakeS.colorSensorV3.getColor();
+            IntakeS.colorMatchResult = IntakeS.colorMatch.matchClosestColor(IntakeS.detected);
+            SmartDashboard.putBoolean("Note Loaded?", IntakeS.noteIsLoaded());
+            //when done, set timer.start().. and delayTimer.stop();
+            intakeS.deployIntake(1);
+            double tx = LimelightHelpers.getTX(Constants.LimelightConstants.limelightName);
+            boolean tv = LimelightHelpers.getTV(Constants.LimelightConstants.limelightName);
+            ty = LimelightHelpers.getTY(Constants.LimelightConstants.limelightName);
+            SmartDashboard.putNumber("TY", ty);
+            if (ty >18.5){
+                close =true;
+            }
+                if (tv == false && loaded==false && close == false) {
+            // We don't see the target, seek for the target by spinning in place at a safe speed.
+            speeds = new ChassisSpeeds(0,0,0.1*Constants.DriveConstants.kMaxTurningSpeedRadPerSec);
+            } else if (loaded==false && close == false) {
+                double moveSpeed = Constants.IntakeConstants.macroMoveSpeed * Constants.DriveConstants.kMaxSpeedMetersPerSecond;
+                speeds = new ChassisSpeeds(moveSpeed,0,IntakeS.autoIntakeController.calculate(tx,0)*Constants.DriveConstants.kMaxTurningSpeedRadPerSec);
+            }else{
+                speeds = new ChassisSpeeds(0,0,0);
+            }
+            swerveS.setChassisSpeeds(speeds);
+            intakeS.setPrimaryIntake(-0.5);
+            //runs intake if note is not loaded
+            if (IntakeS.noteIsLoaded() || delayTimer.get() > 2) {
+                delayTimer.stop();
+                isFinished = true;
+            }
         }
-        swerveS.setChassisSpeeds(speeds);
-        intakeS.setPrimaryIntake(-0.5);
-        //runs intake if note is not loaded
-        if (IntakeS.noteIsLoaded() || delayTimer.get() > 2) {
-            delayTimer.stop();
-            isFinished = true;
-        }
+        
     }
 
     @Override
@@ -84,6 +94,7 @@ public class AutonIntake extends Command {
         speeds = new ChassisSpeeds(0,0,0);
         swerveS.setChassisSpeeds(speeds);
         intakeS.pullBackNote(); 
+        System.out.println("DONE INTAKING");
         close = false;
     }
 

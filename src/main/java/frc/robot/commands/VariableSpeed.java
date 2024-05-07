@@ -49,7 +49,7 @@ public class VariableSpeed extends Command {
             intakeS.setPrimaryIntake(-0.5);
             delay.start();
         }
-        if (CameraS.robotInRange() && OutakeS.getFlywheelSpeedDifference() < 100 && timer.get() >= 0.3 && OutakeS.getBottomSpeedError() < 150 && OutakeS.getTopSpeedError() < 150 && Math.abs(CameraS.getXError()) < 3 && !RobotContainer.manipController.getAButton() && IntakeS.getIntakePosition() >= IntakeConstants.deployIntakeOuterBound-2) {
+        if (CameraS.robotInRange() && OutakeS.getFlywheelSpeedDifference() < 100 && timer.get() >= 0.3 && OutakeS.getBottomSpeedError(4000) < 150 && OutakeS.getTopSpeedError() < 150 && Math.abs(CameraS.getXError()) < 3 && !RobotContainer.manipController.getAButton() && IntakeS.getIntakePosition() >= IntakeConstants.deployIntakeOuterBound-2) {
             intakeS.setPrimaryIntake(-0.5);
             delay.start();
         }

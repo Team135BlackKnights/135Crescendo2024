@@ -190,8 +190,9 @@ public class OutakeS extends SubsystemBase {
     public static double getFlywheelSpeedDifference() {
         return Math.abs(Math.abs(topVelocity) - Math.abs(bottomVelocity));
     }
-    public static double getBottomSpeedError(){
-        return m_bottomLoop.getError(0); //very low chance this is the wrong call
+    public static double getBottomSpeedError(double setRPM){
+        return Math.abs(bottomVelocity - setRPM);
+     //   return m_bottomLoop.getError(0); //very low chance this is the wrong call
     }
     public static double getTopSpeedError(){
         return m_topLoop.getError(0);

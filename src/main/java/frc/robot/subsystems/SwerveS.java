@@ -176,7 +176,6 @@ public class SwerveS extends SubsystemBase {
     return sysIdRoutineDrive.quasistatic(direction);
   }
     public static boolean autoLock = false;
-    public static boolean runningTest = false;
     public static boolean redIsAlliance = true;
 
     public PIDController autoLockController = new PIDController(0.0044, 0.00135, 0.00001); //sadly cannot be system Id'd
@@ -222,7 +221,7 @@ public class SwerveS extends SubsystemBase {
             new PIDConstants(5, 0.0, 0.0), // Rotation PID constants
             Constants.DriveConstants.kMaxSpeedMetersPerSecond, // Max module speed, in m/s
             Constants.DriveConstants.kDriveBaseRadius, // Drive base radius in meters. Distance from robot center to furthest module.
-            new ReplanningConfig(true,true) // Default path replanning config. See the API for the options here
+            new ReplanningConfig(true,false) // Default path replanning config. See the API for the options here
         ),
         SwerveS::getAlliance,
         this // Reference to this subsystem to set requirements
