@@ -119,7 +119,20 @@ public class CameraS extends SubsystemBase {
         
 }
 public static boolean aprilTagVisible() {
-    return backCam.getLatestResult().hasTargets();
+    var results = backCam.getLatestResult().getTargets();
+    for (var target : results){
+        if (SwerveS.getAlliance()){
+            if (target.getFiducialId() == 4){
+                return true;
+            }
+        }else{
+            if (target.getFiducialId() == 7){
+                return true;
+            }
+        }
+        
+    }
+    return false;
 }
     public PhotonPipelineResult getLatestResult(PhotonCamera camera) {
         return camera.getLatestResult();
@@ -191,17 +204,23 @@ private void updateSimField(Optional<EstimatedRobotPose> visionEst,boolean newRe
                         SmartDashboard.putString("CAMERAUPDATE", cCam.getName());
                         if (cCam.getName() == Constants.VisionConstants.backCamName){
                             var targets = backCam.getLatestResult().getTargets();
+                            boolean hasSpeaker = false;
                             for (var target : targets){
                                 if (SwerveS.getAlliance()){
                                     if (target.getFiducialId() == 4){
-                                        backCamXError = target.getBestCameraToTarget().getX();
+                                        hasSpeaker = true;
+                                        backCamXError = -target.getBestCameraToTarget().getY();
                                     }
                                 }else{
                                     if (target.getFiducialId() == 7){
-                                        backCamXError = target.getBestCameraToTarget().getX();
+                                        hasSpeaker = true;
+                                        backCamXError = -target.getBestCameraToTarget().getY();
                                     }
+                                    
                                 }
-                                
+                            }
+                            if (!hasSpeaker){
+                                backCamXError= 0;
                             }
                         }
                         SwerveS.addVisionMeasurement(est.estimatedPose.toPose2d(), est.timestampSeconds, estStdDevs);
@@ -248,8 +267,7 @@ private void updateSimField(Optional<EstimatedRobotPose> visionEst,boolean newRe
      */
 public static double getXError() {
         // bounds xError between -5 and 5 (normal range of xError is -30 to 30)
-        double bounded = CameraS.backCamXError/6 + Math.copySign(0.9999, CameraS.backCamXError); //adds 0.9999 to reduce dead area range once we square
-        return bounded*Math.abs(bounded);
+        return CameraS.backCamXError;
     }
 public static boolean robotInRange() {
     return getDistanceFromSpeakerUsingRobotPose() > 1.9 && getDistanceFromSpeakerUsingRobotPose() < 2.2;

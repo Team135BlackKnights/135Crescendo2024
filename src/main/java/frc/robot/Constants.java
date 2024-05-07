@@ -52,7 +52,7 @@ public final class Constants {
       public static double 
         P = .01,
         I = .0,
-        D = .00001;
+        D = .0000;
     }
     public static I2C.Port colorSensorPort = I2C.Port.kOnboard;
     public static Color noteColor = new Color(0.55, 0.36, .08);
@@ -111,7 +111,7 @@ public final class Constants {
       kTurningEncoderRot2Rad = kTurningMotorGearRatio * 2 * Math.PI,
       kTurningEncoderRPM2RadPerSec = kTurningEncoderRot2Rad / 60,
       kDeadband = 0.1,
-      kAutoDeadband = 0.01,
+      kAutoDeadband = 0.0000001,
 
       kOverallP = 2.36975,
       kOverallSVolts = -.180747,
@@ -201,7 +201,12 @@ public final class Constants {
       kFrontLeftAbsEncoderOffsetRad = 0.562867,
       kFrontRightAbsEncoderOffsetRad = 0.548137,
       kBackLeftAbsEncoderOffsetRad = 2*Math.PI - 2.891372,
-      kBackRightAbsEncoderOffsetRad = 2*Math.PI - 0.116861; 
+      kBackRightAbsEncoderOffsetRad = 2*Math.PI - 0.116861,
+
+
+      kP = 0.01,
+      kI = 0,
+      kD = 0;
     
     // Declare the position of each module
     public static final SwerveDriveKinematics kDriveKinematics = new SwerveDriveKinematics(
@@ -313,7 +318,19 @@ public final class Constants {
   }
   public static class DriveSimConstants{
     //id 1 is topmost leftmost. goes in order down, right.
-    public static Translation2d[] fieldNotePoses = new Translation2d[]{new Translation2d(8.270875, 4.1148)};
+    public static Translation2d[] fieldNotePoses = new Translation2d[]{
+      new Translation2d(Units.inchesToMeters(325.625),Units.inchesToMeters(162)), //center
+      new Translation2d(Units.inchesToMeters(325.625),Units.inchesToMeters(228)), //center up 1
+      new Translation2d(Units.inchesToMeters(325.625),Units.inchesToMeters(294)), //center up 2
+      new Translation2d(Units.inchesToMeters(325.625),Units.inchesToMeters(96)), //center down 1
+      new Translation2d(Units.inchesToMeters(325.625),Units.inchesToMeters(30)), //center down 2
+      new Translation2d(Units.inchesToMeters(114),Units.inchesToMeters(162)), //BLUE CENTER
+      new Translation2d(Units.inchesToMeters(114),Units.inchesToMeters(219)), //BLUE CENTER + 1
+      new Translation2d(Units.inchesToMeters(114),Units.inchesToMeters(276)), //BUE TOP 
+      new Translation2d(Units.inchesToMeters(534.5),Units.inchesToMeters(162)), //RED CENTER
+      new Translation2d(Units.inchesToMeters(534.5),Units.inchesToMeters(219)), //RED CENTER + 1
+      new Translation2d(Units.inchesToMeters(534.5),Units.inchesToMeters(276)), //RED TOP 
+    };
   }
 
   public static class LEDConstants{

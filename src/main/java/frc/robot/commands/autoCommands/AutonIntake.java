@@ -36,9 +36,7 @@ public class AutonIntake extends Command {
         this.intakeS = intakeS;
         this.swerveS = swerveS;
         addRequirements(intakeS);
-        if (DriverStation.isTeleop()){
-            this.targetNoteLocation = intakeS.getClosestNote();
-        }
+        this.targetNoteLocation = intakeS.getClosestNote();
     }
     /*Call this for simulation autonomous only */
     public AutonIntake(IntakeS intakeS, SwerveS swerveS, Translation2d fieldNotePose){
@@ -58,6 +56,7 @@ public class AutonIntake extends Command {
         close = false;
         takeOver = true;
         ty = 0;
+        this.targetNoteLocation = intakeS.getClosestNote();
     }
 
     @Override
@@ -67,7 +66,7 @@ public class AutonIntake extends Command {
         if (Robot.isSimulation()){
             //Computing distance
             currentPose = SwerveS.getPose();
-            tx = targetNoteLocation.getX() - currentPose.getX();
+            tx = targetNoteLocation.getX() - currentPose.getX();// -0.307975;
             ty = targetNoteLocation.getY() - currentPose.getY();
             tv = true;
             // Calculate the angle to aim towards the target

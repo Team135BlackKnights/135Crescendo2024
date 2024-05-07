@@ -175,10 +175,11 @@ public class SwerveS extends SubsystemBase {
   public Command sysIdQuasistaticDrive(SysIdRoutine.Direction direction) {
     return sysIdRoutineDrive.quasistatic(direction);
   }
-    public static boolean autoLock = false;
+    public static boolean autoLock = true;
     public static boolean redIsAlliance = true;
+    private static double kP,kI,kD;
 
-    public PIDController autoLockController = new PIDController(0.0044, 0.00135, 0.00001); //sadly cannot be system Id'd
+    public PIDController autoLockController; //sadly cannot be system Id'd
 
     //so that the navXDisconnect command doesn't start twice
     int debounce = 0;
@@ -221,13 +222,19 @@ public class SwerveS extends SubsystemBase {
             new PIDConstants(5, 0.0, 0.0), // Rotation PID constants
             Constants.DriveConstants.kMaxSpeedMetersPerSecond, // Max module speed, in m/s
             Constants.DriveConstants.kDriveBaseRadius, // Drive base radius in meters. Distance from robot center to furthest module.
-            new ReplanningConfig(true,false) // Default path replanning config. See the API for the options here
+            new ReplanningConfig(true,true) // Default path replanning config. See the API for the options here
         ),
         SwerveS::getAlliance,
         this // Reference to this subsystem to set requirements
         );
-
         //SmartDashboard.putData("Field", robotField);
+        kP = Constants.DriveConstants.kP;
+        kI = Constants.DriveConstants.kI;
+        kD = Constants.DriveConstants.kD;
+        SmartDashboard.putNumber("P GainD", kP);
+        SmartDashboard.putNumber("I GainD", kI);
+        SmartDashboard.putNumber("D GainD", kD);
+        autoLockController = new PIDController(kP, kI, kD);
     }
     
     public void zeroHeading() {
@@ -286,16 +293,28 @@ public class SwerveS extends SubsystemBase {
                 zAccel = gyro.getRawAccelZ();
         //puts values to smartDashboard
         SmartDashboard.putNumber("Robot Heading", getRotation2d().getDegrees());
-        SmartDashboard.putNumber("xError", xError);
+        SmartDashboard.putNumber("xError", CameraS.backCamXError);
         SmartDashboard.putBoolean("Auto Lock", autoLock);
         SmartDashboard.putBoolean("Red is Alliance", getAlliance());
         SmartDashboard.putNumber("Position X (getPose)", getPose().getX());
         SmartDashboard.putNumber("Position Y (getPose)", getPose().getY());
         SmartDashboard.putNumber("Robot Heading (getPose)", getPose().getRotation().getDegrees());
 
-
-        xError = tx.getDouble(0.0);
-
+        double p = SmartDashboard.getNumber("P GainD", Constants.DriveConstants.kP);
+        double i = SmartDashboard.getNumber("I GainD", Constants.DriveConstants.kI);
+        double d = SmartDashboard.getNumber("D GainD", Constants.DriveConstants.kD);
+        if ((p != kP)) { 
+            autoLockController.setP(p);
+             kP = p; 
+        }
+        if ((i != kI)) {
+            autoLockController.setI(i); kI = i; 
+        }
+        if ((d != kD)) {
+            autoLockController.setD(d); kD = d;
+        }
+        //xError = tx.getDouble(0.0);
+        
         m_modulePositions = getModulePositions();
 
         // LIST MODULES IN THE SAME EXACT ORDER USED WHEN DECLARING SwerveDriveKinematics
@@ -389,6 +408,7 @@ public class SwerveS extends SubsystemBase {
     }
 
     public void toggleAutoLock() {
+        autoLockController.reset();
         autoLock = !autoLock;
     }
      /*public void updatePoseEstimatorWithVisionBotPose() {

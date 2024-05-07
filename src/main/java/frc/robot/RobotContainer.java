@@ -83,9 +83,10 @@ public class RobotContainer {
   }
 
   private void configureBindings() {
-    if (aButton.getAsBoolean() && isDriving()){
+    aButton.onTrue(swerveS.toggleAutoLockCommand());
+    /*if (aButton.getAsBoolean() && isDriving()){
       swerveS.toggleAutoLockCommand();
-    }
+    }*/
     if (yButton.getAsBoolean() && isDriving()){
       new InstantCommand(() -> swerveS.zeroHeading());
     }

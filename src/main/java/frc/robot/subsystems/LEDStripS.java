@@ -62,7 +62,7 @@ public class LEDStripS extends SubsystemBase{
 
                 
                 //if its locked on, set to constant green
-                if (SwerveS.aprilTagVisible() && CameraS.robotInRange()) {
+                if (CameraS.aprilTagVisible() && CameraS.robotInRange()) {
                     setConstantColors(LEDConstants.greenHSV);
                     
 

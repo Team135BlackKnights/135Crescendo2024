@@ -4,6 +4,7 @@ import frc.robot.subsystems.CameraS;
 import frc.robot.subsystems.SwerveS;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 import frc.robot.Robot;
 
@@ -24,32 +25,25 @@ public class AutoLock extends Command{
         isFinished = false;
         timer.stop();
         timer.reset();
-        if (Robot.isSimulation()){
-            timer.start();
-        }
+        System.out.println("RUNNING LOCK");
     }
 
     @Override
     public void execute(){
-        if(Robot.isSimulation()){
-            if (timer.get() >= .5){
-                isFinished = true;
-            }
-        }else{
             if (timer.get() >= maxTimeTargetting) {
                 isFinished = true;
             }
-            if (!SwerveS.aprilTagVisible()) {
+            if (!CameraS.aprilTagVisible()) {
                 timer.start();
             }
             //takes x value of limelight as the distance nthat needs to be rotated, runs a chassisSpeedscommand to rotate until within an acceptable deadband
             limelightTx = CameraS.getXError();
+            SmartDashboard.putNumber("TX", limelightTx);
             if (Math.abs(limelightTx)<limelightDeadBand){
                 isFinished = true;
             }
             speeds = new ChassisSpeeds(0,0,swerveS.autoLockController.calculate(limelightTx,0)*Constants.DriveConstants.kMaxTurningSpeedRadPerSec);
             swerveS.setChassisSpeeds(speeds);
-        }
     }
 
     @Override 

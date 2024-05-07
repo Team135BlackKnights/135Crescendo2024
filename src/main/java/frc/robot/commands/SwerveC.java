@@ -51,7 +51,7 @@ public class SwerveC extends Command {
       ySpeed = Math.pow(ySpeed, 2) * (ySpeed < 0 ? -1 : 1);
       //turningSpeed = Math.pow(turningSpeed, 2) * (turningSpeed < 0 ? -1 : 1);
 
-      if (SwerveS.autoLock == true && SwerveS.aprilTagVisible() == true) {
+      if (SwerveS.autoLock == true && CameraS.aprilTagVisible() == true) {
         turningSpeed = swerveS.autoLockController.calculate(CameraS.getXError(), 0.0);
       }
       //every time the array isn't full and the logging button is pressed, save another value to the array. 
@@ -77,7 +77,7 @@ public class SwerveC extends Command {
       // If the desired ChassisSpeeds are really small (ie from controller drift) make them even smaller so that the robot doesn't move
       xSpeed = Math.abs(xSpeed) > Constants.SwerveConstants.kDeadband ? xSpeed : 0.0000;
       ySpeed = Math.abs(ySpeed) > Constants.SwerveConstants.kDeadband ? ySpeed : 0.0000;
-      if (SwerveS.autoLock == true && SwerveS.aprilTagVisible() == true) {
+      if (SwerveS.autoLock == true && CameraS.aprilTagVisible() == true) {
         turningSpeed = Math.abs(turningSpeed) > Constants.SwerveConstants.kAutoDeadband ? turningSpeed : 0.0000;
       } else {
         turningSpeed = Math.abs(turningSpeed) > Constants.SwerveConstants.kDeadband ? turningSpeed : 0.0000;
