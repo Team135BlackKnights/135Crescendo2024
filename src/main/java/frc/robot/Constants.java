@@ -11,6 +11,7 @@ import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -46,7 +47,12 @@ public final class Constants {
     REPLAY
   }
   public static class IntakeConstants {
-
+    public static class PIDConstants{
+      public static double 
+        P = .00135,
+        I = .00135,
+        D = .00001;
+    }
     public static I2C.Port colorSensorPort = I2C.Port.kOnboard;
     public static Color noteColor = new Color(0.55, 0.36, .08);
 
@@ -63,7 +69,7 @@ public final class Constants {
       primaryIntakeGearRatio = 1/4.5,
       deployIntakeInnerBound = 0,
       deployIntakeOuterBound = 90,
-      macroMoveSpeed = .5;
+      macroMoveSpeed = 1;
 
     public static boolean
       primaryIntakeReversed = true,
@@ -83,7 +89,7 @@ public final class Constants {
       flywheelGearRatio = 1.5,
       idealPercentTop = .34,
       idealPercentBottom = .31,
-      kFlywheelMomentOfInertia = .00066, //0.00006502025 //.001086
+      kFlywheelMomentOfInertia = .001086, //0.00006502025 //.001086 //.00066
       kP = 0.0021258,
       kSVolts = -0.089838,
       kVVoltSecondsPerRotation= 0.0015425*.928,
@@ -155,7 +161,13 @@ public final class Constants {
       kBackRightTurningKs = 0.25885,
       kBackRightTurningKv = 0.0021008,
       kBackRightTurningKa = 0.0002368;
-
+      public enum ModulePosition {
+        FRONT_LEFT,
+        FRONT_RIGHT,
+        BACK_LEFT,
+        BACK_RIGHT
+      }
+      
       public static double[] 
       overallTurnkPkSkVkAkD = new double[]{Constants.DriveConstants.kOverallPTurn*4,Constants.DriveConstants.kOverallSVoltsTurn,Constants.DriveConstants.kOverallVVoltSecondsPerRotationTurn*2,Constants.DriveConstants.kOverallAVoltSecondsSquaredPerRotationTurn,Constants.DriveConstants.kOverallDTurn*1},
       overallDrivekPkSkVkA = new double[]{Constants.DriveConstants.kOverallP,Constants.DriveConstants.kOverallSVolts,Constants.DriveConstants.kOverallVVoltSecondsPerRotation,Constants.DriveConstants.kOverallAVoltSecondsSquaredPerRotation},
@@ -196,7 +208,12 @@ public final class Constants {
       new Translation2d(kChassisLength / 2, -kChassisWidth / 2),
       new Translation2d(-kChassisLength / 2, kChassisWidth / 2),
       new Translation2d(-kChassisLength / 2, -kChassisWidth / 2));
-
+      public static final Translation2d[] kModuleTranslations = {
+        new Translation2d(kChassisLength / 2, kChassisWidth / 2),
+        new Translation2d(kChassisLength / 2, -kChassisWidth / 2),
+        new Translation2d(-kChassisLength / 2, kChassisWidth / 2),
+        new Translation2d(-kChassisLength / 2, -kChassisWidth / 2)
+      };
     public static int
       kFrontLeftDrivePort = 16, //10
       kFrontLeftTurningPort = 17, //20
@@ -350,28 +367,47 @@ public final class Constants {
   public static class VisionConstants{ 
     //These are all placeholders
     //Camera names, from photonVision web interface
+
     public static String 
       frontCamName = "Front_Camera",
       backCamName = "Back_Camera",
       leftCamName = "Left_Camera",
       rightCamName = "Right_Camera";
+    public static String[] camNameStrings = new String[]{frontCamName, backCamName, leftCamName, rightCamName};
     //offset of each cam from robot center, in meters
     public static Translation3d 
-      frontCamTranslation3d = new Translation3d(0, 0, 0),
+      frontCamTranslation3d = new Translation3d(Units.inchesToMeters(15),0,Units.inchesToMeters(19.75)),
       rightCamTranslation3d = new Translation3d(Units.inchesToMeters(12.75),Units.inchesToMeters(Constants.DriveConstants.kChassisLength/2),Units.inchesToMeters(19.75)), 
       /*For right cam ^
         X = center to limelight tube
         Y = center to right chassis rail
         Z = floor to camera 
       */
-      leftCamTranslation3d = new Translation3d(Units.inchesToMeters(0), Units.inchesToMeters(0), Units.inchesToMeters(0)),
+      leftCamTranslation3d = new Translation3d(Units.inchesToMeters(12.75),Units.inchesToMeters(-Constants.DriveConstants.kChassisLength/2),Units.inchesToMeters(19.75)),
       backCamTranslation3d = new Translation3d(Units.inchesToMeters(12.75),Units.inchesToMeters(0),Units.inchesToMeters(25));
+
+  
     //Pitches of camera, in DEGREES, positive means UPWARD angle
     public static int 
-      frontCamPitch = 15,
-      rightCamPitch = 21, //MUST GET
-      leftCamPitch = 15,
-      backCamPitch = 26;    
+      frontCamPitch = -21,
+      rightCamPitch = -21, //MUST GET
+      leftCamPitch = -15,
+      backCamPitch = -26,
+      camResWidth = 600,
+      camResHeight = 800,
+      camFPS = 60;
+    public static int[] camPitches = new int[]{frontCamPitch, rightCamPitch, leftCamPitch, backCamPitch};
+           
+      
+    
+    public static Rotation2d
+      camFOV = new Rotation2d(70);
+    public static int[] 
+    camAvgError = new int[]{0,0,0,0},
+    camAvgStdDev = new int[]{0,0,0,0},
+    camAvgLatencyMs = new int[]{10,10,10,10},
+    camAvgLatencyStdDev = new int[]{5,5,5,5};
+
   }
   public static class FieldConstants {
     public static final Matrix<N3, N1> kSingleTagStdDevs = VecBuilder.fill(4, 4, 8);
@@ -387,6 +423,9 @@ public final class Constants {
     public static Translation2d
       blueSpeaker = new Translation2d(0, 5.56),
       redSpeaker = new Translation2d(16.59128, 5.56);
+    
+
+
 
   }
   public static class DataLog{

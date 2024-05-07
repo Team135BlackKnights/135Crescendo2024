@@ -9,11 +9,13 @@ import com.pathplanner.lib.util.PathPlannerLogging;
 import com.pathplanner.lib.util.ReplanningConfig;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.hal.SimDouble;
+import edu.wpi.first.hal.simulation.SimDeviceDataJNI;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
@@ -29,7 +31,6 @@ import edu.wpi.first.units.Time;
 import edu.wpi.first.units.Velocity;
 import edu.wpi.first.units.Voltage;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.SerialPort.Port;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -38,62 +39,68 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
-import frc.robot.LimelightHelpers;
 import frc.robot.Robot;
 import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
-
-import frc.robot.LimelightHelpers;
-import frc.robot.LimelightHelpers.PoseEstimate;
-
-import static edu.wpi.first.units.Units.Volts;
-
+import java.util.HashMap;
+import java.util.Map;
+import frc.robot.Constants.SwerveConstants.ModulePosition;
 
 public class SwerveS extends SubsystemBase {
+    private final static HashMap<ModulePosition, SwerveModule> m_swerveModules =
+          new HashMap<>(
+                  Map.of(
+                        ModulePosition.FRONT_LEFT,
+                        new SwerveModule(
+                            Constants.DriveConstants.kFrontLeftDrivePort, 
+                            Constants.DriveConstants.kFrontLeftTurningPort, 
+                            Constants.DriveConstants.kFrontLeftDriveReversed, 
+                            Constants.DriveConstants.kFrontLeftTurningReversed, 
+                            Constants.DriveConstants.kFrontLeftAbsEncoderPort, 
+                            Constants.DriveConstants.kFrontLeftAbsEncoderOffsetRad, 
+                            Constants.DriveConstants.kFrontLeftAbsEncoderReversed,
+                            Constants.SwerveConstants.frontLeftDriveKpKsKvKa, Constants.SwerveConstants.overallTurnkPkSkVkAkD),
+                        ModulePosition.FRONT_RIGHT,
+                        new SwerveModule(
+                            Constants.DriveConstants.kFrontRightDrivePort, 
+                            Constants.DriveConstants.kFrontRightTurningPort, 
+                            Constants.DriveConstants.kFrontRightDriveReversed, 
+                            Constants.DriveConstants.kFrontRightTurningReversed, 
+                            Constants.DriveConstants.kFrontRightAbsEncoderPort, 
+                            Constants.DriveConstants.kFrontRightAbsEncoderOffsetRad, 
+                            Constants.DriveConstants.kFrontRightAbsEncoderReversed,
+                            Constants.SwerveConstants.frontRightDriveKpKsKvKa, Constants.SwerveConstants.overallTurnkPkSkVkAkD),
+                        ModulePosition.BACK_LEFT,
+                        new SwerveModule(
+                            Constants.DriveConstants.kBackLeftDrivePort, 
+                            Constants.DriveConstants.kBackLeftTurningPort, 
+                            Constants.DriveConstants.kBackLeftDriveReversed, 
+                            Constants.DriveConstants.kBackLeftTurningReversed, 
+                            Constants.DriveConstants.kBackLeftAbsEncoderPort, 
+                            Constants.DriveConstants.kBackLeftAbsEncoderOffsetRad, 
+                            Constants.DriveConstants.kBackLeftAbsEncoderReversed, 
+                            Constants.SwerveConstants.backLeftDriveKpKsKvKa, Constants.SwerveConstants.overallTurnkPkSkVkAkD),
+                        ModulePosition.BACK_RIGHT,
+                        new SwerveModule(
+                            Constants.DriveConstants.kBackRightDrivePort, 
+                            Constants.DriveConstants.kBackRightTurningPort, 
+                            Constants.DriveConstants.kBackRightDriveReversed, 
+                            Constants.DriveConstants.kBackRightTurningReversed, 
+                            Constants.DriveConstants.kBackRightAbsEncoderPort, 
+                            Constants.DriveConstants.kBackRightAbsEncoderOffsetRad, 
+                            Constants.DriveConstants.kBackRightDriveReversed,
+                            Constants.SwerveConstants.backRightDriveKpKsKvKa, Constants.SwerveConstants.overallTurnkPkSkVkAkD)));
+
     
-    private final static SwerveModule frontLeft = new SwerveModule(
-        Constants.DriveConstants.kFrontLeftDrivePort, 
-        Constants.DriveConstants.kFrontLeftTurningPort, 
-        Constants.DriveConstants.kFrontLeftDriveReversed, 
-        Constants.DriveConstants.kFrontLeftTurningReversed, 
-        Constants.DriveConstants.kFrontLeftAbsEncoderPort, 
-        Constants.DriveConstants.kFrontLeftAbsEncoderOffsetRad, 
-        Constants.DriveConstants.kFrontLeftAbsEncoderReversed,
-        Constants.SwerveConstants.frontLeftDriveKpKsKvKa, Constants.SwerveConstants.overallTurnkPkSkVkAkD);
 
-    private final static SwerveModule frontRight = new SwerveModule(
-        Constants.DriveConstants.kFrontRightDrivePort, 
-        Constants.DriveConstants.kFrontRightTurningPort, 
-        Constants.DriveConstants.kFrontRightDriveReversed, 
-        Constants.DriveConstants.kFrontRightTurningReversed, 
-        Constants.DriveConstants.kFrontRightAbsEncoderPort, 
-        Constants.DriveConstants.kFrontRightAbsEncoderOffsetRad, 
-        Constants.DriveConstants.kFrontRightAbsEncoderReversed,
-        Constants.SwerveConstants.frontRightDriveKpKsKvKa, Constants.SwerveConstants.overallTurnkPkSkVkAkD);
+    
 
-    private final static SwerveModule backLeft = new SwerveModule(
-        Constants.DriveConstants.kBackLeftDrivePort, 
-        Constants.DriveConstants.kBackLeftTurningPort, 
-        Constants.DriveConstants.kBackLeftDriveReversed, 
-        Constants.DriveConstants.kBackLeftTurningReversed, 
-        Constants.DriveConstants.kBackLeftAbsEncoderPort, 
-        Constants.DriveConstants.kBackLeftAbsEncoderOffsetRad, 
-        Constants.DriveConstants.kBackLeftAbsEncoderReversed, 
-        Constants.SwerveConstants.backLeftDriveKpKsKvKa, Constants.SwerveConstants.overallTurnkPkSkVkAkD);
 
-    private final static SwerveModule backRight = new SwerveModule(
-        Constants.DriveConstants.kBackRightDrivePort, 
-        Constants.DriveConstants.kBackRightTurningPort, 
-        Constants.DriveConstants.kBackRightDriveReversed, 
-        Constants.DriveConstants.kBackRightTurningReversed, 
-        Constants.DriveConstants.kBackRightAbsEncoderPort, 
-        Constants.DriveConstants.kBackRightAbsEncoderOffsetRad, 
-        Constants.DriveConstants.kBackRightDriveReversed,
-        Constants.SwerveConstants.backRightDriveKpKsKvKa, Constants.SwerveConstants.overallTurnkPkSkVkAkD);
+
 
     private static AHRS gyro = new AHRS(Port.kUSB1);
+
     NetworkTableEntry pipeline;
-    public PoseEstimate poseEstimate;    
     public static boolean fieldOriented = true;
     int periodicUpdateCycle;
 
@@ -106,11 +113,21 @@ public class SwerveS extends SubsystemBase {
     Field2d robotField = new Field2d();
     static double zAccel = 0;
     // LIST MODULES IN THE SAME EXACT ORDER USED WHEN DECLARING SwerveDriveKinematics
-    ChassisSpeeds m_ChassisSpeeds = Constants.DriveConstants.kDriveKinematics.toChassisSpeeds(new SwerveModuleState[]{frontLeft.getState(), frontRight.getState(), backLeft.getState(), backRight.getState()});
-    static SwerveDrivePoseEstimator poseEstimator = new SwerveDrivePoseEstimator(Constants.DriveConstants.kDriveKinematics, getRotation2d(), new SwerveModulePosition[]{frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()},robotPosition);
-    SwerveModulePosition[] m_modulePositions = new SwerveModulePosition[]{frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()};
+    ChassisSpeeds m_ChassisSpeeds = Constants.DriveConstants.kDriveKinematics.toChassisSpeeds(getModuleStates());
+    static Vector<N3> stateStdDevs = VecBuilder.fill(0.1, 0.1, 0.1);
+    static Vector<N3> visionStdDevs = VecBuilder.fill(1, 1, 1);
+    static SwerveDrivePoseEstimator poseEstimator = new SwerveDrivePoseEstimator(
+        Constants.DriveConstants.kDriveKinematics,
+        getRotation2d(),
+        getModulePositions(),
+        robotPosition,
+        stateStdDevs,
+        visionStdDevs
+          );
+    SwerveModulePosition[] m_modulePositions = getModulePositions();
     
-    
+    private double m_simYaw;
+
     Measure<Velocity<Voltage>> rampRate = Volts.of(1).per(Seconds.of(1)); //for going FROM ZERO PER SECOND
     Measure<Voltage> holdVoltage = Volts.of(8);
     Measure<Time> timeout = Seconds.of(10);
@@ -118,10 +135,8 @@ public class SwerveS extends SubsystemBase {
         new SysIdRoutine.Config(rampRate,holdVoltage,timeout),
         new SysIdRoutine.Mechanism(
             (Measure<Voltage> volts) -> {
-                frontLeft.setTurningTest(volts.in(Volts));
-                frontRight.setTurningTest(volts.in(Volts));
-                backLeft.setTurningTest(volts.in(Volts));
-                backRight.setTurningTest(volts.in(Volts));
+                for (SwerveModule module : m_swerveModules.values())
+                module.setTurningTest(volts.in(Volts));
               },
           null // No log consumer, since data is recorded by URCL
     , this
@@ -131,10 +146,8 @@ public class SwerveS extends SubsystemBase {
         new SysIdRoutine.Config(rampRate,holdVoltage,timeout),
         new SysIdRoutine.Mechanism(
             (Measure<Voltage> volts) -> {
-                frontLeft.setDriveTest(volts.in(Volts));
-                frontRight.setDriveTest(volts.in(Volts));
-                backLeft.setDriveTest(volts.in(Volts));
-                backRight.setDriveTest(volts.in(Volts));
+                for (SwerveModule module : m_swerveModules.values())
+                module.setDriveTest(volts.in(Volts));
               },
           null // No log consumer, since data is recorded by URCL
     , this
@@ -166,64 +179,39 @@ public class SwerveS extends SubsystemBase {
     public static boolean runningTest = false;
     public static boolean redIsAlliance = true;
 
-    SysIdRoutine sysIdRoutine = new SysIdRoutine(
-        new SysIdRoutine.Config(),
-        new SysIdRoutine.Mechanism(
-            (Measure<Voltage> volts) -> {
-                frontLeft.setTurningTest(volts.in(Volts));
-                frontRight.setTurningTest(volts.in(Volts));
-                backLeft.setTurningTest(volts.in(Volts));
-                backRight.setTurningTest(volts.in(Volts));
-              },
-          null // No log consumer, since data is recorded by URCL
-    , this
-        )
-      );
-    /**
-   * Returns a command that will execute a quasistatic test in the given direction.
-   *
-   * @param direction The direction (forward or reverse) to run the test in
-   */
-  public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
-    runningTest = true;
-    sysIdRoutine.quasistatic(direction).finallyDo(() -> {
-        runningTest = false;
-    });
-    return sysIdRoutine.quasistatic(direction);
-  }
-  /**
-   * Returns a command that will execute a dynamic test in the given direction.
-   *
-   * @param direction The direction (forward or reverse) to run the test in
-   */
-  public Command sysIdDynamic(SysIdRoutine.Direction direction) {
-    runningTest = true;
-    sysIdRoutine.quasistatic(direction).finallyDo(() -> {
-        runningTest = false;
-    });
-    return sysIdRoutine.dynamic(direction);
-  }
-
     public PIDController autoLockController = new PIDController(0.0044, 0.00135, 0.00001); //sadly cannot be system Id'd
 
     //so that the navXDisconnect command doesn't start twice
     int debounce = 0;
-
+    public SwerveModuleState[] getModuleStates() {
+        return new SwerveModuleState[] {
+                m_swerveModules.get(ModulePosition.FRONT_LEFT).getState(),
+                m_swerveModules.get(ModulePosition.FRONT_RIGHT).getState(),
+                m_swerveModules.get(ModulePosition.BACK_LEFT).getState(),
+                m_swerveModules.get(ModulePosition.BACK_RIGHT).getState()
+        };
+      }
+      public static SwerveModulePosition[] getModulePositions() {
+        return new SwerveModulePosition[] {
+                m_swerveModules.get(ModulePosition.FRONT_LEFT).getPosition(),
+                m_swerveModules.get(ModulePosition.FRONT_RIGHT).getPosition(),
+                m_swerveModules.get(ModulePosition.BACK_LEFT).getPosition(),
+                m_swerveModules.get(ModulePosition.BACK_RIGHT).getPosition()
+        };
+      }
     public SwerveS() {
         // Waits for the RIO to finishing booting
         new Thread(() -> {
             try {
                 Thread.sleep(1000);
                 zeroHeading();
-                frontLeft.resetEncoders();
-                frontRight.resetEncoders();
-                backLeft.resetEncoders();
-                backRight.resetEncoders();
+                for (SwerveModule module : m_swerveModules.values())
+                module.resetEncoders();
                 limelight.getEntry("pipeline").setNumber(1);
             } catch (Exception e) {
             }
         }).start();
-
+        
         AutoBuilder.configureHolonomic(
         SwerveS::getPose, // Robot pose supplier
         this::resetPose, // Method to reset odometry (will be called if your auto has a starting pose)
@@ -240,7 +228,7 @@ public class SwerveS extends SubsystemBase {
         this // Reference to this subsystem to set requirements
         );
 
-        SmartDashboard.putData("Field", robotField);
+        //SmartDashboard.putData("Field", robotField);
     }
     
     public void zeroHeading() {
@@ -259,15 +247,25 @@ public class SwerveS extends SubsystemBase {
     public static boolean getAutoLock() {
         return autoLock;
     }
- 
     @Override
     public void periodic() {
         if (Robot.isSimulation()){
-            frontLeft.updateSimModuleState();
+            /*frontLeft.updateSimModuleState();
             frontRight.updateSimModuleState();
             backLeft.updateSimModuleState();
             backRight.updateSimModuleState();
-            SmartDashboard.putNumber("Sim debug chassis x speed", m_ChassisSpeeds.vyMetersPerSecond);
+            SmartDashboard.putNumber("Sim debug chassis x speed", m_ChassisSpeeds.vyMetersPerSecond);*/
+            
+            //LimelightSim.updateTarget(getPose());
+            ChassisSpeeds chassisSpeed = Constants.DriveConstants.kDriveKinematics.toChassisSpeeds(getModuleStates());
+            SmartDashboard.putNumber("RADIANS", chassisSpeed.omegaRadiansPerSecond);
+            m_simYaw += chassisSpeed.omegaRadiansPerSecond * 0.02;
+
+            int dev = SimDeviceDataJNI.getSimDeviceHandle("navX-Sensor[0]");
+            SimDouble angle = new SimDouble(SimDeviceDataJNI.getSimValueHandle(dev, "Yaw"));
+            // NavX expects clockwise positive, but sim outputs clockwise negative
+            angle.set(Math.IEEEremainder(-Units.radiansToDegrees(m_simYaw), 360));
+            //m_pigeon.getSimCollection().setRawHeading(-Units.radiansToDegrees(m_simYaw));
         }
         periodicUpdateCycle +=1;
 
@@ -286,36 +284,38 @@ public class SwerveS extends SubsystemBase {
             updatePoseEstimatorWithVisionBotPose();
         }*/
         redIsAlliance = getAlliance();
+                zAccel = gyro.getRawAccelZ();
         //puts values to smartDashboard
         SmartDashboard.putNumber("Robot Heading", getRotation2d().getDegrees());
-        SmartDashboard.putNumber("FrontLeft Abs Encoder", frontLeft.getAbsoluteEncoderRad());
-        SmartDashboard.putNumber("FrontRight Abs Encoder", frontRight.getAbsoluteEncoderRad());
-        SmartDashboard.putNumber("BackLeft Abs Encoder", backLeft.getAbsoluteEncoderRad());
-        SmartDashboard.putNumber("BackRight Abs Encoder", backRight.getAbsoluteEncoderRad());
         SmartDashboard.putNumber("xError", xError);
         SmartDashboard.putBoolean("Auto Lock", autoLock);
         SmartDashboard.putBoolean("Red is Alliance", getAlliance());
-        zAccel = gyro.getRawAccelZ();
         SmartDashboard.putNumber("Position X (getPose)", getPose().getX());
         SmartDashboard.putNumber("Position Y (getPose)", getPose().getY());
         SmartDashboard.putNumber("Robot Heading (getPose)", getPose().getRotation().getDegrees());
-        
 
 
         xError = tx.getDouble(0.0);
 
-        m_modulePositions[0] = frontRight.getPosition();
-        m_modulePositions[1] = backRight.getPosition();
-        m_modulePositions[2] = frontLeft.getPosition();
-        m_modulePositions[3] = backLeft.getPosition();
+        m_modulePositions = getModulePositions();
 
         // LIST MODULES IN THE SAME EXACT ORDER USED WHEN DECLARING SwerveDriveKinematics
-        m_ChassisSpeeds = Constants.DriveConstants.kDriveKinematics.toChassisSpeeds(new SwerveModuleState[]{frontLeft.getState(), frontRight.getState(), backLeft.getState(), backRight.getState()});
+        m_ChassisSpeeds = Constants.DriveConstants.kDriveKinematics.toChassisSpeeds(getModuleStates());
         
         robotPosition = poseEstimator.update(getRotation2d(), m_modulePositions);
-
+        for (SwerveModule module : m_swerveModules.values()) {
+            var modulePositionFromChassis =
+                    Constants.DriveConstants.kModuleTranslations[module.getModuleNumber()]
+                            .rotateBy(getRotation2d())
+                            .plus(getPoseMeters().getTranslation());
+            module.setModulePose(
+                    new Pose2d(
+                            modulePositionFromChassis,
+                            module.getHeadingRotation2d().plus(getRotation2d())));
+          }
         robotField.setRobotPose(getPose());
-
+        //SmartDashboard.putData(robotField);
+        SmartDashboard.putData(CameraS.getEstimatedField());
         PathPlannerLogging.setLogCurrentPoseCallback((pose) -> {
             // Do whatever you want with the pose here
             robotField.setRobotPose(pose);
@@ -385,16 +385,14 @@ public class SwerveS extends SubsystemBase {
     }
 
     public void stopModules() {
-        frontLeft.stop();
-        frontRight.stop();
-        backLeft.stop();
-        backRight.stop();
+        for (SwerveModule module : m_swerveModules.values())
+                module.stop();
     }
 
     public void toggleAutoLock() {
         autoLock = !autoLock;
     }
-     public void updatePoseEstimatorWithVisionBotPose() {
+     /*public void updatePoseEstimatorWithVisionBotPose() {
         //sanity check, doesn't do anything if unexpected value occurs
         
         //computes latency
@@ -444,7 +442,7 @@ public class SwerveS extends SubsystemBase {
        
         
 
-        }
+        }*/
 
 
 
@@ -454,13 +452,15 @@ public class SwerveS extends SubsystemBase {
     public InstantCommand toggleAutoLockCommand() {
         return new InstantCommand(this::toggleAutoLock, this);
     }
-
+    public Pose2d getPoseMeters() {
+        return poseEstimator.getEstimatedPosition();
+      }
     public void setChassisSpeeds(ChassisSpeeds speed) {
         SwerveModuleState[] moduleStates = Constants.DriveConstants.kDriveKinematics.toSwerveModuleStates(speed);
-        frontLeft.setDesiredState(moduleStates[0]);
-        frontRight.setDesiredState(moduleStates[1]);
-        backLeft.setDesiredState(moduleStates[2]);
-        backRight.setDesiredState(moduleStates[3]);
+        for (SwerveModule module : m_swerveModules.values()){
+            module.setDesiredState(moduleStates[module.getModuleNumber()]);
+        }
+
     }
     
     public void setModuleStates(SwerveModuleState[] desiredStates) {
@@ -468,10 +468,9 @@ public class SwerveS extends SubsystemBase {
         SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, Constants.DriveConstants.kMaxSpeedMetersPerSecond);
         
         // LIST MODULES IN THE SAME EXACT ORDER USED WHEN DECLARING SwerveDriveKinematics
-        frontLeft.setDesiredState(desiredStates[0]);
-        frontRight.setDesiredState(desiredStates[1]);
-        backLeft.setDesiredState(desiredStates[2]);
-        backRight.setDesiredState(desiredStates[3]);
+        for (SwerveModule module : m_swerveModules.values()){
+            module.setDesiredState(desiredStates[module.getModuleNumber()]);
+        }
     }
     /**
      * Function that sets the robot to robot relative (and then sets the leds to a pattern showing that the navx has disconnected) if the navx has disconnected

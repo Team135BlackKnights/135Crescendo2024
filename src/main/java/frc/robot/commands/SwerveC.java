@@ -5,10 +5,10 @@ import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.DataHandler;
 import frc.robot.RobotContainer;
+import frc.robot.commands.autoCommands.AutonIntake;
 import frc.robot.subsystems.CameraS;
 import frc.robot.subsystems.SwerveS;
 
@@ -41,19 +41,7 @@ public class SwerveC extends Command {
   
   @Override
   public void execute() {
-    if (RobotContainer.manipController.getPOV() == 0 && RobotContainer.manipController.getStartButton() && !SwerveS.runningTest){
-      swerveS.sysIdQuasistatic(SysIdRoutine.Direction.kForward);
-    }
-    else if (RobotContainer.manipController.getPOV() == 90 && RobotContainer.manipController.getStartButton() && !SwerveS.runningTest){
-      swerveS.sysIdQuasistatic(SysIdRoutine.Direction.kReverse);
-    }
-    else if (RobotContainer.manipController.getPOV() == 180 && RobotContainer.manipController.getStartButton() && !SwerveS.runningTest){
-      swerveS.sysIdDynamic(SysIdRoutine.Direction.kForward);
-    }
-    else if (RobotContainer.manipController.getPOV() == 270 && RobotContainer.manipController.getStartButton() && !SwerveS.runningTest){
-      swerveS.sysIdDynamic(SysIdRoutine.Direction.kReverse);
-    }
-    else{
+    if (!AutonIntake.takeOver){
       // Get desired ChassisSpeeds from controller
       double xSpeed = -RobotContainer.driveController.getLeftY();
       double ySpeed = -RobotContainer.driveController.getLeftX();
@@ -87,12 +75,12 @@ public class SwerveC extends Command {
         
       }
       // If the desired ChassisSpeeds are really small (ie from controller drift) make them even smaller so that the robot doesn't move
-      xSpeed = Math.abs(xSpeed) > Constants.SwerveConstants.kDeadband ? xSpeed : 0.0001;
-      ySpeed = Math.abs(ySpeed) > Constants.SwerveConstants.kDeadband ? ySpeed : 0.0001;
+      xSpeed = Math.abs(xSpeed) > Constants.SwerveConstants.kDeadband ? xSpeed : 0.0000;
+      ySpeed = Math.abs(ySpeed) > Constants.SwerveConstants.kDeadband ? ySpeed : 0.0000;
       if (SwerveS.autoLock == true && SwerveS.aprilTagVisible() == true) {
-        turningSpeed = Math.abs(turningSpeed) > Constants.SwerveConstants.kAutoDeadband ? turningSpeed : 0.0001;
+        turningSpeed = Math.abs(turningSpeed) > Constants.SwerveConstants.kAutoDeadband ? turningSpeed : 0.0000;
       } else {
-        turningSpeed = Math.abs(turningSpeed) > Constants.SwerveConstants.kDeadband ? turningSpeed : 0.0001;
+        turningSpeed = Math.abs(turningSpeed) > Constants.SwerveConstants.kDeadband ? turningSpeed : 0.0000;
       }
 
       // Limit the acceleration and convert -1 to 1 from the controller into actual speeds
@@ -120,8 +108,7 @@ public class SwerveC extends Command {
       // Set our module states to our desired module states
       swerveS.setModuleStates(moduleStates);
         }
-    
-  }
+      }
   /*Use this link to compute the regression model:https://planetcalc.com/5992/#google_vignette 
     Each of the files has an x and y output so put those in the respective lists, or use a ti-84 stats bar*/
   public void printData() {

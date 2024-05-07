@@ -64,9 +64,10 @@ public class OutakeS extends SubsystemBase {
     // Outputs (what we can measure): [velocity], in radians per second.
     //
     // The Kv and Ka constants are found using the FRC Characterization toolsuite
+    //one more try!
     private final static LinearSystem<N1, N1, N1> m_topFlywheelPlant =
-        LinearSystemId.createFlywheelSystem(DCMotor.getNEO(1), Constants.OutakeConstants.kFlywheelMomentOfInertia, 1/Constants.OutakeConstants.flywheelGearRatio);
-        //LinearSystemId.identifyVelocitySystem(Constants.OutakeConstants.kVVoltSecondsPerRotation, Constants.OutakeConstants.kAVoltSecondsSquaredPerRotation);
+        //LinearSystemId.createFlywheelSystem(DCMotor.getNEO(1), Constants.OutakeConstants.kFlywheelMomentOfInertia, 1/Constants.OutakeConstants.flywheelGearRatio);
+        LinearSystemId.identifyVelocitySystem(Constants.OutakeConstants.kVVoltSecondsPerRotation*.995, Constants.OutakeConstants.kAVoltSecondsSquaredPerRotation);
     //to reject noise, we use a kalman filter.
     private final static KalmanFilter<N1,N1,N1> m_topObserver = 
         new KalmanFilter<>(
@@ -81,7 +82,7 @@ public class OutakeS extends SubsystemBase {
     private final static LinearQuadraticRegulator<N1, N1, N1> m_topController =
     new LinearQuadraticRegulator<>(
         m_topFlywheelPlant,
-        VecBuilder.fill(1), /* qelms. velocity error tolerances, in meters per second. Decrease this to more
+        VecBuilder.fill(15), /* qelms. velocity error tolerances, in meters per second. Decrease this to more
         heavily penalize state excursion, or make the controller behave more aggressively. In
         this example we weight position much more highly than velocity, but this can be
         tuned to balance the two.*/
@@ -92,11 +93,11 @@ public class OutakeS extends SubsystemBase {
     new LinearSystemLoop<>(m_topFlywheelPlant, m_topController, m_topObserver, 12.0, 0.020); //max physical voltage, not applied.
     
     
-    private final static LinearSystem<N1, N1, N1> m_bottomFlywheelPlant =LinearSystemId.createFlywheelSystem(DCMotor.getNEO(1), Constants.OutakeConstants.kFlywheelMomentOfInertia, 1/Constants.OutakeConstants.flywheelGearRatio);
-    //LinearSystemId.identifyVelocitySystem(Constants.OutakeConstants.kVVoltSecondsPerRotation*.995, Constants.OutakeConstants.kAVoltSecondsSquaredPerRotation);
+    private final static LinearSystem<N1, N1, N1> m_bottomFlywheelPlant =//LinearSystemId.createFlywheelSystem(DCMotor.getNEO(1), Constants.OutakeConstants.kFlywheelMomentOfInertia, 1/Constants.OutakeConstants.flywheelGearRatio);
+    LinearSystemId.identifyVelocitySystem(Constants.OutakeConstants.kVVoltSecondsPerRotation*.995, Constants.OutakeConstants.kAVoltSecondsSquaredPerRotation);
     private final static KalmanFilter<N1,N1,N1> m_bottomObserver = new KalmanFilter<>(Nat.N1(),Nat.N1(),m_bottomFlywheelPlant,VecBuilder.fill(3.0),VecBuilder.fill(0.01), .02 );
     private final static LinearQuadraticRegulator<N1, N1, N1> m_bottomController =
-    new LinearQuadraticRegulator<>(m_bottomFlywheelPlant,VecBuilder.fill(8),VecBuilder.fill(12.0),0.020);
+    new LinearQuadraticRegulator<>(m_bottomFlywheelPlant,VecBuilder.fill(11),VecBuilder.fill(12.0),0.020);
     private final static LinearSystemLoop<N1, N1, N1> m_bottomLoop = new LinearSystemLoop<>(m_bottomFlywheelPlant, m_bottomController, m_bottomObserver, 12.0, 0.020);
     private double topNextVoltage,bottomNextVoltage;
     private final FlywheelSim topFlywheelSim = new FlywheelSim(m_topFlywheelPlant,DCMotor.getNEO(1),1/Constants.OutakeConstants.flywheelGearRatio);
@@ -166,10 +167,6 @@ public class OutakeS extends SubsystemBase {
    * @param direction The direction (forward or reverse) to run the test in
    */
   public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
-    runningTest = true;
-    sysIdRoutine.quasistatic(direction).finallyDo(() -> {
-        runningTest = false;
-    });
     return sysIdRoutine.quasistatic(direction);
   }
   public double getDrawnCurrentAmps(){
@@ -181,10 +178,6 @@ public class OutakeS extends SubsystemBase {
    * @param direction The direction (forward or reverse) to run the test in
    */
   public Command sysIdDynamic(SysIdRoutine.Direction direction) {
-    runningTest = true;
-    sysIdRoutine.quasistatic(direction).finallyDo(() -> {
-        runningTest = false;
-    });
     return sysIdRoutine.dynamic(direction);
   }
     public static double getAverageFlywheelSpeed() {
@@ -209,7 +202,7 @@ public class OutakeS extends SubsystemBase {
      * @param speed The RPM of the flywheels.
      */
     public void setRPM(double rpm){
-        m_topLoop.setNextR(VecBuilder.fill(rpm));
+        m_topLoop.setNextR(VecBuilder.fill(rpm+60)); //haha top motor not same RPM output :)
         m_bottomLoop.setNextR(VecBuilder.fill(rpm));
         /*topFlywheel.setVoltage(
             shooterPID.calculate(topFlywheelEncoder.getVelocity(), rpm)
@@ -225,7 +218,7 @@ public class OutakeS extends SubsystemBase {
 
         //set setpoint
         if (Robot.isReal()){
-            m_topLoop.setNextR(VecBuilder.fill(topWheelSpeed));
+            m_topLoop.setNextR(VecBuilder.fill(topWheelSpeed+45));
             m_bottomLoop.setNextR(VecBuilder.fill(bottomWheelSpeed));
         }else{
             m_topLoop.setNextR(VecBuilder.fill(Units.rotationsPerMinuteToRadiansPerSecond(topWheelSpeed))); //because it uses radians..?

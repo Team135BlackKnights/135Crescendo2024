@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.IntakeConstants;
+import frc.robot.commands.autoCommands.AutonIntake;
 
 
 
@@ -36,9 +37,10 @@ public class IntakeS extends SubsystemBase {
     public static Thread sensorThread;
     public static int timesRan;
     public PIDController anglePidController = new PIDController(0.06, 0, 0);
+    private static double kP,kI,kD;
 
+    public static PIDController autoIntakeController = new PIDController(0.00135, 0.00135, 0.00001); //sadly cannot be system Id'd
 
-    
     public IntakeS() {
         timesRan = 0;
 
@@ -66,7 +68,12 @@ public class IntakeS extends SubsystemBase {
         //sets changes to motor (resource intensive, ONLY CALL ON INITIALIZATION)
         primaryIntake.burnFlash();
         deployIntake.burnFlash();
-
+        kP = Constants.IntakeConstants.PIDConstants.P;
+        kI = Constants.IntakeConstants.PIDConstants.I;
+        kD = Constants.IntakeConstants.PIDConstants.D;
+        SmartDashboard.putNumber("P Gain", kP);
+        SmartDashboard.putNumber("I Gain", kI);
+        SmartDashboard.putNumber("D Gain", kD);
         //Color sensor thread
 
     }
@@ -79,7 +86,19 @@ public class IntakeS extends SubsystemBase {
         SmartDashboard.putNumber("Intake Angle", getIntakeAngle());
       //  SmartDashboard.putBoolean("Intake Within Bounds", intakeWithinBounds());
         SmartDashboard.putNumber("Intake Offset", IntakeConstants.intakeOffset);
-
+        double p = SmartDashboard.getNumber("P Gain", Constants.IntakeConstants.PIDConstants.P);
+        double i = SmartDashboard.getNumber("I Gain", Constants.IntakeConstants.PIDConstants.I);
+        double d = SmartDashboard.getNumber("D Gain", Constants.IntakeConstants.PIDConstants.D);
+        if ((p != kP)) { 
+            autoIntakeController.setP(p);
+             kP = p; 
+        }
+        if ((i != kI)) {
+            autoIntakeController.setI(i); kI = i; 
+        }
+        if ((d != kD)) {
+            autoIntakeController.setD(d); kD = d;
+        }
     }
 
     public static double getIntakePosition() {
@@ -139,9 +158,14 @@ public class IntakeS extends SubsystemBase {
             Timer timer = new Timer();
             timer.start();
             while (timer.get() < .15) {
+                setPrimaryIntake(-0.5);
+            }
+            timer.reset();
+            while (timer.get() < .15){
                 setPrimaryIntake(0.2);
             }
             setPrimaryIntake(0);
+            AutonIntake.allClear = true;
         }).start();
     }
     }

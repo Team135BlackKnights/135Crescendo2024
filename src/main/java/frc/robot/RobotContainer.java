@@ -52,6 +52,7 @@ public class RobotContainer {
 
   JoystickButton aButton = new JoystickButton(driveController, 1);
   JoystickButton bButton = new JoystickButton(manipController, 2);
+  JoystickButton bButtonDrive = new JoystickButton(driveController, 2);
   JoystickButton xButton = new JoystickButton(driveController, 3);
   JoystickButton yButton = new JoystickButton(driveController, 4);
   static JoystickButton selectButton = new JoystickButton(driveController,7);
@@ -94,6 +95,7 @@ public class RobotContainer {
     if (bButton.getAsBoolean() && isDriving()){
       new SetAngle(intakeS, outakeS, 13);
     }
+    bButtonDrive.whileTrue(new AutonIntake(intakeS,swerveS));
     
     //outake Tests
     startButton.and(aButton).whileTrue(outakeS.sysIdQuasistatic(SysIdRoutine.Direction.kForward));

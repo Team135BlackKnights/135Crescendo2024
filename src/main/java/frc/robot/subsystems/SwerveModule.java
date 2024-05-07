@@ -4,6 +4,7 @@ package frc.robot.subsystems;
 
 //import com.ctre.phoenix.sensors.CANCoder;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.REVPhysicsSim;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkAnalogSensor;
 import com.revrobotics.CANSparkBase.IdleMode;
@@ -11,18 +12,20 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.SparkAnalogSensor.Mode;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.system.plant.DCMotor;
 //import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Robot;
 
 
-public class SwerveModule {
-
-    private final SwerveModuleSim swerveModuleSim;
+public class SwerveModule extends SubsystemBase{
 
 
 
@@ -45,6 +48,16 @@ public class SwerveModule {
     private final boolean absoluteEncoderReversed;
     private final double absoluteEncoderOffsetRad;
     
+
+
+    //Simulation Variables
+    double m_currentAngle;
+    private double m_simDriveEncoderPosition;
+    private double m_simDriveEncoderVelocity;
+    private double m_simAngleDifference;
+    private double m_simTurnAngleIncrement;
+    Pose2d m_pose;
+    private int m_moduleNumber;
     /**
      * 
      * @param driveMotorId Drive CANSparkMax Motor ID
@@ -62,7 +75,15 @@ public class SwerveModule {
         driveKpKsKvKa[1], driveKpKsKvKa[2], driveKpKsKvKa[3]);
        
        
-       
+        if (turningMotorId == 17){
+            m_moduleNumber = 0; //frontLeft
+        }else if (turningMotorId == 11){
+            m_moduleNumber = 1; //frontRight
+        }else if (turningMotorId == 15){
+            m_moduleNumber = 2; //backLeft
+        }else if (turningMotorId == 13){
+            m_moduleNumber = 3; //backRight
+        }
         //sets values of the encoder offset and whether its reversed
         this.absoluteEncoderOffsetRad = absoluteEncoderOffset;
         this.absoluteEncoderReversed = absoluteEncoderReversed;
@@ -97,10 +118,8 @@ public class SwerveModule {
 
         drivePIDController = new PIDController(driveKpKsKvKa[0], 0, 0);
         if (Robot.isSimulation()){
-            swerveModuleSim = new SwerveModuleSim(driveKpKsKvKa, turningKpKsKvKa, 3); 
-        }
-        else{
-            swerveModuleSim = null;
+            REVPhysicsSim.getInstance().addSparkMax(driveMotor, DCMotor.getNEO(1));
+            REVPhysicsSim.getInstance().addSparkMax(turningMotor, DCMotor.getNEO(1));
         }
     }
 
@@ -110,7 +129,7 @@ public class SwerveModule {
             return driveEncoder.getPosition();
         }
         else{
-            return swerveModuleSim.getDrivePosRadiansSim();
+            return m_simDriveEncoderPosition;
         }
         
     }
@@ -121,10 +140,16 @@ public class SwerveModule {
             return getAbsoluteEncoderRad();
         }
         else{
-            return swerveModuleSim.getTurningPosRadiansSim();
+            return m_currentAngle;
         }
         
     }
+    public int getModuleNumber() {
+        return m_moduleNumber;
+      }
+    public Rotation2d getHeadingRotation2d() {
+        return Rotation2d.fromDegrees(getTurningPosition());
+      }
 
     public double getDriveVelocity() {
         //returns velocity of drive wheel
@@ -132,19 +157,14 @@ public class SwerveModule {
             return driveEncoder.getVelocity();
         }
         else{
-            return swerveModuleSim.getDriveVelocityMetersPerSecond();
+            return m_simDriveEncoderVelocity;
         }
         
     }
 
     public double getTurningVelocity() {
         //returns velocity of turning motor
-        if (Robot.isReal()){
             return turningEncoder.getVelocity();
-        }
-        else{
-            return swerveModuleSim.getTurningVelocityMetersPerSecond();
-        }
         
         
     }
@@ -185,49 +205,30 @@ public class SwerveModule {
 
     public void resetEncoders() {
         //resets the encoders, (drive motor becomes zero, turning encoder becomes the module heading from the absolute encoder)
-        if (Robot.isReal()){
             driveEncoder.setPosition(0);
             turningEncoder.setPosition(getAbsoluteEncoderRad()); 
-        }
-        else{
-            swerveModuleSim.resetEncoders();
-        }
-        
     }
 
     public SwerveModulePosition getPosition() {
+        return new SwerveModulePosition(getDrivePosition(),getHeadingRotation2d());
          //basically creates a new swervemoduleposition based on the current positions of the drive and turning encoders
-
-        if (Robot.isReal()){
-            return new SwerveModulePosition(
-            driveEncoder.getPosition(), new Rotation2d(getAbsoluteEncoderRad()));
-        }
-       
-        else{
-            return swerveModuleSim.getSwerveModuleSimPosition();
-        }
+           
     }
     
 
     public SwerveModuleState getState() {
         //creates new swerveModuleState based on drive speed and turn motor position (speed and direction)
-        if (Robot.isReal()){
-            return new SwerveModuleState(getDriveVelocity(), new Rotation2d(getTurningPosition()));
-        }
-        else{
-            return swerveModuleSim.getSimModuleState();
-        }
+        return new SwerveModuleState(getDriveVelocity(), getHeadingRotation2d());
     }
 
 
     public void setDesiredState(SwerveModuleState state) {
         //var encoderRotation = new Rotation2d(getTurningPosition());
         // Stops the motors if the desired state is too small
-        if (Math.abs(state.speedMetersPerSecond) < 0.001 && !SwerveS.autoLock) {
+       /*  if (Math.abs(state.speedMetersPerSecond) < 0.001 && !SwerveS.autoLock) {
             stop();
             return;
-        }
-
+        }*/
         // Optimizing finds the shortest path to the desired angle
         state = SwerveModuleState.optimize(state, getState().angle);
 
@@ -244,6 +245,7 @@ public class SwerveModule {
         // Calculate the turning motor output from the turning PID controller.
         final double turnOutput =
             turningPIDController.calculate(getAbsoluteEncoderRad(), state.angle.getRadians());
+        
 
 //        final double turnFeedforward =
   //         turningFeedForward.calculate(turningPIDController.getSetpoint().velocity);
@@ -253,33 +255,48 @@ public class SwerveModule {
                 turningMotor.set(turnOutput);
             }
             else{
-              //  swerveModuleSim.updateVoltage((driveOutput + driveFeedforward), (turnOutput + turnFeedforward));
+                simUpdateDrivePosition(state);
+                m_currentAngle = state.angle.getDegrees();
+                //simTurnPosition(m_currentAngle);
             }
 
     }
-    public double getDrivePosRadiansSim(){
-        return swerveModuleSim.getDrivePosRadiansSim();
-    }
+    private void simUpdateDrivePosition(SwerveModuleState state) {
+        m_simDriveEncoderVelocity = state.speedMetersPerSecond;
+        double distancePer20Ms = m_simDriveEncoderVelocity *.02;    
+        m_simDriveEncoderPosition += distancePer20Ms;
+      }
 
-    public double getTurningPosRadiansSim(){
-        return swerveModuleSim.getTurningPosRadiansSim();
-    }
-
-    public double getDriveVelocityMetersPerSecond(){
-        return swerveModuleSim.getDriveVelocityMetersPerSecond();
-    }
+      private void simTurnPosition(double angle) {
+        if (angle != m_currentAngle && m_simTurnAngleIncrement == 0) {
+          m_simAngleDifference = angle - m_currentAngle;
+          m_simTurnAngleIncrement = m_simAngleDifference * .02;// 10*50ms = .2 sec move time
+        }
     
-    public double getTurningVelocityMetersPerSecond(){
-        return swerveModuleSim.getTurningVelocityMetersPerSecond();
-    }
+        if (m_simTurnAngleIncrement != 0) {
+          m_currentAngle += m_simTurnAngleIncrement;
+    
+          if ((Math.abs(angle - m_currentAngle)) < .1) {
+            m_currentAngle = angle;
+            m_simTurnAngleIncrement = 0;
+          }
+        }
+      }
 
     public void stop() {
         driveMotor.set(0);
         turningMotor.set(0);
     }
-    public void updateSimModuleState(){
-        swerveModuleSim.updateModuleState();
-    }
+    public void setModulePose(Pose2d pose) {
+        m_pose = pose;
+      }
     
-
+      public Pose2d getModulePose() {
+        return m_pose;
+      }
+    
+    @Override
+    public void simulationPeriodic() {
+      REVPhysicsSim.getInstance().run();
+    }
 }
