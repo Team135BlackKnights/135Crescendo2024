@@ -33,12 +33,17 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard
-    
+    DataLogManager.start();
     DriverStation.startDataLog(DataLogManager.getLog());
-    //DataLogManager.start();
     URCL.start(Constants.DataLog.manCanIdsToNames());
     m_robotContainer = new RobotContainer();
-    
+
+    if (Robot.isReal()){
+      DataHandler.createLogFileOnRIOUSB();
+    }
+    else if (Robot.isSimulation()){
+      DataHandler.createLogFileinSimulation("E:");
+    }
   }
 
   /**
@@ -117,5 +122,8 @@ public class Robot extends TimedRobot {
 
   /** This function is called periodically whilst in simulation. */
   @Override
-  public void simulationPeriodic() {}
+  public void simulationPeriodic() {
+    DataHandler.updateHandlerState();
+   
+  }
 }

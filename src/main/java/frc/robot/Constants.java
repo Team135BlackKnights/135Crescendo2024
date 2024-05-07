@@ -7,8 +7,15 @@ package frc.robot;
 import java.util.HashMap;
 import java.util.Map;
 
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.util.Color;
@@ -23,10 +30,21 @@ import edu.wpi.first.wpilibj2.command.Command;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+
   public static class AutoConstants {
     public static HashMap<String, Command> eventMap = new HashMap<>();
   }
+  public static final Mode currentMode = Mode.SIM;
+  public static enum Mode {
+    /** Running on a real robot. */
+    REAL,
 
+    /** Running a physics simulator. */
+    SIM,
+
+    /** Replaying from a log file. */
+    REPLAY
+  }
   public static class IntakeConstants {
 
     public static I2C.Port colorSensorPort = I2C.Port.kOnboard;
@@ -44,7 +62,8 @@ public final class Constants {
       absIntakeEncoderConversionFactor = 360,
       primaryIntakeGearRatio = 1/4.5,
       deployIntakeInnerBound = 0,
-      deployIntakeOuterBound = 90;
+      deployIntakeOuterBound = 90,
+      macroMoveSpeed = .5;
 
     public static boolean
       primaryIntakeReversed = true,
@@ -64,15 +83,15 @@ public final class Constants {
       flywheelGearRatio = 1.5,
       idealPercentTop = .34,
       idealPercentBottom = .31,
-      kP = 0.00035971,
-      kSVolts = -0.24149,
-      kVVoltSecondsPerRotation= 0.0010486,
-      kAVoltSecondsSquaredPerRotation = 0.00034565;
+      kFlywheelMomentOfInertia = .00066, //0.00006502025 //.001086
+      kP = 0.0021258,
+      kSVolts = -0.089838,
+      kVVoltSecondsPerRotation= 0.0015425*.928,
+      kAVoltSecondsSquaredPerRotation = 0.00039717*1;
 
     public static boolean
       topFlywheelReversed = false,
       bottomFlywheelReversed = false;
-    
   }
 
   public static class SwerveConstants {
@@ -87,13 +106,71 @@ public final class Constants {
       kDeadband = 0.1,
       kAutoDeadband = 0.01,
 
-      kTurningP = 0.5,
-      kSVolts = -0.24149,
-      kVVoltSecondsPerRotation= 0.0010486,
-      kAVoltSecondsSquaredPerRotation = 0.00034565;
+      kOverallP = 2.36975,
+      kOverallSVolts = -.180747,
+      kOverallVVoltSecondsPerRotation = 2.8303,
+      kOverallAVoltSecondsSquaredPerRotation = 1.4715,
+
+      kFrontRightDriveP = 2.4646, //2.4646 maybe
+      kFrontRightDriveSVolts = -0.040248,
+      kFrontRightDriveVVoltSecondsPerRotation = 2.9041,
+      kFrontRightDriveAVoltSecondsSquaredPerRotation = 1.52,
+
+      kFrontLeftDriveP = 2.5896, //2.5896 //4.1054
+      kFrontLeftDriveSVolts =-0.22934,
+      kFrontLeftDriveVVoltSecondsPerRotation = 2.8559,
+      kFrontLeftDriveAVoltSecondsSquaredPerRotation = 1.7338,
+
+      kBackRightDriveP = 2.0873,//maybe 2.0873 or 1.4862 //4.1688
+      kBackRightDriveSVolts =0.070421,
+      kBackRightDriveVVoltSecondsPerRotation = 2.8607,
+      kBackRightDriveAVoltSecondsSquaredPerRotation =  1.1811,
+
+      kBackLeftDriveP = 2.3375,//maybe 2.3375 or 1.5638 //3.9698
+      kBackLeftDriveSVolts = 0.01842,
+      kBackLeftDriveVVoltSecondsPerRotation = 2.7005,
+      kBackLeftDriveAVoltSecondsSquaredPerRotation = 1.4511,
+
+      //Window size is 1, velocity threshold is 75.
+      //Motor ID 17 
+      kFrontLeftTurnP = 1.0181, //maybe 0
+      kFrontLeftTurnKs = 0.34809,
+      kFrontLeftTurnKv = 0.0021885,
+      kFrontLeftTurnKa = 0.00019056,
+
+      //Motor ID 11
+      kFrontRightTurnP = 0.99768, //maybe 0
+      kFrontRightTurnKs = 0.28984,
+      kFrontRightTurnKv = 0.0021057,
+      kFrontRightTurnKa = 0.00018697,
+
+      //Motor ID 15
+      kBackLeftTurningP = 1.0521,
+      kBackLeftTurningKs = 0.26615,
+      kBackLeftTurningKv = 0.0021315,
+      kBackLeftTurningKa = 0.00019805,
+
+      //Motor ID 13
+      kBackRightTurningP = 1.2362,
+      kBackRightTurningKs = 0.25885,
+      kBackRightTurningKv = 0.0021008,
+      kBackRightTurningKa = 0.0002368;
+
+      public static double[] 
+      overallTurnkPkSkVkAkD = new double[]{Constants.DriveConstants.kOverallPTurn*4,Constants.DriveConstants.kOverallSVoltsTurn,Constants.DriveConstants.kOverallVVoltSecondsPerRotationTurn*2,Constants.DriveConstants.kOverallAVoltSecondsSquaredPerRotationTurn,Constants.DriveConstants.kOverallDTurn*1},
+      overallDrivekPkSkVkA = new double[]{Constants.DriveConstants.kOverallP,Constants.DriveConstants.kOverallSVolts,Constants.DriveConstants.kOverallVVoltSecondsPerRotation,Constants.DriveConstants.kOverallAVoltSecondsSquaredPerRotation},
+      frontRightDriveKpKsKvKa = new double[]{2.4646, .04248,2.9041,1.52},
+      frontLeftDriveKpKsKvKa = new double[]{2.5896, .22934,2.8559,1.7338},
+      backRightDriveKpKsKvKa = new double[]{2.0873, .070421,2.8607, 1.1811},
+      backLeftDriveKpKsKvKa = new double[]{2.3375, .01842, 2.7005, 1.4511},
+      frontLeftTurnKpKsKvKa = new double[]{1.0181, .34809,.0021885,.00019056},
+      frontRightTurnKpKsKvKa = new double[]{.99768, .28984, .0021057, .00018697},
+      backLeftTurnKpKsKvKa = new double[]{1.0521, .26615, .26615, .0021315},
+      backRightTurnKpKsKvKa = new double[]{1.2362,.25885, .0021008, .0002368};
   }
 
   public static class DriveConstants {
+
     public static double
       kChassisWidth = Units.inchesToMeters(24.25), // Distance between Left and Right wheels
       kChassisLength = Units.inchesToMeters(24.25), // Distance betwwen Front and Back wheels
@@ -104,7 +181,7 @@ public final class Constants {
       kMaxSpeedMetersPerSecond = Units.feetToMeters(15.1),
       kMaxTurningSpeedRadPerSec = 3.914667 * 2 * Math.PI, // 1.33655 *2 *Math.PI
       kTeleDriveMaxAcceleration = Units.feetToMeters(12), //guess
-      kTeleTurningMaxAcceleration = 5, //guess
+      kTeleTurningMaxAcceleration = 2 * Math.PI, //guess
       
       // To find these set them to zero, then turn the robot on and manually set the wheels straight.
       // The encoder values being read are then your new Offset values
@@ -128,6 +205,8 @@ public final class Constants {
       kFrontRightDrivePort = 10, //11
       kFrontRightTurningPort = 11, //21
       kFrontRightAbsEncoderPort = 0, //2
+
+      
 
       kBackLeftDrivePort = 14, //13
       kBackLeftTurningPort = 15, //23
@@ -153,6 +232,68 @@ public final class Constants {
       kBackRightDriveReversed = false,
       kBackRightTurningReversed = true,
       kBackRigthAbsEncoderReversed = false;
+      
+      //Unused
+      public static double 
+      kOverallP = 2.36975,
+      kOverallSVolts = -.180747,
+      kOverallVVoltSecondsPerRotation = 2.8303,
+      kOverallAVoltSecondsSquaredPerRotation = 1.4715,
+
+      kFrontRightDriveP = 4.125, //2.4646 maybe
+      kFrontRightDriveSVolts = -0.040248,
+      kFrontRightDriveVVoltSecondsPerRotation = 2.9041,
+      kFrontRightDriveAVoltSecondsSquaredPerRotation = 1.52,
+      
+      kFrontLeftDriveP = 4.1054, //2.5896 //4.1054
+      kFrontLeftDriveSVolts =-0.22934,
+      kFrontLeftDriveVVoltSecondsPerRotation = 2.8559,
+      kFrontLeftDriveAVoltSecondsSquaredPerRotation = 1.7338,
+
+      kBackRightDriveP = 4.1688,//maybe 2.0873 or 1.4862 //4.1688
+      kBackRightDriveSVolts =0.070421,
+      kBackRightDriveVVoltSecondsPerRotation = 2.8607,
+      kBackRightDriveAVoltSecondsSquaredPerRotation =  1.1811,
+
+      kBackLeftDriveP = 3.9698,//maybe 2.3375 or 1.5638 //3.9698
+      kBackLeftDriveSVolts = 0.01842,
+      kBackLeftDriveVVoltSecondsPerRotation = 2.7005,
+      kBackLeftDriveAVoltSecondsSquaredPerRotation = 1.4511,
+
+      //Motor ID 17 
+      kOverallSVoltsTurn = .2907325,
+      kOverallVVoltSecondsPerRotationTurn = .002131625,
+      kOverallAVoltSecondsSquaredPerRotationTurn =  .000203095,
+      kOverallPTurn = 1.07602,
+      kOverallDTurn = 0.019508,
+      kFrontLeftTurnP = 1.0181, //maybe 0
+      kFrontLeftTurnD = 0.018265,
+      kFrontLeftTurnKs = 0.34809,
+      kFrontLeftTurnKv = 0.0021885,
+      kFrontLeftTurnKa = 0.00019056,
+
+      //Motor ID 11
+      kFrontRightTurnP = 0.99768, //maybe 0
+      kFrontRightTurnD = 0.017936,
+      kFrontRightTurnKs = 0.28984,
+      kFrontRightTurnKv = 0.0021057,
+      kFrontRightTurnKa = 0.00018697,
+
+      //Motor ID 15
+      kBackLeftTurningP = 1.0521,
+      kBackLeftTurningD = 0.019017,
+      kBackLeftTurningKs = 0.26615,
+      kBackLeftTurningKv = 0.0021315,
+      kBackLeftTurningKa = 0.00019805,
+
+      //Motor ID 13
+      kBackRightTurningP = 1.2362,
+      kBackRightTurningD = 0.022814,
+      kBackRightTurningKs = 0.25885,
+      kBackRightTurningKv = 0.0021008,
+      kBackRightTurningKa = 0.0002368;
+  }
+  public static class DriveSimConstants{
 
   }
 
@@ -204,9 +345,38 @@ public final class Constants {
   public static class LimelightConstants{
     public static double limeLightAngleOffsetDegrees = 15,
     limelightLensHeightoffFloorInches = 22.5;
+    public static String limelightName = "limelight-swerve";
   }
-
+  public static class VisionConstants{ 
+    //These are all placeholders
+    //Camera names, from photonVision web interface
+    public static String 
+      frontCamName = "Front_Camera",
+      backCamName = "Back_Camera",
+      leftCamName = "Left_Camera",
+      rightCamName = "Right_Camera";
+    //offset of each cam from robot center, in meters
+    public static Translation3d 
+      frontCamTranslation3d = new Translation3d(0, 0, 0),
+      rightCamTranslation3d = new Translation3d(Units.inchesToMeters(12.75),Units.inchesToMeters(Constants.DriveConstants.kChassisLength/2),Units.inchesToMeters(19.75)), 
+      /*For right cam ^
+        X = center to limelight tube
+        Y = center to right chassis rail
+        Z = floor to camera 
+      */
+      leftCamTranslation3d = new Translation3d(Units.inchesToMeters(0), Units.inchesToMeters(0), Units.inchesToMeters(0)),
+      backCamTranslation3d = new Translation3d(Units.inchesToMeters(12.75),Units.inchesToMeters(0),Units.inchesToMeters(25));
+    //Pitches of camera, in DEGREES, positive means UPWARD angle
+    public static int 
+      frontCamPitch = 15,
+      rightCamPitch = 21, //MUST GET
+      leftCamPitch = 15,
+      backCamPitch = 26;    
+  }
   public static class FieldConstants {
+    public static final Matrix<N3, N1> kSingleTagStdDevs = VecBuilder.fill(4, 4, 8);
+    public static final AprilTagFieldLayout kTagLayout =AprilTagFields.kDefaultField.loadAprilTagLayoutField();
+    public static final Matrix<N3, N1> kMultiTagStdDevs = VecBuilder.fill(0.5, 0.5, 1);
     public static double
       targetHeightoffFloorInches = 57,
       speakerLowerLipHeight = Units.inchesToMeters(78.13),
@@ -230,5 +400,4 @@ public final class Constants {
     public static double variableAngleDistance = 0;
     public static double angleOutputDegrees = 0;
   }
-  
 }

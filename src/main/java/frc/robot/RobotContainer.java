@@ -16,6 +16,7 @@ import frc.robot.commands.autoCommands.AutoLock;
 import frc.robot.commands.autoCommands.AutonIntake;
 import frc.robot.commands.autoCommands.FireShooter;
 import frc.robot.commands.autoCommands.MoveIntake;
+import frc.robot.subsystems.CameraS;
 import frc.robot.subsystems.HangS;
 import frc.robot.subsystems.IntakeS;
 import frc.robot.subsystems.OutakeS;
@@ -41,22 +42,24 @@ public class RobotContainer {
   private final IntakeS intakeS = new IntakeS();
   private final OutakeS outakeS = new OutakeS();
   private final HangS hangS = new HangS();
-  @SuppressWarnings("unused")
+  @SuppressWarnings("unused") //only periodic ledStrip is used, so don't care.
   private final LEDStripS ledStripS = new LEDStripS();
+  @SuppressWarnings("unused") //only periodic camera updates is used, so don't care.
+  private final CameraS cameraS = new CameraS();
   private final SendableChooser<Command> autoChooser;
-
   public static XboxController driveController = new XboxController(0);
   public static XboxController manipController = new XboxController(1);
 
   JoystickButton aButton = new JoystickButton(driveController, 1);
-  JoystickButton xButton = new JoystickButton(driveController, 3);
-  JoystickButton yButton = new JoystickButton(manipController, 4);
   JoystickButton bButton = new JoystickButton(manipController, 2);
-  JoystickButton startButton = new JoystickButton(manipController,8);
-  POVButton povUpManip = new POVButton(manipController, 0);
-  POVButton povRightManip = new POVButton(manipController, 90);
-  POVButton povDownManip = new POVButton(manipController, 180);
-  POVButton povLeftManip = new POVButton(manipController, 270);
+  JoystickButton xButton = new JoystickButton(driveController, 3);
+  JoystickButton yButton = new JoystickButton(driveController, 4);
+  static JoystickButton selectButton = new JoystickButton(driveController,7);
+  static JoystickButton startButton = new JoystickButton(driveController,8);
+  //POVButton povUpManip = new POVButton(driveController, 0);
+  POVButton povRightManip = new POVButton(driveController, 90);
+  POVButton povDownManip = new POVButton(driveController, 180);
+  POVButton povLeftManip = new POVButton(driveController, 270);
   POVButton povUp = new POVButton(driveController, 0);
  // POVButton manipPOVZero = new POVButton(manipController, 0);
  // POVButton manipPOV180 = new POVButton(manipController, 180);
@@ -66,13 +69,11 @@ public class RobotContainer {
     intakeS.setDefaultCommand(new IntakeC(intakeS));
     outakeS.setDefaultCommand(new OutakeC(outakeS));
     hangS.setDefaultCommand(new HangC(hangS));
-    
     NamedCommands.registerCommand("DeployIntake", new MoveIntake(intakeS));
     NamedCommands.registerCommand("Lock Onto April Tags", new AutoLock(swerveS));
-    NamedCommands.registerCommand("IntakeNote", new AutonIntake(intakeS));
-    NamedCommands.registerCommand("ShootNote 3600 RPM", new FireShooter(outakeS, intakeS, 3600));
-    NamedCommands.registerCommand("ShootNote 3000 RPM", new FireShooter(outakeS, intakeS, 3000));
+    NamedCommands.registerCommand("IntakeNote", new AutonIntake(intakeS,swerveS));
     NamedCommands.registerCommand("Shoot From Anywhere", new VariableAngle(intakeS, outakeS, true));
+    NamedCommands.registerCommand("Hold Outake Ready", new FireShooter(outakeS));
 
     autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auto Chooser",autoChooser);
@@ -81,31 +82,40 @@ public class RobotContainer {
   }
 
   private void configureBindings() {
-    if (aButton.getAsBoolean() && !manipController.getStartButton()){
+    if (aButton.getAsBoolean() && isDriving()){
       swerveS.toggleAutoLockCommand();
     }
-    if (yButton.getAsBoolean() && !manipController.getStartButton()){
+    if (yButton.getAsBoolean() && isDriving()){
       new InstantCommand(() -> swerveS.zeroHeading());
     }
-    if (yButton.getAsBoolean() && !manipController.getStartButton()){
+    if (yButton.getAsBoolean() && isDriving()){
       new VariableSpeed(intakeS, outakeS, false);
     }
-    if (bButton.getAsBoolean() && !manipController.getStartButton()){
+    if (bButton.getAsBoolean() && isDriving()){
       new SetAngle(intakeS, outakeS, 13);
     }
+    
     //outake Tests
     startButton.and(aButton).whileTrue(outakeS.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
     startButton.and(bButton).whileTrue(outakeS.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
     startButton.and(xButton).whileTrue(outakeS.sysIdDynamic(SysIdRoutine.Direction.kForward));
     startButton.and(yButton).whileTrue(outakeS.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+
+    //swerve DRIVE tests
+    startButton.and(povUp).whileTrue(swerveS.sysIdQuasistaticDrive(SysIdRoutine.Direction.kForward));
+    startButton.and(povRightManip).whileTrue(swerveS.sysIdQuasistaticDrive(SysIdRoutine.Direction.kReverse));
+    startButton.and(povDownManip).whileTrue(swerveS.sysIdDynamicDrive(SysIdRoutine.Direction.kForward));
+    startButton.and(povLeftManip).whileTrue(swerveS.sysIdDynamicDrive(SysIdRoutine.Direction.kReverse));
+    
     //swerve TURNING tests
-    startButton.and(povUpManip).whileTrue(swerveS.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-    startButton.and(povRightManip).whileTrue(swerveS.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-    startButton.and(povDownManip).whileTrue(swerveS.sysIdDynamic(SysIdRoutine.Direction.kForward));
-    startButton.and(povLeftManip).whileTrue(swerveS.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+
+    selectButton.and(povUp).whileTrue(swerveS.sysIdQuasistaticTurn(SysIdRoutine.Direction.kForward));
+    selectButton.and(povRightManip).whileTrue(swerveS.sysIdQuasistaticTurn(SysIdRoutine.Direction.kReverse));
+    selectButton.and(povDownManip).whileTrue(swerveS.sysIdDynamicTurn(SysIdRoutine.Direction.kForward));
+    selectButton.and(povLeftManip).whileTrue(swerveS.sysIdDynamicTurn(SysIdRoutine.Direction.kReverse));
    //manipController.y().and(manipController.start().negate()).onTrue(new VariableSpeed(intakeS, outakeS, false));
     //manipController.b().and(manipController.start().negate()).onTrue(new SetAngle(intakeS, outakeS, 13));
-    if (povUp.getAsBoolean() && !manipController.getStartButton()){
+    if (povUp.getAsBoolean() && isDriving()){
       new HangMacroC(hangS, HangConstants.upperHookHeight);
       new SetAngle(intakeS, outakeS, 27);
     }
@@ -120,5 +130,11 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
     return autoChooser.getSelected();
+  }
+  public static boolean isDriving(){
+    if (startButton.getAsBoolean() || selectButton.getAsBoolean()){
+      return false; //currently doing a test
+    }
+    return true;
   }
 }
