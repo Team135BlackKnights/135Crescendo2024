@@ -1,15 +1,15 @@
 package frc.robot.commands.autoCommands;
 
-import edu.wpi.first.math.controller.PIDController;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.LimelightHelpers;
 import frc.robot.Robot;
-import frc.robot.subsystems.CameraS;
 import frc.robot.subsystems.IntakeS;
 import frc.robot.subsystems.SwerveS;
 
@@ -22,20 +22,22 @@ public class AutonIntake extends Command {
     public static boolean takeOver = false;
     private static boolean close = false;
     
-    private final Pose2d targetNoteLocation;
+    private Pose2d targetNoteLocation = null;
     private Pose2d currentPose;
     private ChassisSpeeds speeds;
     double ty;
     Timer timer = new Timer();
     Timer delayTimer = new Timer();
-    /*Call this in teleop */
+    /*Call this in all cases but simulation autonomous*/
     public AutonIntake(IntakeS intakeS, SwerveS swerveS) {
         this.intakeS = intakeS;
         this.swerveS = swerveS;
-        targetNoteLocation = null;
         addRequirements(intakeS);
+        if (DriverStation.isTeleop()){
+            this.targetNoteLocation = intakeS.getClosestNote();
+        }
     }
-    /*Call this for simulation only */
+    /*Call this for simulation autonomous only */
     public AutonIntake(IntakeS intakeS, SwerveS swerveS, Pose2d fieldNotePose){
         this.intakeS = intakeS;
         this.swerveS = swerveS;
@@ -76,7 +78,7 @@ public class AutonIntake extends Command {
             tv = LimelightHelpers.getTV(Constants.LimelightConstants.limelightName);
             ty = LimelightHelpers.getTY(Constants.LimelightConstants.limelightName);
             SmartDashboard.putNumber("TY", ty);
-
+            
             }
             SmartDashboard.putBoolean("Note Loaded?", IntakeS.noteIsLoaded());
             if (ty >18.5){

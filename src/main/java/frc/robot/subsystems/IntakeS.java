@@ -9,8 +9,9 @@ import com.revrobotics.ColorSensorV3;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
-
+import frc.robot.Constants.DriveSimConstants;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
@@ -19,7 +20,7 @@ import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.commands.autoCommands.AutonIntake;
-
+import java.util.ArrayList;
 
 
 
@@ -123,6 +124,19 @@ public class IntakeS extends SubsystemBase {
         else{
             return false;
         }
+
+    }
+    public Pose2d getClosestNote(){
+        //Obnoxiously high distance to be overrode
+        Pose2d closestPose = new Pose2d();
+        double closestPoseDistance = 9999;
+        for (var pose : DriveSimConstants.fieldNotePoses){
+            if (pose.getTranslation().getDistance(SwerveS.getPose().getTranslation())< closestPoseDistance){
+                closestPose = pose;
+                closestPoseDistance = pose.getTranslation().getDistance(SwerveS.getPose().getTranslation());
+            }
+        }
+        return closestPose;
 
     }
 
