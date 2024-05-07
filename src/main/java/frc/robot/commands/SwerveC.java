@@ -5,7 +5,6 @@ import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.DataHandler;
 import frc.robot.RobotContainer;
@@ -43,19 +42,6 @@ public class SwerveC extends Command {
   @Override
   public void execute() {
     if (!AutonIntake.takeOver){
-    if (RobotContainer.manipController.getPOV() == 0 && RobotContainer.manipController.getStartButton() && !SwerveS.runningTest){
-      swerveS.sysIdQuasistatic(SysIdRoutine.Direction.kForward);
-    }
-    else if (RobotContainer.manipController.getPOV() == 90 && RobotContainer.manipController.getStartButton() && !SwerveS.runningTest){
-      swerveS.sysIdQuasistatic(SysIdRoutine.Direction.kReverse);
-    }
-    else if (RobotContainer.manipController.getPOV() == 180 && RobotContainer.manipController.getStartButton() && !SwerveS.runningTest){
-      swerveS.sysIdDynamic(SysIdRoutine.Direction.kForward);
-    }
-    else if (RobotContainer.manipController.getPOV() == 270 && RobotContainer.manipController.getStartButton() && !SwerveS.runningTest){
-      swerveS.sysIdDynamic(SysIdRoutine.Direction.kReverse);
-    }
-    else{
       // Get desired ChassisSpeeds from controller
       double xSpeed = -RobotContainer.driveController.getLeftY();
       double ySpeed = -RobotContainer.driveController.getLeftX();
@@ -123,8 +109,6 @@ public class SwerveC extends Command {
       swerveS.setModuleStates(moduleStates);
         }
       }
-    
-  }
   /*Use this link to compute the regression model:https://planetcalc.com/5992/#google_vignette 
     Each of the files has an x and y output so put those in the respective lists, or use a ti-84 stats bar*/
   public void printData() {

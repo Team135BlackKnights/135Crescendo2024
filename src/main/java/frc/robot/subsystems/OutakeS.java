@@ -64,6 +64,7 @@ public class OutakeS extends SubsystemBase {
     // Outputs (what we can measure): [velocity], in radians per second.
     //
     // The Kv and Ka constants are found using the FRC Characterization toolsuite
+    //one more try!
     private final static LinearSystem<N1, N1, N1> m_topFlywheelPlant =
         //LinearSystemId.createFlywheelSystem(DCMotor.getNEO(1), Constants.OutakeConstants.kFlywheelMomentOfInertia, 1/Constants.OutakeConstants.flywheelGearRatio);
         LinearSystemId.identifyVelocitySystem(Constants.OutakeConstants.kVVoltSecondsPerRotation*.995, Constants.OutakeConstants.kAVoltSecondsSquaredPerRotation);
@@ -217,7 +218,7 @@ public class OutakeS extends SubsystemBase {
 
         //set setpoint
         if (Robot.isReal()){
-            m_topLoop.setNextR(VecBuilder.fill(topWheelSpeed+60));
+            m_topLoop.setNextR(VecBuilder.fill(topWheelSpeed+45));
             m_bottomLoop.setNextR(VecBuilder.fill(bottomWheelSpeed));
         }else{
             m_topLoop.setNextR(VecBuilder.fill(Units.rotationsPerMinuteToRadiansPerSecond(topWheelSpeed))); //because it uses radians..?

@@ -125,6 +125,7 @@ public static boolean aprilTagVisible() {
                         var estPose = est.estimatedPose.toPose2d();
                         Field2d cameraField = new Field2d();
                         cameraField.setRobotPose(estPose);
+                        cameraField.close();
                         //SmartDashboard.putData(cameraField);
                         // Change our trust in the measurement based on the tags we can see
                         var estStdDevs = getEstimationStdDevs(estPose,cEstimator,cCam);

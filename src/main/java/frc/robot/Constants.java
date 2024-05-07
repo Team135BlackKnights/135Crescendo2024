@@ -88,7 +88,7 @@ public final class Constants {
       flywheelGearRatio = 1.5,
       idealPercentTop = .34,
       idealPercentBottom = .31,
-      kFlywheelMomentOfInertia = .00066, //0.00006502025 //.001086
+      kFlywheelMomentOfInertia = .001086, //0.00006502025 //.001086 //.00066
       kP = 0.0021258,
       kSVolts = -0.089838,
       kVVoltSecondsPerRotation= 0.0015425*.928,
@@ -160,7 +160,13 @@ public final class Constants {
       kBackRightTurningKs = 0.25885,
       kBackRightTurningKv = 0.0021008,
       kBackRightTurningKa = 0.0002368;
-
+      public enum ModulePosition {
+        FRONT_LEFT,
+        FRONT_RIGHT,
+        BACK_LEFT,
+        BACK_RIGHT
+      }
+      
       public static double[] 
       overallTurnkPkSkVkAkD = new double[]{Constants.DriveConstants.kOverallPTurn*4,Constants.DriveConstants.kOverallSVoltsTurn,Constants.DriveConstants.kOverallVVoltSecondsPerRotationTurn*2,Constants.DriveConstants.kOverallAVoltSecondsSquaredPerRotationTurn,Constants.DriveConstants.kOverallDTurn*1},
       overallDrivekPkSkVkA = new double[]{Constants.DriveConstants.kOverallP,Constants.DriveConstants.kOverallSVolts,Constants.DriveConstants.kOverallVVoltSecondsPerRotation,Constants.DriveConstants.kOverallAVoltSecondsSquaredPerRotation},
@@ -201,7 +207,12 @@ public final class Constants {
       new Translation2d(kChassisLength / 2, -kChassisWidth / 2),
       new Translation2d(-kChassisLength / 2, kChassisWidth / 2),
       new Translation2d(-kChassisLength / 2, -kChassisWidth / 2));
-
+      public static final Translation2d[] kModuleTranslations = {
+        new Translation2d(kChassisLength / 2, kChassisWidth / 2),
+        new Translation2d(kChassisLength / 2, -kChassisWidth / 2),
+        new Translation2d(-kChassisLength / 2, kChassisWidth / 2),
+        new Translation2d(-kChassisLength / 2, -kChassisWidth / 2)
+      };
     public static int
       kFrontLeftDrivePort = 16, //10
       kFrontLeftTurningPort = 17, //20
