@@ -313,7 +313,7 @@ public final class Constants {
   }
   public static class DriveSimConstants{
     //id 1 is topmost leftmost. goes in order down, right.
-    public static Pose2d[] fieldNotePoses = new Pose2d[]{new Pose2d(8.270875, 4.1148, new Rotation2d(0))};
+    public static Translation2d[] fieldNotePoses = new Translation2d[]{new Translation2d(8.270875, 4.1148)};
   }
 
   public static class LEDConstants{

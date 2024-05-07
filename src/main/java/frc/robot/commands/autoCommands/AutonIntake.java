@@ -2,6 +2,7 @@ package frc.robot.commands.autoCommands;
 
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -23,7 +24,7 @@ public class AutonIntake extends Command {
     public static boolean takeOver = false;
     private static boolean close = false;
     
-    private Pose2d targetNoteLocation = null;
+    private Translation2d targetNoteLocation = null;
     private Pose2d currentPose;
     private ChassisSpeeds speeds;
     double ty;
@@ -39,7 +40,7 @@ public class AutonIntake extends Command {
         }
     }
     /*Call this for simulation autonomous only */
-    public AutonIntake(IntakeS intakeS, SwerveS swerveS, Pose2d fieldNotePose){
+    public AutonIntake(IntakeS intakeS, SwerveS swerveS, Translation2d fieldNotePose){
         this.intakeS = intakeS;
         this.swerveS = swerveS;
         this.targetNoteLocation = fieldNotePose;

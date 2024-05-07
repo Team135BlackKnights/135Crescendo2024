@@ -13,6 +13,7 @@ import frc.robot.Constants.DriveSimConstants;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
@@ -21,7 +22,6 @@ import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.commands.autoCommands.AutonIntake;
-import java.util.ArrayList;
 
 
 
@@ -127,17 +127,17 @@ public class IntakeS extends SubsystemBase {
         }
 
     }
-    public Pose2d getClosestNote(){
+    public Translation2d getClosestNote(){
         //Obnoxiously high distance to be overrode
-        Pose2d closestPose = new Pose2d();
+        Translation2d closestTrans = new Translation2d();
         double closestPoseDistance = 9999;
         for (var pose : DriveSimConstants.fieldNotePoses){
-            if (pose.getTranslation().getDistance(SwerveS.getPose().getTranslation())< closestPoseDistance){
-                closestPose = pose;
-                closestPoseDistance = pose.getTranslation().getDistance(SwerveS.getPose().getTranslation());
+            if (pose.getDistance(SwerveS.getPose().getTranslation())< closestPoseDistance){
+                closestTrans = pose;
+                closestPoseDistance = pose.getDistance(SwerveS.getPose().getTranslation());
             }
         }
-        return closestPose;
+        return closestTrans;
 
     }
 
