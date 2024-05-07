@@ -76,7 +76,7 @@ public class CameraS extends SubsystemBase {
         Transform3d robotToRight = new Transform3d(rightPos, rightRot);
         Transform3d robotToLeft = new Transform3d(leftPos, leftRot);
         Transform3d robotToBack = new Transform3d(backPos, backRot);
-        Transform3d[] camTranslations = new Transform3d[]{robotToRight};
+        Transform3d[] camTranslations = new Transform3d[]{robotToRight,robotToBack};
     //sim
         //frontEstimator = new PhotonPoseEstimator(Constants.FieldConstants.kTagLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, frontCam,robotToFront);
         //frontEstimator.setMultiTagFallbackStrategy(PoseStrategy.CLOSEST_TO_REFERENCE_POSE);
@@ -87,17 +87,17 @@ public class CameraS extends SubsystemBase {
         backEstimator = new PhotonPoseEstimator(Constants.FieldConstants.kTagLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, backCam,robotToBack);
         backEstimator.setMultiTagFallbackStrategy(PoseStrategy.CLOSEST_TO_REFERENCE_POSE); 
         //camEstimates = new PhotonPoseEstimator[]{frontEstimator,rightEstimator,leftEstimator,backEstimator};
-        camEstimates = new PhotonPoseEstimator[]{rightEstimator};//,backEstimator};
+        camEstimates = new PhotonPoseEstimator[]{rightEstimator,backEstimator};//,backEstimator};
         //cams = new PhotonCamera[]{frontCam,rightCam,leftCam,backCam};
-        cams = new PhotonCamera[]{rightCam};//,backCam};
+        cams = new PhotonCamera[]{rightCam,backCam};//,backCam};
          
         if (Robot.isSimulation()){
 
-            PhotonCameraSim[] cameraSims =  new PhotonCameraSim[]{new PhotonCameraSim(rightCam)};//, new PhotonCameraSim(backCam)};
+            PhotonCameraSim[] cameraSims =  new PhotonCameraSim[]{new PhotonCameraSim(rightCam),new PhotonCameraSim(backCam)};//, new PhotonCameraSim(backCam)};
             visionSim = new VisionSystemSim("Vision Sim");
             visionSim.addAprilTags(fieldLayout);
             //i think
-            SimCameraProperties[] properties = new SimCameraProperties[]{SimCameraProperties.LL2_960_720()};//,SimCameraProperties.LL2_960_720()};
+            SimCameraProperties[] properties = new SimCameraProperties[]{SimCameraProperties.LL2_960_720(),SimCameraProperties.LL2_960_720()};//,SimCameraProperties.LL2_960_720()};
             
             for (var i = 0; i < cams.length; i++){
                 /*properties[i].
