@@ -50,8 +50,8 @@ public final class Constants {
   public static class IntakeConstants {
     public static class PIDConstants{
       public static double 
-        P = .00135,
-        I = .00135,
+        P = .01,
+        I = .0,
         D = .00001;
     }
     public static I2C.Port colorSensorPort = I2C.Port.kOnboard;
@@ -403,7 +403,7 @@ public final class Constants {
       
     
     public static Rotation2d
-      camFOV = new Rotation2d(70);
+      camFOV = new Rotation2d(Units.radiansToDegrees(70));
     public static int[] 
     camAvgError = new int[]{0,0,0,0},
     camAvgStdDev = new int[]{0,0,0,0},

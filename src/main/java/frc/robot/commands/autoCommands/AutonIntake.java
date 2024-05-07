@@ -30,6 +30,7 @@ public class AutonIntake extends Command {
     double ty;
     Timer timer = new Timer();
     Timer delayTimer = new Timer();
+    double desiredHeading,currentHeading;
     /*Call this in all cases but simulation autonomous*/
     public AutonIntake(IntakeS intakeS, SwerveS swerveS) {
         this.intakeS = intakeS;
@@ -66,10 +67,18 @@ public class AutonIntake extends Command {
         if (Robot.isSimulation()){
             //Computing distance
             currentPose = SwerveS.getPose();
-            tx = currentPose.getX()-targetNoteLocation.getX();
-            ty = currentPose.getY()-targetNoteLocation.getY();
+            tx = targetNoteLocation.getX() - currentPose.getX();
+            ty = targetNoteLocation.getY() - currentPose.getY();
             tv = true;
-            
+            // Calculate the angle to aim towards the target
+            double angleToTarget = Math.atan2(ty, tx); // Calculate angle in radians
+            // Convert angle to degrees if necessary
+            angleToTarget = Math.toDegrees(angleToTarget);
+            SmartDashboard.putNumber("ANGLE", angleToTarget);
+
+            // Adjust the robot's orientation towards the target
+            // Example: Set the desired heading for your motion control system
+            desiredHeading = angleToTarget;
         }else{
             IntakeS.detected = IntakeS.colorSensorV3.getColor();
             IntakeS.colorMatchResult = IntakeS.colorMatch.matchClosestColor(IntakeS.detected);
@@ -79,6 +88,7 @@ public class AutonIntake extends Command {
             tx = LimelightHelpers.getTX(Constants.LimelightConstants.limelightName);
             tv = LimelightHelpers.getTV(Constants.LimelightConstants.limelightName);
             ty = LimelightHelpers.getTY(Constants.LimelightConstants.limelightName);
+            desiredHeading = IntakeS.calculateAngleFromTX(tx, Constants.VisionConstants.camFOV.getDegrees());
             SmartDashboard.putNumber("TY", ty);
             
             }
@@ -93,15 +103,14 @@ public class AutonIntake extends Command {
             }
            }
            
-                if (tv == false && loaded==false && close == false) {
-            // We don't see the target, seek for the target by spinning in place at a safe speed.
-            speeds = new ChassisSpeeds(0,0,0.1*Constants.DriveConstants.kMaxTurningSpeedRadPerSec);
+            if (tv == false && loaded==false && close == false) {
+                // We don't see the target, seek for the target by spinning in place at a safe speed.
+                speeds = new ChassisSpeeds(0,0,0.1*Constants.DriveConstants.kMaxTurningSpeedRadPerSec);
             } else if (loaded==false && close == false) {
                 double moveSpeed = Constants.IntakeConstants.macroMoveSpeed * Constants.DriveConstants.kMaxSpeedMetersPerSecond;
-                System.out.println("FAR");
-                speeds = new ChassisSpeeds(moveSpeed,0,IntakeS.autoIntakeController.calculate(tx,0)*Constants.DriveConstants.kMaxTurningSpeedRadPerSec);
+                currentHeading = SwerveS.getHeading();
+                speeds = new ChassisSpeeds(moveSpeed,0,IntakeS.autoIntakeController.calculate(currentHeading,desiredHeading)*Constants.DriveConstants.kMaxTurningSpeedRadPerSec);
             }else{
-                System.out.println("CLOSE");
                 speeds = new ChassisSpeeds(0,0,0);
             }
             swerveS.setChassisSpeeds(speeds);

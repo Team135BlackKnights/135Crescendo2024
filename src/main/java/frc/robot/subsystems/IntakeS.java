@@ -42,7 +42,7 @@ public class IntakeS extends SubsystemBase {
     public PIDController anglePidController = new PIDController(0.06, 0, 0);
     private static double kP,kI,kD;
 
-    public static PIDController autoIntakeController = new PIDController(0.00135, 0.00135, 0.00001); //sadly cannot be system Id'd
+    public static PIDController autoIntakeController; //sadly cannot be system Id'd
 
     public IntakeS() {
         timesRan = 0;
@@ -77,6 +77,8 @@ public class IntakeS extends SubsystemBase {
         SmartDashboard.putNumber("P Gain", kP);
         SmartDashboard.putNumber("I Gain", kI);
         SmartDashboard.putNumber("D Gain", kD);
+        autoIntakeController = new PIDController(kP, kI, kD);
+        autoIntakeController.enableContinuousInput(-180, 180);
         //Color sensor thread
 
     }
@@ -103,7 +105,15 @@ public class IntakeS extends SubsystemBase {
             autoIntakeController.setD(d); kD = d;
         }
     }
-
+    public static double calculateAngleFromTX(double tX, double horizontalFOV) {
+        // Calculate the half FOV
+        double halfFOV = horizontalFOV / 2.0;
+        
+        // Calculate the angle using trigonometry
+        double angle = Math.toDegrees(Math.atan2(tX, 1.0 / (2 * Math.tan(Math.toRadians(halfFOV)))));
+        
+        return angle;
+    }
     public static double getIntakePosition() {
         return absDeployIntakeEncoder.getAbsolutePosition()*Constants.IntakeConstants.absIntakeEncoderConversionFactor - Constants.IntakeConstants.absIntakeEncoderOffset;
     }
