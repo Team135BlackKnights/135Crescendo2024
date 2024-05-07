@@ -5,9 +5,7 @@ import java.util.Optional;
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
-import org.photonvision.PhotonUtils;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
-import org.photonvision.proto.Photon;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import org.photonvision.simulation.VisionSystemSim;
@@ -19,7 +17,6 @@ import org.photonvision.simulation.SimCameraProperties;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
@@ -37,7 +34,7 @@ import frc.robot.Constants.VisionConstants;
 import frc.robot.Constants.DriveConstants;
 
 public class CameraS extends SubsystemBase {
-    public VisionSystemSim visionSim;
+    public static VisionSystemSim visionSim;
    // public final PhotonPoseEstimator frontEstimator;
     public final PhotonPoseEstimator rightEstimator;
    // public final PhotonPoseEstimator leftEstimator;
@@ -71,15 +68,15 @@ public class CameraS extends SubsystemBase {
         Translation3d rightPos = Constants.VisionConstants.rightCamTranslation3d;
         Translation3d leftPos = Constants.VisionConstants.leftCamTranslation3d;
         Translation3d backPos = Constants.VisionConstants.backCamTranslation3d;
-        Rotation3d frontRot = new Rotation3d(0, Math.toRadians(Constants.VisionConstants.frontCamPitch), 0); 
-        Rotation3d rightRot = new Rotation3d(0, Math.toRadians(Constants.VisionConstants.rightCamPitch), -90);
-        Rotation3d leftRot = new Rotation3d(0, Math.toRadians(Constants.VisionConstants.leftCamPitch), 90);
-        Rotation3d backRot = new Rotation3d(0, Math.toRadians(Constants.VisionConstants.backCamPitch), 180);
+        Rotation3d frontRot = new Rotation3d(0, Math.toRadians(Constants.VisionConstants.frontCamPitch), Math.toRadians(0)); 
+        Rotation3d rightRot = new Rotation3d(0, Math.toRadians(Constants.VisionConstants.rightCamPitch), Math.toRadians(-90));
+        Rotation3d leftRot = new Rotation3d(0, Math.toRadians(Constants.VisionConstants.leftCamPitch), Math.toRadians(90));
+        Rotation3d backRot = new Rotation3d(0, Math.toRadians(Constants.VisionConstants.backCamPitch), Math.toRadians(180));
         Transform3d robotToFront = new Transform3d(frontPos, frontRot); //transform
         Transform3d robotToRight = new Transform3d(rightPos, rightRot);
         Transform3d robotToLeft = new Transform3d(leftPos, leftRot);
         Transform3d robotToBack = new Transform3d(backPos, backRot);
-        Transform3d[] camTranslations = new Transform3d[]{robotToFront, robotToRight, robotToLeft, robotToBack};
+        Transform3d[] camTranslations = new Transform3d[]{robotToRight};
     //sim
         //frontEstimator = new PhotonPoseEstimator(Constants.FieldConstants.kTagLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, frontCam,robotToFront);
         //frontEstimator.setMultiTagFallbackStrategy(PoseStrategy.CLOSEST_TO_REFERENCE_POSE);
@@ -90,28 +87,33 @@ public class CameraS extends SubsystemBase {
         backEstimator = new PhotonPoseEstimator(Constants.FieldConstants.kTagLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, backCam,robotToBack);
         backEstimator.setMultiTagFallbackStrategy(PoseStrategy.CLOSEST_TO_REFERENCE_POSE); 
         //camEstimates = new PhotonPoseEstimator[]{frontEstimator,rightEstimator,leftEstimator,backEstimator};
-        camEstimates = new PhotonPoseEstimator[]{rightEstimator,backEstimator};
+        camEstimates = new PhotonPoseEstimator[]{rightEstimator};//,backEstimator};
         //cams = new PhotonCamera[]{frontCam,rightCam,leftCam,backCam};
-        cams = new PhotonCamera[]{rightCam,backCam};
+        cams = new PhotonCamera[]{rightCam};//,backCam};
          
         if (Robot.isSimulation()){
 
-            PhotonCameraSim[] cameraSims =  new PhotonCameraSim[]{new PhotonCameraSim(rightCam), new PhotonCameraSim(backCam)};
+            PhotonCameraSim[] cameraSims =  new PhotonCameraSim[]{new PhotonCameraSim(rightCam)};//, new PhotonCameraSim(backCam)};
             visionSim = new VisionSystemSim("Vision Sim");
             visionSim.addAprilTags(fieldLayout);
             //i think
-            SimCameraProperties[] properties = new SimCameraProperties[]{new SimCameraProperties(), new SimCameraProperties()};
+            SimCameraProperties[] properties = new SimCameraProperties[]{SimCameraProperties.LL2_960_720()};//,SimCameraProperties.LL2_960_720()};
+            
             for (var i = 0; i < cams.length; i++){
+                /*properties[i].
                 properties[i].setCalibration(VisionConstants.camResWidth, VisionConstants.camResHeight,VisionConstants.camFOV);
                 properties[i].setCalibError(VisionConstants.camAvgError[i], VisionConstants.camAvgStdDev[i]);
                 properties[i].setFPS(VisionConstants.camFPS);
                 properties[i].setAvgLatencyMs(VisionConstants.camAvgLatencyMs[i]);
                 properties[i].setLatencyStdDevMs(VisionConstants.camAvgLatencyStdDev[i]);
+                */
                 cameraSims[i] = new PhotonCameraSim(cams[i], properties[i]);
                 visionSim.addCamera(cameraSims[i], camTranslations[i]);
+                cameraSims[i].enableRawStream(true);
+                cameraSims[i].enableProcessedStream(true);
+                cameraSims[i].enableDrawWireframe(true);
             }
 
-            
             
         }
         
@@ -122,43 +124,68 @@ public static boolean aprilTagVisible() {
     public PhotonPipelineResult getLatestResult(PhotonCamera camera) {
         return camera.getLatestResult();
     }
+private void updateSimField(Optional<EstimatedRobotPose> visionEst,boolean newResult,int camera){
+    if (Robot.isSimulation()) {
+        String objectName;
+        if (camera == 0) objectName = "VisionEstimationF";
+        else if (camera ==1) objectName = "VisionEstimationR";
+        else if (camera ==2) objectName = "VisionEstimationL";
+        else objectName = "VisionEstimationB";
+        visionEst.ifPresentOrElse(
+                est ->
+                        visionSim.getDebugField()
+                                .getObject(objectName)
+                                .setPose(est.estimatedPose.toPose2d()),
+                () -> {
+                    if (newResult) visionSim.getDebugField().getObject(objectName).setPoses();
+                });
+    }
+}
  public Optional<EstimatedRobotPose> getEstimatedGlobalPose( PhotonPoseEstimator photonEstimator,PhotonCamera camera,Pose2d prevEstPose2d) {
         photonEstimator.setReferencePose(prevEstPose2d);
         var visionEst = photonEstimator.update();
         double latestTimestamp = camera.getLatestResult().getTimestampSeconds();
         boolean newResult = false;
+        int cameraVal;
         if (camera.getName() == Constants.VisionConstants.frontCamName){
             newResult = Math.abs(latestTimestamp - frontLastEstTimestamp) > 1e-5;
             if (newResult) frontLastEstTimestamp = latestTimestamp;
+            cameraVal = 0;
         } else if (camera.getName() == Constants.VisionConstants.rightCamName){
             newResult = Math.abs(latestTimestamp - rightLastEstTimestamp) > 1e-5;
             if (newResult) rightLastEstTimestamp = latestTimestamp;
+            cameraVal = 1;
         } else if (camera.getName() == Constants.VisionConstants.leftCamName){
             newResult = Math.abs(latestTimestamp - leftLastEstTimestamp) > 1e-5;
             if (newResult) leftLastEstTimestamp = latestTimestamp;
+            cameraVal = 2;
+
         } else {
             newResult = Math.abs(latestTimestamp - backLastEstTimestamp) > 1e-5;
             if (newResult) backLastEstTimestamp = latestTimestamp;
+            cameraVal = 3;
+
         }
-        
+        if(Robot.isSimulation()){
+            updateSimField(visionEst,newResult,cameraVal);
+        }
         return visionEst;
+    }
+    public static Field2d getEstimatedField(){
+        return visionSim.getDebugField();
     }
     @Override
     public void periodic(){
         if (Robot.isSimulation()){
             visionSim.update(SwerveS.getPose());
         }
-        for (int i = 0; i <2; i++){
+        for (int i = 0; i <cams.length; i++){
             PhotonPoseEstimator cEstimator = camEstimates[i];
             PhotonCamera cCam = cams[i];
             var visionEst = getEstimatedGlobalPose(cEstimator,cCam,SwerveS.getPose());
             visionEst.ifPresent(
                     est -> {
                         var estPose = est.estimatedPose.toPose2d();
-                        Field2d cameraField = new Field2d();
-                        cameraField.setRobotPose(estPose);
-                        cameraField.close();
-                        //SmartDashboard.putData(cameraField);
                         // Change our trust in the measurement based on the tags we can see
                         var estStdDevs = getEstimationStdDevs(estPose,cEstimator,cCam);
                         SmartDashboard.putString("CAMERAUPDATE", cCam.getName());
@@ -181,7 +208,6 @@ public static boolean aprilTagVisible() {
                         
                     });
         }
-
         
     }
     //FOR SWERVE ESTIMATION
@@ -193,7 +219,7 @@ public static boolean aprilTagVisible() {
         for (var tgt : targets) {
             var tagPose = photonEstimator.getFieldTags().getTagPose(tgt.getFiducialId());
             if (tagPose.isEmpty()) continue;
-            if (tgt.getPoseAmbiguity() >.25) continue; //give zero F's about bad tags
+            if (tgt.getPoseAmbiguity() >.2) continue; //give zero F's about bad tags
             numTags++;
 
             avgDist +=

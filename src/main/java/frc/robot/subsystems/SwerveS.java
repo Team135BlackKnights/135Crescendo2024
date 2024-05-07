@@ -258,6 +258,7 @@ public class SwerveS extends SubsystemBase {
             
             //LimelightSim.updateTarget(getPose());
             ChassisSpeeds chassisSpeed = Constants.DriveConstants.kDriveKinematics.toChassisSpeeds(getModuleStates());
+            SmartDashboard.putNumber("RADIANS", chassisSpeed.omegaRadiansPerSecond);
             m_simYaw += chassisSpeed.omegaRadiansPerSecond * 0.02;
 
             int dev = SimDeviceDataJNI.getSimDeviceHandle("navX-Sensor[0]");
@@ -292,7 +293,6 @@ public class SwerveS extends SubsystemBase {
         SmartDashboard.putNumber("Position X (getPose)", getPose().getX());
         SmartDashboard.putNumber("Position Y (getPose)", getPose().getY());
         SmartDashboard.putNumber("Robot Heading (getPose)", getPose().getRotation().getDegrees());
-        
 
 
         xError = tx.getDouble(0.0);
@@ -314,7 +314,8 @@ public class SwerveS extends SubsystemBase {
                             module.getHeadingRotation2d().plus(getRotation2d())));
           }
         robotField.setRobotPose(getPose());
-        SmartDashboard.putData(robotField);
+        //SmartDashboard.putData(robotField);
+        SmartDashboard.putData(CameraS.getEstimatedField());
         PathPlannerLogging.setLogCurrentPoseCallback((pose) -> {
             // Do whatever you want with the pose here
             robotField.setRobotPose(pose);
@@ -456,9 +457,9 @@ public class SwerveS extends SubsystemBase {
       }
     public void setChassisSpeeds(ChassisSpeeds speed) {
         SwerveModuleState[] moduleStates = Constants.DriveConstants.kDriveKinematics.toSwerveModuleStates(speed);
-        for (SwerveModule module : m_swerveModules.values())
+        for (SwerveModule module : m_swerveModules.values()){
             module.setDesiredState(moduleStates[module.getModuleNumber()]);
-    
+        }
 
     }
     
@@ -467,8 +468,9 @@ public class SwerveS extends SubsystemBase {
         SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, Constants.DriveConstants.kMaxSpeedMetersPerSecond);
         
         // LIST MODULES IN THE SAME EXACT ORDER USED WHEN DECLARING SwerveDriveKinematics
-        for (SwerveModule module : m_swerveModules.values())
+        for (SwerveModule module : m_swerveModules.values()){
             module.setDesiredState(desiredStates[module.getModuleNumber()]);
+        }
     }
     /**
      * Function that sets the robot to robot relative (and then sets the leds to a pattern showing that the navx has disconnected) if the navx has disconnected

@@ -19,6 +19,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.system.plant.DCMotor;
 //import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Robot;
@@ -224,10 +225,10 @@ public class SwerveModule extends SubsystemBase{
     public void setDesiredState(SwerveModuleState state) {
         //var encoderRotation = new Rotation2d(getTurningPosition());
         // Stops the motors if the desired state is too small
-        if (Math.abs(state.speedMetersPerSecond) < 0.001 && !SwerveS.autoLock) {
+       /*  if (Math.abs(state.speedMetersPerSecond) < 0.001 && !SwerveS.autoLock) {
             stop();
             return;
-        }
+        }*/
         // Optimizing finds the shortest path to the desired angle
         state = SwerveModuleState.optimize(state, getState().angle);
 
@@ -256,19 +257,20 @@ public class SwerveModule extends SubsystemBase{
             else{
                 simUpdateDrivePosition(state);
                 m_currentAngle = state.angle.getDegrees();
+                //simTurnPosition(m_currentAngle);
             }
 
     }
     private void simUpdateDrivePosition(SwerveModuleState state) {
         m_simDriveEncoderVelocity = state.speedMetersPerSecond;
-        double distancePer20Ms = m_simDriveEncoderVelocity / 50.0;    
+        double distancePer20Ms = m_simDriveEncoderVelocity *.02;    
         m_simDriveEncoderPosition += distancePer20Ms;
       }
 
       private void simTurnPosition(double angle) {
         if (angle != m_currentAngle && m_simTurnAngleIncrement == 0) {
           m_simAngleDifference = angle - m_currentAngle;
-          m_simTurnAngleIncrement = m_simAngleDifference / 20.0;// 10*20ms = .2 sec move time
+          m_simTurnAngleIncrement = m_simAngleDifference * .02;// 10*50ms = .2 sec move time
         }
     
         if (m_simTurnAngleIncrement != 0) {

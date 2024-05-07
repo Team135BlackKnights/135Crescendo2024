@@ -75,12 +75,12 @@ public class SwerveC extends Command {
         
       }
       // If the desired ChassisSpeeds are really small (ie from controller drift) make them even smaller so that the robot doesn't move
-      xSpeed = Math.abs(xSpeed) > Constants.SwerveConstants.kDeadband ? xSpeed : 0.0001;
-      ySpeed = Math.abs(ySpeed) > Constants.SwerveConstants.kDeadband ? ySpeed : 0.0001;
+      xSpeed = Math.abs(xSpeed) > Constants.SwerveConstants.kDeadband ? xSpeed : 0.0000;
+      ySpeed = Math.abs(ySpeed) > Constants.SwerveConstants.kDeadband ? ySpeed : 0.0000;
       if (SwerveS.autoLock == true && SwerveS.aprilTagVisible() == true) {
-        turningSpeed = Math.abs(turningSpeed) > Constants.SwerveConstants.kAutoDeadband ? turningSpeed : 0.0001;
+        turningSpeed = Math.abs(turningSpeed) > Constants.SwerveConstants.kAutoDeadband ? turningSpeed : 0.0000;
       } else {
-        turningSpeed = Math.abs(turningSpeed) > Constants.SwerveConstants.kDeadband ? turningSpeed : 0.0001;
+        turningSpeed = Math.abs(turningSpeed) > Constants.SwerveConstants.kDeadband ? turningSpeed : 0.0000;
       }
 
       // Limit the acceleration and convert -1 to 1 from the controller into actual speeds

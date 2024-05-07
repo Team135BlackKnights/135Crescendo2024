@@ -376,25 +376,25 @@ public final class Constants {
     public static String[] camNameStrings = new String[]{frontCamName, backCamName, leftCamName, rightCamName};
     //offset of each cam from robot center, in meters
     public static Translation3d 
-      frontCamTranslation3d = new Translation3d(0, 0, 0),
+      frontCamTranslation3d = new Translation3d(Units.inchesToMeters(15),0,Units.inchesToMeters(19.75)),
       rightCamTranslation3d = new Translation3d(Units.inchesToMeters(12.75),Units.inchesToMeters(Constants.DriveConstants.kChassisLength/2),Units.inchesToMeters(19.75)), 
       /*For right cam ^
         X = center to limelight tube
         Y = center to right chassis rail
         Z = floor to camera 
       */
-      leftCamTranslation3d = new Translation3d(Units.inchesToMeters(0), Units.inchesToMeters(0), Units.inchesToMeters(0)),
+      leftCamTranslation3d = new Translation3d(Units.inchesToMeters(12.75),Units.inchesToMeters(-Constants.DriveConstants.kChassisLength/2),Units.inchesToMeters(19.75)),
       backCamTranslation3d = new Translation3d(Units.inchesToMeters(12.75),Units.inchesToMeters(0),Units.inchesToMeters(25));
 
   
     //Pitches of camera, in DEGREES, positive means UPWARD angle
     public static int 
-      frontCamPitch = 15,
-      rightCamPitch = 21, //MUST GET
-      leftCamPitch = 15,
-      backCamPitch = 26,
-      camResWidth = 3,
-      camResHeight = 3,
+      frontCamPitch = -21,
+      rightCamPitch = -21, //MUST GET
+      leftCamPitch = -15,
+      backCamPitch = -26,
+      camResWidth = 600,
+      camResHeight = 800,
       camFPS = 60;
     public static int[] camPitches = new int[]{frontCamPitch, rightCamPitch, leftCamPitch, backCamPitch};
            
@@ -405,7 +405,7 @@ public final class Constants {
     public static int[] 
     camAvgError = new int[]{0,0,0,0},
     camAvgStdDev = new int[]{0,0,0,0},
-    camAvgLatencyMs = new int[]{35,35,35,35},
+    camAvgLatencyMs = new int[]{10,10,10,10},
     camAvgLatencyStdDev = new int[]{5,5,5,5};
 
   }
