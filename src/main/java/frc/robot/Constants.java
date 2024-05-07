@@ -11,6 +11,7 @@ import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
@@ -311,7 +312,8 @@ public final class Constants {
       kBackRightTurningKa = 0.0002368;
   }
   public static class DriveSimConstants{
-
+    //id 1 is topmost leftmost. goes in order down, right.
+    public static Pose2d[] fieldNotePoses = new Pose2d[]{new Pose2d()};
   }
 
   public static class LEDConstants{

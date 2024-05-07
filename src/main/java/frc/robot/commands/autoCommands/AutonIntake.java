@@ -1,6 +1,7 @@
 package frc.robot.commands.autoCommands;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -20,14 +21,26 @@ public class AutonIntake extends Command {
     public static boolean allClear = false;
     public static boolean takeOver = false;
     private static boolean close = false;
+    
+    private final Pose2d targetNoteLocation;
+    private Pose2d currentPose;
     private ChassisSpeeds speeds;
     double ty;
     Timer timer = new Timer();
     Timer delayTimer = new Timer();
+    /*Call this in teleop */
     public AutonIntake(IntakeS intakeS, SwerveS swerveS) {
         this.intakeS = intakeS;
         this.swerveS = swerveS;
+        targetNoteLocation = null;
         addRequirements(intakeS);
+    }
+    /*Call this for simulation only */
+    public AutonIntake(IntakeS intakeS, SwerveS swerveS, Pose2d fieldNotePose){
+        this.intakeS = intakeS;
+        this.swerveS = swerveS;
+        this.targetNoteLocation = fieldNotePose;
+        
     }
 
     @Override
@@ -44,22 +57,28 @@ public class AutonIntake extends Command {
 
     @Override
     public void execute() {
+        double tx, ty;
+        boolean tv;
         if (Robot.isSimulation()){
-            if (delayTimer.get() > 1){
-                delayTimer.stop();
-                allClear = true;
-                isFinished = true;
-            }
+            //Computing distance
+            currentPose = SwerveS.getPose();
+            tx = currentPose.getX()-targetNoteLocation.getX();
+            ty = currentPose.getY()-targetNoteLocation.getY();
+            tv = true;
+            
         }else{
             IntakeS.detected = IntakeS.colorSensorV3.getColor();
             IntakeS.colorMatchResult = IntakeS.colorMatch.matchClosestColor(IntakeS.detected);
-            SmartDashboard.putBoolean("Note Loaded?", IntakeS.noteIsLoaded());
+
             //when done, set timer.start().. and delayTimer.stop();
             intakeS.deployIntake(1);
-            double tx = LimelightHelpers.getTX(Constants.LimelightConstants.limelightName);
-            boolean tv = LimelightHelpers.getTV(Constants.LimelightConstants.limelightName);
+            tx = LimelightHelpers.getTX(Constants.LimelightConstants.limelightName);
+            tv = LimelightHelpers.getTV(Constants.LimelightConstants.limelightName);
             ty = LimelightHelpers.getTY(Constants.LimelightConstants.limelightName);
             SmartDashboard.putNumber("TY", ty);
+
+            }
+            SmartDashboard.putBoolean("Note Loaded?", IntakeS.noteIsLoaded());
             if (ty >18.5){
                 close =true;
             }
@@ -81,7 +100,7 @@ public class AutonIntake extends Command {
             }
         }
         
-    }
+    
 
     @Override
     public void end(boolean interrupted) {
