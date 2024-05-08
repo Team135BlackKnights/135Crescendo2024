@@ -378,7 +378,7 @@ public final class Constants {
       rightHangReversed = false;
   }
   public static class LimelightConstants{
-    public static double limeLightAngleOffsetDegrees = 15,
+    public static double limeLightAngleOffsetDegrees = -30,
     limelightLensHeightoffFloorInches = 22.5;
     public static String limelightName = "limelight-swerve";
   }

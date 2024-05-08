@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.LimelightHelpers;
 import frc.robot.Robot;
+import frc.robot.subsystems.CameraS;
 import frc.robot.subsystems.IntakeS;
 import frc.robot.subsystems.SwerveS;
 
@@ -86,7 +87,7 @@ public class AutonIntake extends Command {
             tx = LimelightHelpers.getTX(Constants.LimelightConstants.limelightName);
             tv = LimelightHelpers.getTV(Constants.LimelightConstants.limelightName);
             ty = LimelightHelpers.getTY(Constants.LimelightConstants.limelightName);
-            desiredHeading = -IntakeS.calculateAngleFromTX(tx, Constants.VisionConstants.camFOV.getDegrees());
+            desiredHeading = CameraS.calculateAngleFromTX(tx,ty);
             SmartDashboard.putNumber("dES HEADING", desiredHeading);
             
             }

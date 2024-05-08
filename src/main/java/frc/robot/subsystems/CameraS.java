@@ -121,21 +121,21 @@ public class CameraS extends SubsystemBase {
 public static double calculateAngleFromTX(double tX, double tY) {        
         // Calculate the angle using trigonometry
 // how many degrees back is your limelight rotated from perfectly vertical?
-       double limelightMountAngleDegrees = -30.0; 
+       double limelightMountAngleDegrees = Constants.LimelightConstants.limeLightAngleOffsetDegrees; 
 
     // distance from the center of the Limelight lens to the floor
-        double limelightLensHeightInches = 20; 
+        double limelightLensHeightInches = Constants.LimelightConstants.limelightLensHeightoffFloorInches;
 
     // distance from the target to the floor
         double goalHeightInches = 1; 
 
-        double angleToGoalDegrees = limelightMountAngleDegrees + targetOffsetAngle_Vertical;
-    double angleToGoalRadians = angleToGoalDegrees * (3.14159 / 180.0);
+        double angleToGoalDegrees = limelightMountAngleDegrees + tY;
+        double angleToGoalRadians = angleToGoalDegrees * (3.14159 / 180.0);
 
     //calculate distance
         double distance = (goalHeightInches - limelightLensHeightInches) / Math.tan(angleToGoalRadians);
         double c = Math.sqrt(Math.pow(distance,2) + Math.pow(tX,2));
-        double angle = Math.arcsin(tX/c);
+        double angle = Math.asin(tX/c);
         
         return Math.toDegrees(angle);
     }
