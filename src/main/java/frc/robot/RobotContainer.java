@@ -97,12 +97,13 @@ public class RobotContainer {
       new SetAngle(intakeS, outakeS, 13);
     }
     bButtonDrive.whileTrue(new AutonIntake(intakeS,swerveS));
-    
+    //System.out.println(SysIdRoutine.Direction.kReverse);
+    //System.out.println(SysIdRoutine.Direction.kForward);
     //outake Tests
-    startButton.and(aButton).whileTrue(outakeS.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-    startButton.and(bButton).whileTrue(outakeS.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-    startButton.and(xButton).whileTrue(outakeS.sysIdDynamic(SysIdRoutine.Direction.kForward));
-    startButton.and(yButton).whileTrue(outakeS.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+    startButton.and(aButton).whileTrue(intakeS.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+    startButton.and(bButton).whileTrue(intakeS.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+    //startButton.and(xButton).whileTrue(intakeS.sysIdDynamic(SysIdRoutine.Direction.kForward));
+    //startButton.and(yButton).whileTrue(intakeS.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
     //swerve DRIVE tests
     startButton.and(povUp).whileTrue(swerveS.sysIdQuasistaticDrive(SysIdRoutine.Direction.kForward));

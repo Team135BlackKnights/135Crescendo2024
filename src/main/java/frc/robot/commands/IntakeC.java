@@ -49,12 +49,16 @@ public class IntakeC extends Command {
 
         if (Math.abs(deployIntakeSpeed) < 0.1) deployIntakeSpeed = 0;
 
-        if ((RobotContainer.manipController.getXButton() || RobotContainer.manipController.getAButton() || RobotContainer.manipController.getRightBumper()) && RobotContainer.isDriving()) {
-            deployIntakeSpeed = 0.25;
+        if ((RobotContainer.manipController.getXButton()  || RobotContainer.manipController.getRightBumper()) && RobotContainer.isDriving()) {
+            intakeS.deployIntake(intakeS.outsideBotState());
+        }
+        if (RobotContainer.manipController.getAButton()){
+            intakeS.deployIntake(intakeS.insideBotState());
         }
 
         intakeS.setPrimaryIntake(intakeSpeed * 1);
-        intakeS.deployIntake(deployIntakeSpeed * 1);
+        //ask Owyn how we should handle this.
+        //intakeS.deployIntake(deployIntakeSpeed * 1);
         
     }
 

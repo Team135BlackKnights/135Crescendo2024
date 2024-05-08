@@ -372,7 +372,10 @@ public static boolean robotInRange() {
        } */
        return Units.radiansToDegrees(Math.atan(lowerBoundHeight/lowerBoundDistance));
    }
-
+   /**
+    * get best angle for shooter
+    * @return angle in degrees
+    */
    public static double getDesiredShooterAngle() {
        double angle = (getDesiredShooterUpperBound() + getDesiredShooterLowerBound())/2;
        if (angle > 42) angle = 43;

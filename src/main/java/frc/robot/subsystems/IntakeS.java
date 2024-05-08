@@ -10,14 +10,24 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import frc.robot.Constants.DriveSimConstants;
+import edu.wpi.first.math.Nat;
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.controller.LinearQuadraticRegulator;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.estimator.KalmanFilter;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.Measure;
 import edu.wpi.first.units.Time;
 import edu.wpi.first.units.Velocity;
 import edu.wpi.first.units.Voltage;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N2;
+import edu.wpi.first.math.system.LinearSystem;
+import edu.wpi.first.math.system.LinearSystemLoop;
+import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.system.plant.LinearSystemId;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
@@ -28,7 +38,6 @@ import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 
 import java.util.function.BooleanSupplier;
-import java.util.function.Supplier;
 
 import org.littletonrobotics.junction.Logger;
 
@@ -37,6 +46,7 @@ import frc.robot.Robot;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.commands.autoCommands.AutonIntake;
 
+import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 
 
 
@@ -53,17 +63,73 @@ public class IntakeS extends SubsystemBase {
     public static ColorMatchResult colorMatchResult;
     public static Thread sensorThread;
     public static int timesRan;
-    public PIDController anglePidController = new PIDController(0.06, 0, 0);
     private static double kP,kI,kD;
-    private BooleanSupplier intakeWithinBoundsSupplier = () -> intakeWithinBounds();
     public static PIDController autoIntakeController; //sadly cannot be system Id'd
 
     Measure<Velocity<Voltage>> rampRate = Volts.of(1).per(Seconds.of(1)); //for going FROM ZERO PER SECOND
-    Measure<Voltage> holdVoltage = Volts.of(8);
+    Measure<Voltage> holdVoltage = Volts.of(3);
     Measure<Time> timeout = Seconds.of(10);
         
-    SysIdRoutine armIdRoutine = new SysIdRoutine(new SysIdRoutine.Config(rampRate,holdVoltage,timeout,(state) -> Logger.recordOutput("SysIdTestState", state.toString())), new SysIdRoutine.Mechanism((Measure<Voltage> volts) -> {setIntakeMotorVolts(volts.in(Volts));}, null, this));
+    SysIdRoutine armIdRoutine = new SysIdRoutine(
+        new SysIdRoutine.Config(rampRate,holdVoltage,timeout,(state) -> Logger.recordOutput("SysIdTestState", state.toString())),
+        new SysIdRoutine.Mechanism((Measure<Voltage> volts) -> {
+            setIntakeMotorVolts(volts.in(Volts));
+        },
+    null, this));
+    private final TrapezoidProfile m_profile =
+    new TrapezoidProfile(
+        new TrapezoidProfile.Constraints(
+            Units.degreesToRadians(45),
+            Units.degreesToRadians(90))); // Max arm speed and acceleration.
+    private TrapezoidProfile.State m_lastProfiledReference = new TrapezoidProfile.State();
+    /* 
+    //using MOI
+    private final LinearSystem<N2,N1,N1> m_armPlant = 
+        LinearSystemId.createSingleJointedArmSystem(DCMotor.getNEO(1), SingleJointedArmSim.estimateMOI(Units.inchesToMeters(5), Units.lbsToKilograms(13)), 400);
+    */
+     
+    //using sysId
+    private final LinearSystem<N2, N1, N1> m_armPlant =
+      LinearSystemId.identifyPositionSystem(Constants.IntakeConstants.StateSpace.kVVoltSecondsPerRotation,Constants.IntakeConstants.StateSpace.kAVoltSecondsSquaredPerRotation);
+    
+    // The observer fuses our encoder data and voltage inputs to reject noise.
+    private final KalmanFilter<N2, N1, N1> m_observer =
+    new KalmanFilter<>(
+        Nat.N2(),
+        Nat.N1(),
+        m_armPlant,
+        VecBuilder.fill(0.015, 0.17), // How accurate we
+        // think our model is, in radians and radians/sec
+        VecBuilder.fill(0.01), // How accurate we think our encoder position
+        // data is. In this case we very highly trust our encoder position reading.
+        0.020);
 
+    // A LQR uses feedback to create voltage commands.
+    private final LinearQuadraticRegulator<N2, N1, N1> m_controller =
+    new LinearQuadraticRegulator<>(
+        m_armPlant,
+        VecBuilder.fill(Units.degreesToRadians(1.0), Units.degreesToRadians(10.0)), // qelms.
+        // Position and velocity error tolerances, in radians and radians per second. Decrease
+        // this
+        // to more heavily penalize state excursion, or make the controller behave more
+        // aggressively. In this example we weight position much more highly than velocity, but
+        // this
+        // can be tuned to balance the two.
+        VecBuilder.fill(12.0), // relms. Control effort (voltage) tolerance. Decrease this to more
+        // heavily penalize control effort, or make the controller less aggressive. 12 is a good
+        // starting point because that is the (approximate) maximum voltage of a battery.
+        0.020); // Nominal time between loops. 0.020 for TimedRobot, but can be
+    // lower if using notifiers.
+
+    // The state-space loop combines a controller, observer, feedforward and plant for easy control.
+    private final LinearSystemLoop<N2, N1, N1> m_loop =
+    new LinearSystemLoop<>(m_armPlant, m_controller, m_observer, 12.0, 0.020);
+    private double m_velocity = 0;
+    private double m_position = 0;
+    private double m_oldPosition = 0;
+    private TrapezoidProfile.State goal = new TrapezoidProfile.State(Constants.IntakeConstants.deployIntakeInnerBound,0);
+    //sim values
+    private SingleJointedArmSim simArm = new SingleJointedArmSim(m_armPlant, DCMotor.getNEO(1), 400, Units.inchesToMeters(5), Constants.IntakeConstants.deployIntakeInnerBound,  Constants.IntakeConstants.deployIntakeOuterBound, false, Constants.IntakeConstants.deployIntakeInnerBound);
     public IntakeS() {
         timesRan = 0;
 
@@ -102,8 +168,8 @@ public class IntakeS extends SubsystemBase {
         //Color sensor thread
 
         
-    
-       
+        m_loop.reset(VecBuilder.fill(getDistance(), getVelocity()));
+        m_lastProfiledReference = new TrapezoidProfile.State(getDistance(), getVelocity());
     }
      /**
    * Returns a command that will execute a quasistatic test in the given direction.
@@ -111,19 +177,18 @@ public class IntakeS extends SubsystemBase {
    * @param direction The direction (forward or reverse) to run the test in
    */
   public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
-    return armIdRoutine.quasistatic(direction).until(intakeWithinBoundsSupplier);
+    return armIdRoutine.quasistatic(direction).onlyWhile(intakeWithinLimits(direction));
   }
-
-  public Command debug1(SysIdRoutine.Direction direction){
-    return armIdRoutine.dynamic(direction).until(intakeWithinBoundsSupplier);
+  public Command sysIdDynamic(SysIdRoutine.Direction direction){
+    return armIdRoutine.dynamic(direction).onlyWhile(intakeWithinLimits(direction));
   }
 
     @Override
     public void periodic() {
-        
+        updateEncoders();
         //sets values to SmartDashboard periodically
       //  SmartDashboard.putNumber("Deploy Intake", deployIntakeEncoder.getPosition());
-        SmartDashboard.putNumber("Deploy Intake Abs", getIntakePosition());
+        SmartDashboard.putNumber("Deploy Intake Abs", getDistance());
         SmartDashboard.putNumber("Intake Angle", getIntakeAngle());
       //  SmartDashboard.putBoolean("Intake Within Bounds", intakeWithinBounds());
         SmartDashboard.putNumber("Intake Offset", IntakeConstants.intakeOffset);
@@ -139,21 +204,67 @@ public class IntakeS extends SubsystemBase {
         }
         if ((d != kD)) {
             autoIntakeController.setD(d); kD = d;
+        }  
+        m_lastProfiledReference = m_profile.calculate(0.020, m_lastProfiledReference, goal);
+        m_loop.setNextR(m_lastProfiledReference.position, m_lastProfiledReference.velocity);
+        // Correct our Kalman filter's state vector estimate with encoder data.
+        if(Robot.isReal()){
+            m_loop.correct(VecBuilder.fill(getDistance()));
         }
-    }
-    public static double getIntakePosition() {
-        return absDeployIntakeEncoder.getAbsolutePosition()*Constants.IntakeConstants.absIntakeEncoderConversionFactor - Constants.IntakeConstants.absIntakeEncoderOffset;
+        // Update our LQR to generate new voltage commands and use the voltages to predict the next
+        // state with out Kalman filter.
+        m_loop.predict(0.020);
+
+        // Send the new calculated voltage to the motors.
+        // voltage = duty cycle * battery voltage, so
+        // duty cycle = voltage / battery voltage
+        double nextVoltage = m_loop.getU(0);
+        if (Robot.isReal()){
+            deployIntake.setVoltage(nextVoltage);
+        }else{
+            simArm.setInput(nextVoltage);
+            simArm.update(.02);
+        }
+
+        SmartDashboard.putNumber("Angle Error", getError());
     }
 
     public double getIntakeAngle() {
-        return getIntakePosition()-IntakeConstants.intakeOffset;
+        return getDistance()-IntakeConstants.intakeOffset;
     }
-
+    public double getDistance(){
+        return m_position;
+    }
+    public double getVelocity(){
+        return m_velocity;
+    }
     public boolean intakeWithinBounds() {
         if (Robot.isSimulation()) return true;
         return getIntakeAngle() > CameraS.getDesiredShooterLowerBound() && getIntakeAngle() < CameraS.getDesiredShooterUpperBound() || (getIntakeAngle() > 42 && CameraS.getDesiredShooterAngle() > 42);
     }
-    
+    /**
+     * power can be in ANY type, percent or voltage.
+     * @param power
+     * @return
+     */
+    public BooleanSupplier intakeWithinLimits(SysIdRoutine.Direction direction){
+        BooleanSupplier returnVal;
+        if (direction.toString() == "kReverse") {
+            if (getDistance() < IntakeConstants.deployIntakeInnerBound*.85) {
+                returnVal = () -> false;
+                return returnVal;
+            } 
+        }
+        //second set of conditionals (below) checks to see if the arm is within the hard limits, and stops it if it is
+        if (direction.toString() == "kForward") {
+            if (getDistance() > IntakeConstants.deployIntakeOuterBound*.85) {
+                returnVal = () -> false;
+                return returnVal;
+            } 
+        }
+        returnVal = () -> true;
+                return returnVal;
+    }
 
     public static boolean noteIsLoaded() {
         if (colorMatchResult.color == IntakeConstants.noteColor){
@@ -167,7 +278,7 @@ public class IntakeS extends SubsystemBase {
     public Translation2d getClosestNote(){
         //Obnoxiously high distance to be overrode
         Translation2d closestTrans = new Translation2d();
-        double closestPoseDistance = 9999;
+        double closestPoseDistance = 9999; //hopefully something is closer than 9999 meters
         for (var pose : DriveSimConstants.fieldNotePoses){
             if (pose.getDistance(SwerveS.getPose().getTranslation())< closestPoseDistance){
                 closestTrans = pose;
@@ -177,35 +288,66 @@ public class IntakeS extends SubsystemBase {
         return closestTrans;
 
     }
-
+    public TrapezoidProfile.State insideBotState(){
+        return new TrapezoidProfile.State(Constants.IntakeConstants.deployIntakeInnerBound,0);
+    }
+    public TrapezoidProfile.State outsideBotState(){
+        return new TrapezoidProfile.State(Constants.IntakeConstants.deployIntakeOuterBound,0);
+    }
+    /**
+     * For cleanliness of code, create State is in IntakeS, called everywhere else.
+     * @param angle IN DEGREES
+     * @return state, pass through to deployIntake.
+     * 
+     */
+    public TrapezoidProfile.State createState(double angle){
+        return new TrapezoidProfile.State(Units.degreesToRadians(angle),0);
+    }
+    /**
+     * Checks if close to state, with less than 2 degrees being "good"
+     * @return true if at state
+     */
+    public boolean isAtState(){
+        if (Math.abs(getError()) < Units.degreesToRadians(2)){
+            return true;
+        }
+        return false;
+    }
+        /**
+     * Checks if close to state, with less than 2 degrees being "good"
+     * @param maximum error in degrees
+     * @return true if at state
+     */
+    public boolean isAtState(double degrees){
+        if (Math.abs(getError()) < Units.degreesToRadians(degrees)){
+            return true;
+        }
+        return false;
+    }
+    /**
+     *
+     * @return error in degrees?
+    */
+    public double getError(){
+        return m_position - m_lastProfiledReference.position; //in radians
+    }
+    public void deployIntake(TrapezoidProfile.State state){
+        goal = state;
+    }
     public void setPrimaryIntake(double power) {
         // sets the primary intake, comment below is a deadband check
         //power = power <= 0.1 ? 0.1 : power;
         primaryIntake.set(power);
     }
-
-    public void deployIntake(double power) {
-        //release the ̶h̶o̶r̶d̶e̶ intake 
-        //first set of conditionals checks to see whether the arm is within the soft limits, and slows it down if it isnt
-        if (power < 0) {
-            if (getIntakePosition() < IntakeConstants.deployIntakeInnerBound) {
-                power = 0;
-            } else if (getIntakePosition() < IntakeConstants.deployIntakeOuterBound*0.33) {
-                power = power * 0.5;
-            }
+    public void updateEncoders(){
+        if (Robot.isReal()){
+            m_position = absDeployIntakeEncoder.getAbsolutePosition()*Constants.IntakeConstants.absIntakeEncoderConversionFactor - Constants.IntakeConstants.absIntakeEncoderOffset;
+            m_velocity = m_position-m_oldPosition; //since called every 20 ms
+            m_oldPosition = m_position;
+        }else{
+            m_position = simArm.getAngleRads();
+            m_velocity = simArm.getVelocityRadPerSec();
         }
-        //second set of conditionals (below) checks to see if the arm is within the hard limits, and stops it if it is
-        if (power > 0) {
-            if (getIntakePosition() > IntakeConstants.deployIntakeOuterBound) {
-                power = 0;
-            } else if (getIntakePosition() > IntakeConstants.deployIntakeOuterBound*0.67) {
-                power = power * 0.5;
-            }
-        }
-        //power value (as a percent) sent to smartDashboard only if intake is called
-       // SmartDashboard.putNumber("Deploy Intake Percentage", power);
-
-        deployIntake.set(power);
     }
 
     public void setIntakeMotorVolts(double volts){

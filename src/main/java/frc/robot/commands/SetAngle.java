@@ -37,11 +37,10 @@ public class SetAngle extends Command {
             isFinished = true;
         }
 
-        double output = intakeS.anglePidController.calculate(intakeS.getIntakeAngle(), desAngle);
 
         if (timer.get() < 0.15) {
             intakeS.setPrimaryIntake(0.2);
-        } else if (timer.get() >= 0.25  && Math.abs(intakeS.anglePidController.getPositionError()) < 10) {
+        } else if (timer.get() >= 0.25  && intakeS.isAtState()) {
             intakeS.setPrimaryIntake(0);
             double outakeSpeed = 6000; //was 0.85 + outakeS.shooterPID.calculate(OutakeS.getAverageFlywheelSpeed(), 6000);
             outakeS.setIndividualFlywheelSpeeds(outakeSpeed, outakeSpeed);
@@ -50,21 +49,19 @@ public class SetAngle extends Command {
             intakeS.setPrimaryIntake(-0.5);
             delay.start();
         }
-        if (OutakeS.getFlywheelSpeedDifference() < 100 && timer.get() >= 0.3 && OutakeS.getBottomSpeedError(6000) < 150 && OutakeS.getTopSpeedError() < 150  && !RobotContainer.manipController.getAButton() && Math.abs(output) < 0.1) {
+        if (OutakeS.getFlywheelSpeedDifference() < 100 && timer.get() >= 0.3 && OutakeS.getBottomSpeedError(6000) < 150 && OutakeS.getTopSpeedError() < 150  && !RobotContainer.manipController.getAButton() && intakeS.isAtState()) {
             intakeS.setPrimaryIntake(-0.5);
             delay.start();
         }
 
         
         //SmartDashboard.putNumber("Angle Output", output);
-        SmartDashboard.putNumber("Angle Error", intakeS.anglePidController.getPositionError());
         SmartDashboard.putNumber("Flywheel Error", OutakeS.getTopSpeedError());
-        intakeS.deployIntake(output);
+        intakeS.deployIntake(intakeS.createState(desAngle));
     }
 
     @Override
     public void end(boolean interrupted) {
-        intakeS.deployIntake(0);
         intakeS.setPrimaryIntake(0);
         outakeS.setIndividualFlywheelSpeeds(0, 0);
         timer.stop();

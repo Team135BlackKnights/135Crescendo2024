@@ -55,7 +55,7 @@ public class SwerveC extends Command {
         turningSpeed = swerveS.autoLockController.calculate(CameraS.getXError(), 0.0);
       }
       //every time the array isn't full and the logging button is pressed, save another value to the array. 
-      if (RobotContainer.driveController.getXButtonPressed() == true){
+      /*if (RobotContainer.driveController.getXButtonPressed() == true){
         //angle is y, distance is x
         try {
           variableAngleLog[1][arrayIndex] = angleOutputDegrees;
@@ -72,8 +72,7 @@ public class SwerveC extends Command {
       if (RobotContainer.driveController.getBButtonPressed() == true){
         //prints array and logs it in dataLog
         printData();
-        
-      }
+      }*/
       // If the desired ChassisSpeeds are really small (ie from controller drift) make them even smaller so that the robot doesn't move
       xSpeed = Math.abs(xSpeed) > Constants.SwerveConstants.kDeadband ? xSpeed : 0.0000;
       ySpeed = Math.abs(ySpeed) > Constants.SwerveConstants.kDeadband ? ySpeed : 0.0000;

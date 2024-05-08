@@ -57,6 +57,7 @@ public class AutonIntake extends Command {
         takeOver = true;
         ty = 0;
         this.targetNoteLocation = intakeS.getClosestNote();
+        intakeS.deployIntake(intakeS.outsideBotState());
     }
 
     @Override
@@ -85,7 +86,6 @@ public class AutonIntake extends Command {
             IntakeS.colorMatchResult = IntakeS.colorMatch.matchClosestColor(IntakeS.detected);
 
             //when done, set timer.start().. and delayTimer.stop();
-            intakeS.deployIntake(1);
             tx = LimelightHelpers.getTX(Constants.LimelightConstants.limelightName);
             tv = LimelightHelpers.getTV(Constants.LimelightConstants.limelightName);
             ty = LimelightHelpers.getTY(Constants.LimelightConstants.limelightName);

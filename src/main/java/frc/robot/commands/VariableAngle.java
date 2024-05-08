@@ -40,7 +40,6 @@ public class VariableAngle extends Command {
             isFinished = true;
         }
 
-        double output = intakeS.anglePidController.calculate(intakeS.getIntakeAngle(), CameraS.getDesiredShooterAngle());
 
         if (timer.get() < 0.15 && !isAutonomous) {
             intakeS.setPrimaryIntake(0.2);
@@ -57,7 +56,7 @@ public class VariableAngle extends Command {
                 desiredRPM = 3300;
             }
             outakeS.setIndividualFlywheelSpeeds(desiredRPM, desiredRPM);
-        }else if (timer.get() >= 0.25 && Math.abs(intakeS.anglePidController.getPositionError()) < 10) {
+        }else if (timer.get() >= 0.25 && intakeS.isAtState()) {
             intakeS.setPrimaryIntake(0);
             if (CameraS.getDistanceFromSpeakerUsingRobotPose() > 4.5) {
             //  outakeS.setFF(.85); //may not be needed.
@@ -83,21 +82,20 @@ public class VariableAngle extends Command {
                 System.out.println("NOT YET RPM");
             }
         }else{
-            if (OutakeS.getFlywheelSpeedDifference() < 100 && timer.get() >= 0.3 && (intakeS.intakeWithinBounds() || Math.abs(intakeS.anglePidController.getPositionError()) < 0.5) && OutakeS.getBottomSpeedError(desiredRPM) < 150 && OutakeS.getTopSpeedError() < 150  && Math.abs(CameraS.getXError()) < .05 && !RobotContainer.manipController.getAButton() && Math.abs(output) < 0.1) {
+            if (OutakeS.getFlywheelSpeedDifference() < 100 && timer.get() >= 0.3 && (intakeS.intakeWithinBounds() || intakeS.isAtState(.5)) && OutakeS.getBottomSpeedError(desiredRPM) < 150 && OutakeS.getTopSpeedError() < 150  && Math.abs(CameraS.getXError()) < .05 && !RobotContainer.manipController.getAButton()) {
                 intakeS.setPrimaryIntake(-0.5);
                 delay.start();
             }
     
             
           //  SmartDashboard.putNumber("Angle Output", output);
-            SmartDashboard.putNumber("Angle Error", intakeS.anglePidController.getPositionError());
             SmartDashboard.putNumber("Flywheel Error", OutakeS.getTopSpeedError());
             if (delay.get() < 0.2) {
                 //stores values of the intake and distance. Updates every time command is called
                 SwerveC.angleOutputDegrees = intakeS.getIntakeAngle();
                 SwerveC.variableAngleDistance = CameraS.getDistanceFromSpeakerUsingRobotPose();
             }
-            intakeS.deployIntake(output);
+            intakeS.deployIntake(intakeS.createState(CameraS.getDesiredShooterAngle()));
         }
 
 
@@ -105,7 +103,6 @@ public class VariableAngle extends Command {
 
     @Override
     public void end(boolean interrupted) {
-        intakeS.deployIntake(0);
         intakeS.setPrimaryIntake(0);
         outakeS.setIndividualFlywheelSpeeds(0, 0);
         System.out.println("DONE SHOTTIN");

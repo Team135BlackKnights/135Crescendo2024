@@ -30,18 +30,16 @@ public class MoveIntake extends Command {
                 isFinished = true;
             }
         }else{
-            intakeS.deployIntake(1);
-            if (IntakeS.getIntakePosition() >= IntakeConstants.deployIntakeOuterBound) {
-                isFinished = true;
-            }
+            intakeS.deployIntake(intakeS.outsideBotState());
         }
-        
+        if (intakeS.isAtState()){
+            isFinished = true;
+        }
     }
     
     
     @Override
     public void end(boolean interrupted){
-        intakeS.deployIntake(0);
         System.out.println("DONE MOVING");
         timer.stop();
     }
