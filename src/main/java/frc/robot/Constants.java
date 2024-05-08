@@ -11,7 +11,6 @@ import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
@@ -50,9 +49,9 @@ public final class Constants {
   public static class IntakeConstants {
     public static class PIDConstants{
       public static double 
-        P = .01,
+        P = .005,
         I = .0,
-        D = .0000;
+        D = .0001;
     }
     public static I2C.Port colorSensorPort = I2C.Port.kOnboard;
     public static Color noteColor = new Color(0.55, 0.36, .08);
@@ -70,7 +69,7 @@ public final class Constants {
       primaryIntakeGearRatio = 1/4.5,
       deployIntakeInnerBound = 0,
       deployIntakeOuterBound = 90,
-      macroMoveSpeed = 1;
+      macroMoveSpeed = .2;
 
     public static boolean
       primaryIntakeReversed = true,
@@ -420,7 +419,7 @@ public final class Constants {
       
     
     public static Rotation2d
-      camFOV = new Rotation2d(Units.radiansToDegrees(70));
+      camFOV = new Rotation2d(Units.degreesToRadians(62.5));
     public static int[] 
     camAvgError = new int[]{0,0,0,0},
     camAvgStdDev = new int[]{0,0,0,0},

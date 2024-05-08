@@ -49,11 +49,6 @@ import frc.robot.Constants.SwerveConstants.ModulePosition;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
-import frc.robot.Constants.DriveConstants;
-import frc.robot.Constants.FieldConstants;
-import frc.robot.Constants.LimelightConstants;
-import frc.robot.Constants.OutakeConstants;
-import frc.robot.LimelightHelpers.PoseEstimate;
 public class SwerveS extends SubsystemBase {
     private final static HashMap<ModulePosition, SwerveModule> m_swerveModules =
           new HashMap<>(
@@ -365,6 +360,8 @@ public class SwerveS extends SubsystemBase {
         if (periodicUpdateCycle %10 == 0){
             DataHandler.logData(periodicUpdateCycle);
         }
+        Logger.recordOutput("Swerve/Display/Actual Swerve Module States", getModuleStates());
+        Logger.recordOutput("Swerve/Display/Rotation", getRotation2d().getDegrees());
     }
 
 
@@ -501,6 +498,7 @@ public class SwerveS extends SubsystemBase {
         for (SwerveModule module : m_swerveModules.values()){
             module.setDesiredState(desiredStates[module.getModuleNumber()]);
         }
+        Logger.recordOutput("Swerve/Display/Target Swerve Module States", desiredStates);
     }
     /**
      * Function that sets the robot to robot relative (and then sets the leds to a pattern showing that the navx has disconnected) if the navx has disconnected

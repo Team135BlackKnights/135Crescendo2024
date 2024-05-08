@@ -225,16 +225,16 @@ public class SwerveModule extends SubsystemBase{
     public void setDesiredState(SwerveModuleState state) {
         //var encoderRotation = new Rotation2d(getTurningPosition());
         // Stops the motors if the desired state is too small
-       /*  if (Math.abs(state.speedMetersPerSecond) < 0.001 && !SwerveS.autoLock) {
+         if (Math.abs(state.speedMetersPerSecond) < 0.001 && !SwerveS.autoLock) {
             stop();
             return;
-        }*/
+        }
         // Optimizing finds the shortest path to the desired angle
         state = SwerveModuleState.optimize(state, getState().angle);
 
         //scales DOWN movement perpendicular to desired direction that occurs when modules change directions. makes smoother.
         //basically, when NOT facing the right direction, turn down our speed so we dont do weird S curves.
-       // state.speedMetersPerSecond *= state.angle.minus(encoderRotation).getCos(); //confirm good idea
+       // state.speedMetersPerSecond *= state.angle.minus(getHeadingRotation2d()).getCos(); //confirm good idea
         //driveMotor.set(state.speedMetersPerSecond * Constants.DriveConstants.kTeleDriveMaxAcceleration);
         // Calculate the drive output from the drive PID controller.
         final double driveOutput =

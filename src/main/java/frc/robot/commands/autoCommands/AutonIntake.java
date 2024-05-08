@@ -5,7 +5,6 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -87,8 +86,8 @@ public class AutonIntake extends Command {
             tx = LimelightHelpers.getTX(Constants.LimelightConstants.limelightName);
             tv = LimelightHelpers.getTV(Constants.LimelightConstants.limelightName);
             ty = LimelightHelpers.getTY(Constants.LimelightConstants.limelightName);
-            desiredHeading = IntakeS.calculateAngleFromTX(tx, Constants.VisionConstants.camFOV.getDegrees());
-            SmartDashboard.putNumber("TY", ty);
+            desiredHeading = -IntakeS.calculateAngleFromTX(tx, Constants.VisionConstants.camFOV.getDegrees());
+            SmartDashboard.putNumber("dES HEADING", desiredHeading);
             
             }
            // SmartDashboard.putBoolean("Note Loaded?", IntakeS.noteIsLoaded());

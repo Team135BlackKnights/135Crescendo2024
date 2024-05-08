@@ -105,14 +105,11 @@ public class IntakeS extends SubsystemBase {
             autoIntakeController.setD(d); kD = d;
         }
     }
-    public static double calculateAngleFromTX(double tX, double horizontalFOV) {
-        // Calculate the half FOV
-        double halfFOV = horizontalFOV / 2.0;
-        
+    public static double calculateAngleFromTX(double tX, double horizontalFOV) {        
         // Calculate the angle using trigonometry
-        double angle = Math.toDegrees(Math.atan2(tX, 1.0 / (2 * Math.tan(Math.toRadians(halfFOV)))));
+        double angle = Math.toRadians((tX / (1280.0 / 2.0)) * (horizontalFOV / 2.0));
         
-        return angle;
+        return Math.toDegrees(angle);
     }
     public static double getIntakePosition() {
         return absDeployIntakeEncoder.getAbsolutePosition()*Constants.IntakeConstants.absIntakeEncoderConversionFactor - Constants.IntakeConstants.absIntakeEncoderOffset;
