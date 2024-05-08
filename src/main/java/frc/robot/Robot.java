@@ -42,7 +42,7 @@ public class Robot extends TimedRobot {
       DataHandler.createLogFileOnRIOUSB();
     }
     else if (Robot.isSimulation()){
-      DataHandler.createLogFileinSimulation("E:");
+      DataHandler.createLogFileinSimulation("C:");
     }
   }
 
@@ -123,6 +123,6 @@ public class Robot extends TimedRobot {
   /** This function is called periodically whilst in simulation. */
   @Override
   public void simulationPeriodic() {
-    //DataHandler.updateHandlerState();
+    DataHandler.updateHandlerState();
   }
 }
