@@ -83,7 +83,7 @@ public class VariableAngle extends Command {
                 System.out.println("NOT YET RPM");
             }
         }else{
-            if (OutakeS.getFlywheelSpeedDifference() < 100 && timer.get() >= 0.3 && (intakeS.intakeWithinBounds() || Math.abs(intakeS.anglePidController.getPositionError()) < 0.5) && OutakeS.getBottomSpeedError(desiredRPM) < 150 && OutakeS.getTopSpeedError() < 150  && Math.abs(CameraS.getXError()) < 3 && !RobotContainer.manipController.getAButton() && Math.abs(output) < 0.1) {
+            if (OutakeS.getFlywheelSpeedDifference() < 100 && timer.get() >= 0.3 && (intakeS.intakeWithinBounds() || Math.abs(intakeS.anglePidController.getPositionError()) < 0.5) && OutakeS.getBottomSpeedError(desiredRPM) < 150 && OutakeS.getTopSpeedError() < 150  && Math.abs(CameraS.getXError()) < .05 && !RobotContainer.manipController.getAButton() && Math.abs(output) < 0.1) {
                 intakeS.setPrimaryIntake(-0.5);
                 delay.start();
             }
