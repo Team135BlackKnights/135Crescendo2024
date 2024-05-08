@@ -130,12 +130,10 @@ public static double calculateAngleFromTX(double tX, double tY) {
         double goalHeightInches = 1; 
 
         double angleToGoalDegrees = limelightMountAngleDegrees + tY;
-        double angleToGoalRadians = angleToGoalDegrees * (3.14159 / 180.0);
 
     //calculate distance
-        double distance = (goalHeightInches - limelightLensHeightInches) / Math.tan(angleToGoalRadians);
-        double c = Math.sqrt(Math.pow(distance,2) + Math.pow(tX,2));
-        double angle = Math.asin(tX/c);
+        double distance = (goalHeightInches - limelightLensHeightInches) / Math.tan(Units.degreesToRadians(angleToGoalDegrees));
+        double angle = Math.atan(tX/distance);
         
         return Math.toDegrees(angle);
     }

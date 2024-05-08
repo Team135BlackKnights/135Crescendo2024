@@ -30,7 +30,7 @@ public class AutonIntake extends Command {
     double ty;
     Timer timer = new Timer();
     Timer delayTimer = new Timer();
-    double desiredHeading,currentHeading;
+    double desiredHeading,currentHeading, error;
     /*Call this in all cases but simulation autonomous*/
     public AutonIntake(IntakeS intakeS, SwerveS swerveS) {
         this.intakeS = intakeS;
@@ -78,6 +78,8 @@ public class AutonIntake extends Command {
             // Adjust the robot's orientation towards the target
             // Example: Set the desired heading for your motion control system
             desiredHeading = angleToTarget;
+            currentHeading = SwerveS.getHeading();
+            error = currentHeading-desiredHeading;
         }else{
             IntakeS.detected = IntakeS.colorSensorV3.getColor();
             IntakeS.colorMatchResult = IntakeS.colorMatch.matchClosestColor(IntakeS.detected);
@@ -87,8 +89,8 @@ public class AutonIntake extends Command {
             tx = LimelightHelpers.getTX(Constants.LimelightConstants.limelightName);
             tv = LimelightHelpers.getTV(Constants.LimelightConstants.limelightName);
             ty = LimelightHelpers.getTY(Constants.LimelightConstants.limelightName);
-            desiredHeading = CameraS.calculateAngleFromTX(tx,ty);
-            SmartDashboard.putNumber("dES HEADING", desiredHeading);
+            error = CameraS.calculateAngleFromTX(tx,ty);
+            SmartDashboard.putNumber("ANGLE ERROR", error);
             
             }
            // SmartDashboard.putBoolean("Note Loaded?", IntakeS.noteIsLoaded());
@@ -107,8 +109,7 @@ public class AutonIntake extends Command {
                 speeds = new ChassisSpeeds(0,0,0.1*Constants.DriveConstants.kMaxTurningSpeedRadPerSec);
             } else if (loaded==false && close == false) {
                 double moveSpeed = Constants.IntakeConstants.macroMoveSpeed * Constants.DriveConstants.kMaxSpeedMetersPerSecond;
-                currentHeading = SwerveS.getHeading();
-                speeds = new ChassisSpeeds(moveSpeed,0,IntakeS.autoIntakeController.calculate(currentHeading,desiredHeading)*Constants.DriveConstants.kMaxTurningSpeedRadPerSec);
+                speeds = new ChassisSpeeds(moveSpeed,0,IntakeS.autoIntakeController.calculate(error,0)*Constants.DriveConstants.kMaxTurningSpeedRadPerSec);
             }else{
                 speeds = new ChassisSpeeds(0,0,0);
             }
