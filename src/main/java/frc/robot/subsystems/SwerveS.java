@@ -175,7 +175,7 @@ public class SwerveS extends SubsystemBase {
   public Command sysIdQuasistaticDrive(SysIdRoutine.Direction direction) {
     return sysIdRoutineDrive.quasistatic(direction);
   }
-    public static boolean autoLock = true;
+    public static boolean autoLock = false;
     public static boolean redIsAlliance = true;
     private static double kP,kI,kD;
 
@@ -332,8 +332,8 @@ public class SwerveS extends SubsystemBase {
                             module.getHeadingRotation2d().plus(getRotation2d())));
           }
         robotField.setRobotPose(getPose());
-        //SmartDashboard.putData(robotField);
-        SmartDashboard.putData(CameraS.getEstimatedField());
+        SmartDashboard.putData(robotField);
+        //SmartDashboard.putData(CameraS.getEstimatedField());
         PathPlannerLogging.setLogCurrentPoseCallback((pose) -> {
             // Do whatever you want with the pose here
             robotField.setRobotPose(pose);
