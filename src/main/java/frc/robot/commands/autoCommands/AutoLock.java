@@ -12,7 +12,7 @@ public class AutoLock extends Command{
 
     SwerveS swerveS;
     boolean isFinished = false;
-    double limelightDeadBand = 1, limelightTx = 0, maxTimeTargetting = 0.1;
+    double limelightDeadBand = 0.00001, limelightTx = 0, maxTimeTargetting = 0.1;
     Timer timer = new Timer();
     ChassisSpeeds speeds;
     public AutoLock(SwerveS swerveS){

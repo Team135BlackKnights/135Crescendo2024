@@ -209,7 +209,7 @@ private void updateSimField(Optional<EstimatedRobotPose> visionEst,boolean newRe
                                 if (SwerveS.getAlliance()){
                                     if (target.getFiducialId() == 4){
                                         hasSpeaker = true;
-                                        backCamXError = -target.getBestCameraToTarget().getY();
+                                        backCamXError = -target.getBestCameraToTarget().getY(); //Y is distance from CENTER, left Right. 
                                     }
                                 }else{
                                     if (target.getFiducialId() == 7){
