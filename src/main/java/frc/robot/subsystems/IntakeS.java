@@ -13,11 +13,25 @@ import frc.robot.Constants.DriveSimConstants;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.Measure;
+import edu.wpi.first.units.Time;
+import edu.wpi.first.units.Velocity;
+import edu.wpi.first.units.Voltage;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import static edu.wpi.first.units.Units.Seconds;
+import static edu.wpi.first.units.Units.Volts;
+
+import java.util.function.BooleanSupplier;
+import java.util.function.Supplier;
+
+import org.littletonrobotics.junction.Logger;
+
 import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.Constants.IntakeConstants;
@@ -41,8 +55,14 @@ public class IntakeS extends SubsystemBase {
     public static int timesRan;
     public PIDController anglePidController = new PIDController(0.06, 0, 0);
     private static double kP,kI,kD;
-
+    private BooleanSupplier intakeWithinBoundsSupplier = () -> intakeWithinBounds();
     public static PIDController autoIntakeController; //sadly cannot be system Id'd
+
+    Measure<Velocity<Voltage>> rampRate = Volts.of(1).per(Seconds.of(1)); //for going FROM ZERO PER SECOND
+    Measure<Voltage> holdVoltage = Volts.of(8);
+    Measure<Time> timeout = Seconds.of(10);
+        
+    SysIdRoutine armIdRoutine = new SysIdRoutine(new SysIdRoutine.Config(rampRate,holdVoltage,timeout,(state) -> Logger.recordOutput("SysIdTestState", state.toString())), new SysIdRoutine.Mechanism((Measure<Voltage> volts) -> {setIntakeMotorVolts(volts.in(Volts));}, null, this));
 
     public IntakeS() {
         timesRan = 0;
@@ -81,7 +101,23 @@ public class IntakeS extends SubsystemBase {
         autoIntakeController.enableContinuousInput(-180, 180);
         //Color sensor thread
 
+        
+    
+       
     }
+     /**
+   * Returns a command that will execute a quasistatic test in the given direction.
+   *
+   * @param direction The direction (forward or reverse) to run the test in
+   */
+  public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
+    return armIdRoutine.quasistatic(direction).until(intakeWithinBoundsSupplier);
+  }
+
+  public Command debug1(SysIdRoutine.Direction direction){
+    return armIdRoutine.dynamic(direction).until(intakeWithinBoundsSupplier);
+  }
+
     @Override
     public void periodic() {
         
@@ -171,6 +207,10 @@ public class IntakeS extends SubsystemBase {
 
         deployIntake.set(power);
     }
+
+    public void setIntakeMotorVolts(double volts){
+        deployIntake.setVoltage(volts);
+    }
     public void pullBackNote(){
         new Thread(() -> {
             Timer timer = new Timer();
@@ -186,4 +226,5 @@ public class IntakeS extends SubsystemBase {
             AutonIntake.allClear = true;
         }).start();
     }
+
     }
