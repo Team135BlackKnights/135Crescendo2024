@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj.Timer;
+
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.ColorMatch;
 import com.revrobotics.ColorMatchResult;
@@ -7,15 +9,19 @@ import com.revrobotics.ColorSensorV3;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
-
+import frc.robot.Constants.DriveSimConstants;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.Robot;
 import frc.robot.Constants.IntakeConstants;
-
+import frc.robot.commands.autoCommands.AutonIntake;
 
 
 
@@ -34,9 +40,10 @@ public class IntakeS extends SubsystemBase {
     public static Thread sensorThread;
     public static int timesRan;
     public PIDController anglePidController = new PIDController(0.06, 0, 0);
+    private static double kP,kI,kD;
 
+    public static PIDController autoIntakeController; //sadly cannot be system Id'd
 
-    
     public IntakeS() {
         timesRan = 0;
 
@@ -64,7 +71,14 @@ public class IntakeS extends SubsystemBase {
         //sets changes to motor (resource intensive, ONLY CALL ON INITIALIZATION)
         primaryIntake.burnFlash();
         deployIntake.burnFlash();
-
+        kP = Constants.IntakeConstants.PIDConstants.P;
+        kI = Constants.IntakeConstants.PIDConstants.I;
+        kD = Constants.IntakeConstants.PIDConstants.D;
+        SmartDashboard.putNumber("P Gain", kP);
+        SmartDashboard.putNumber("I Gain", kI);
+        SmartDashboard.putNumber("D Gain", kD);
+        autoIntakeController = new PIDController(kP, kI, kD);
+        autoIntakeController.enableContinuousInput(-180, 180);
         //Color sensor thread
 
     }
@@ -77,9 +91,29 @@ public class IntakeS extends SubsystemBase {
         SmartDashboard.putNumber("Intake Angle", getIntakeAngle());
       //  SmartDashboard.putBoolean("Intake Within Bounds", intakeWithinBounds());
         SmartDashboard.putNumber("Intake Offset", IntakeConstants.intakeOffset);
-
+        double p = SmartDashboard.getNumber("P Gain", Constants.IntakeConstants.PIDConstants.P);
+        double i = SmartDashboard.getNumber("I Gain", Constants.IntakeConstants.PIDConstants.I);
+        double d = SmartDashboard.getNumber("D Gain", Constants.IntakeConstants.PIDConstants.D);
+        if ((p != kP)) { 
+            autoIntakeController.setP(p);
+             kP = p; 
+        }
+        if ((i != kI)) {
+            autoIntakeController.setI(i); kI = i; 
+        }
+        if ((d != kD)) {
+            autoIntakeController.setD(d); kD = d;
+        }
     }
-
+    public static double calculateAngleFromTX(double tX, double horizontalFOV) {
+        // Calculate the half FOV
+        double halfFOV = horizontalFOV / 2.0;
+        
+        // Calculate the angle using trigonometry
+        double angle = Math.toDegrees(Math.atan2(tX, 1.0 / (2 * Math.tan(Math.toRadians(halfFOV)))));
+        
+        return angle;
+    }
     public static double getIntakePosition() {
         return absDeployIntakeEncoder.getAbsolutePosition()*Constants.IntakeConstants.absIntakeEncoderConversionFactor - Constants.IntakeConstants.absIntakeEncoderOffset;
     }
@@ -89,7 +123,8 @@ public class IntakeS extends SubsystemBase {
     }
 
     public boolean intakeWithinBounds() {
-        return getIntakeAngle() > SwerveS.getDesiredShooterLowerBound() && getIntakeAngle() < SwerveS.getDesiredShooterUpperBound() || (getIntakeAngle() > 42 && SwerveS.getDesiredShooterAngle() > 42);
+        if (Robot.isSimulation()) return true;
+        return getIntakeAngle() > CameraS.getDesiredShooterLowerBound() && getIntakeAngle() < CameraS.getDesiredShooterUpperBound() || (getIntakeAngle() > 42 && CameraS.getDesiredShooterAngle() > 42);
     }
     
 
@@ -100,6 +135,19 @@ public class IntakeS extends SubsystemBase {
         else{
             return false;
         }
+
+    }
+    public Translation2d getClosestNote(){
+        //Obnoxiously high distance to be overrode
+        Translation2d closestTrans = new Translation2d();
+        double closestPoseDistance = 9999;
+        for (var pose : DriveSimConstants.fieldNotePoses){
+            if (pose.getDistance(SwerveS.getPose().getTranslation())< closestPoseDistance){
+                closestTrans = pose;
+                closestPoseDistance = pose.getDistance(SwerveS.getPose().getTranslation());
+            }
+        }
+        return closestTrans;
 
     }
 
@@ -131,5 +179,20 @@ public class IntakeS extends SubsystemBase {
        // SmartDashboard.putNumber("Deploy Intake Percentage", power);
 
         deployIntake.set(power);
+    }
+    public void pullBackNote(){
+        new Thread(() -> {
+            Timer timer = new Timer();
+            timer.start();
+            while (timer.get() < .15) {
+                setPrimaryIntake(-0.5);
+            }
+            timer.reset();
+            while (timer.get() < .15){
+                setPrimaryIntake(0.2);
+            }
+            setPrimaryIntake(0);
+            AutonIntake.allClear = true;
+        }).start();
     }
     }
