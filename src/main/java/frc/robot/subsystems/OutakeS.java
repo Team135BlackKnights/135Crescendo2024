@@ -32,6 +32,8 @@ import frc.robot.Robot;
 import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 
+import org.littletonrobotics.junction.Logger;
+
 public class OutakeS extends SubsystemBase {
     //motor declarations
     public static boolean SysIDTestRunning = false;
@@ -46,7 +48,7 @@ public class OutakeS extends SubsystemBase {
     Measure<Voltage> holdVoltage = Volts.of(7);
     Measure<Time> timeout = Seconds.of(10);
     SysIdRoutine sysIdRoutine = new SysIdRoutine(
-        new SysIdRoutine.Config(rampRate,holdVoltage,timeout),
+        new SysIdRoutine.Config(rampRate,holdVoltage,timeout,(state) -> Logger.recordOutput("SysIdTestState", state.toString())        ),
         new SysIdRoutine.Mechanism(
             (Measure<Voltage> volts) -> {
                 topFlywheel.setVoltage(volts.in(Volts));
@@ -127,7 +129,6 @@ public class OutakeS extends SubsystemBase {
         m_topLoop.setNextR(0);
         m_bottomLoop.setNextR(0);
         // Reset our loop to make sure it's in a known state.
-        //  (sparks have exact 20ms delay so not needed) m_controller.latencyCompensate(m_flywheelPlant, .02, .025); //sensor delay
         m_topLoop.reset(VecBuilder.fill(topFlywheelEncoder.getVelocity()));
         m_bottomLoop.reset(VecBuilder.fill(bottomFlywheelEncoder.getVelocity()));
 
