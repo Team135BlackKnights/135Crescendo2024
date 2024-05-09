@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.ColorMatch;
@@ -46,7 +47,9 @@ import org.littletonrobotics.junction.Logger;
 
 import frc.robot.Constants;
 import frc.robot.Robot;
+import frc.robot.RobotContainer;
 import frc.robot.Constants.IntakeConstants;
+import frc.robot.LimelightHelpers;
 import frc.robot.commands.autoCommands.AutonIntake;
 
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
@@ -183,12 +186,10 @@ public class IntakeS extends SubsystemBase {
         SmartDashboard.putData("Mech2d",m_mech2d);
         autoIntakeController = new PIDController(kP, kI, kD);
         autoIntakeController.enableContinuousInput(-180, 180);
+        autoIntakeController.setIntegratorRange(-Constants.DriveConstants.kMaxTurningSpeedRadPerSec/2, Constants.DriveConstants.kMaxTurningSpeedRadPerSec/2);
         //Color sensor thread
-
-        
         m_loop.reset(VecBuilder.fill(getDistance(), getVelocity()));
         m_lastProfiledReference = new TrapezoidProfile.State(getDistance(), getVelocity());
-        
     }
      /**
    * Returns a command that will execute a quasistatic test in the given direction.
@@ -255,6 +256,7 @@ public class IntakeS extends SubsystemBase {
             new Rotation3d(0, -Units.degreesToRadians(m_position-Constants.IntakeConstants.intakeOffset+8), 0.0));
         Logger.recordOutput("Mechanism3d/", armPose);
         SmartDashboard.putNumber("Angle Error", getError());
+
     }
 
     public double getIntakeAngle() {

@@ -51,13 +51,14 @@ public class AutonIntake extends Command {
         isFinished = false;
         LimelightHelpers.setPipelineIndex(Constants.LimelightConstants.limelightName, 1); //TODO: Make this base Pipe, cuz error swapping back and forth
         delayTimer.reset();
-        delayTimer.start();
+        //delayTimer.start(); //for now
         allClear = false;
         close = false;
         takeOver = true;
         ty = 0;
         this.targetNoteLocation = intakeS.getClosestNote();
         intakeS.deployIntake(intakeS.outsideBotState());
+        intakeS.autoIntakeController.reset();
     }
 
     @Override
@@ -93,7 +94,7 @@ public class AutonIntake extends Command {
         SmartDashboard.putNumber("ANGLE ERROR", error);
         // SmartDashboard.putBoolean("Note Loaded?", IntakeS.noteIsLoaded());
         if (Robot.isReal()){
-            if (ty >18.5){
+            if (ty <-18.5){
                 close =true;
             }
         } else{
@@ -105,13 +106,13 @@ public class AutonIntake extends Command {
                 // We don't see the target, seek for the target by spinning in place at a safe speed.
             speeds = new ChassisSpeeds(0,0,0.1*Constants.DriveConstants.kMaxTurningSpeedRadPerSec);
         } else if (loaded==false && close == false) {
-            double moveSpeed = Constants.IntakeConstants.macroMoveSpeed * Constants.DriveConstants.kMaxSpeedMetersPerSecond* 0;
-            speeds = new ChassisSpeeds(moveSpeed,0,IntakeS.autoIntakeController.calculate(error,-5)*Constants.DriveConstants.kTeleTurningMaxAcceleration);
+            double moveSpeed = Constants.IntakeConstants.macroMoveSpeed * Constants.DriveConstants.kMaxSpeedMetersPerSecond/Math.sqrt(Math.abs(tx));
+            speeds = new ChassisSpeeds(moveSpeed,0,IntakeS.autoIntakeController.calculate(tx,0)*Constants.DriveConstants.kMaxTurningSpeedRadPerSec);
         }else{
             speeds = new ChassisSpeeds(0,0,0);
         }
             swerveS.setChassisSpeeds(speeds);
-            intakeS.setPrimaryIntake(-0.5);
+            intakeS.setPrimaryIntake(-1);
             //runs intake if note is not loaded
             if (Robot.isReal()){
                 if (IntakeS.noteIsLoaded() || delayTimer.get() > 2) {

@@ -49,9 +49,9 @@ public final class Constants {
   public static class IntakeConstants {
     public static class PIDConstants{
       public static double 
-        P = .005,
-        I = .0,
-        D = .0001;
+        P = 0.000001,
+        I = 0.010000,
+        D = .000;
     }
     public static class StateSpace{
       public static double
@@ -76,7 +76,7 @@ public final class Constants {
       primaryIntakeGearRatio = 1/4.5,
       deployIntakeInnerBound = 0,
       deployIntakeOuterBound = 90,
-      macroMoveSpeed = .2;
+      macroMoveSpeed = .5;
 
     public static boolean
       primaryIntakeReversed = true,
