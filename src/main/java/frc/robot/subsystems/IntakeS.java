@@ -31,6 +31,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
+import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -47,7 +48,9 @@ import frc.robot.Constants.IntakeConstants;
 import frc.robot.commands.autoCommands.AutonIntake;
 
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
-
+import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
+import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
+import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
 
 
 public class IntakeS extends SubsystemBase {
@@ -79,15 +82,15 @@ public class IntakeS extends SubsystemBase {
     private final TrapezoidProfile m_profile =
     new TrapezoidProfile(
         new TrapezoidProfile.Constraints(
-            Units.degreesToRadians(45),
-            Units.degreesToRadians(90))); // Max arm speed and acceleration.
+            DCMotor.getNEO(1).freeSpeedRadPerSec,//placeholder
+            DCMotor.getNEO(1).freeSpeedRadPerSec/2)); // Max acceleration (def accurate frfr)😈😈😈
     private TrapezoidProfile.State m_lastProfiledReference = new TrapezoidProfile.State();
     /* 
     //using MOI
     private final LinearSystem<N2,N1,N1> m_armPlant = 
         LinearSystemId.createSingleJointedArmSystem(DCMotor.getNEO(1), SingleJointedArmSim.estimateMOI(Units.inchesToMeters(5), Units.lbsToKilograms(13)), 400);
     */
-     
+      
     //using sysId
     private final LinearSystem<N2, N1, N1> m_armPlant =
       LinearSystemId.identifyPositionSystem(Constants.IntakeConstants.StateSpace.kVVoltSecondsPerRotation,Constants.IntakeConstants.StateSpace.kAVoltSecondsSquaredPerRotation);
@@ -129,7 +132,19 @@ public class IntakeS extends SubsystemBase {
     private double m_oldPosition = 0;
     private TrapezoidProfile.State goal = new TrapezoidProfile.State(Constants.IntakeConstants.deployIntakeInnerBound,0);
     //sim values
-    private SingleJointedArmSim simArm = new SingleJointedArmSim(m_armPlant, DCMotor.getNEO(1), 400, Units.inchesToMeters(5), Constants.IntakeConstants.deployIntakeInnerBound,  Constants.IntakeConstants.deployIntakeOuterBound, false, Constants.IntakeConstants.deployIntakeInnerBound);
+    private SingleJointedArmSim simArm = new SingleJointedArmSim(m_armPlant, DCMotor.getNEO(1), 400, Units.inchesToMeters(5), Constants.IntakeConstants.deployIntakeInnerBound,  Constants.IntakeConstants.deployIntakeOuterBound, true, Constants.IntakeConstants.deployIntakeInnerBound);
+    
+    // Create a Mechanism2d display of an Arm with a fixed ArmTower and moving Arm.
+    private final Mechanism2d m_mech2d = new Mechanism2d(Units.inchesToMeters(29.5), Units.inchesToMeters(29.5));
+    private final MechanismRoot2d m_armPivot = m_mech2d.getRoot("ArmPivot", Units.inchesToMeters(29.5/2), Units.inchesToMeters(29.5/2));
+    private final MechanismLigament2d m_arm =
+    m_armPivot.append(
+        new MechanismLigament2d(
+            "Arm",
+            Units.inchesToMeters(5),
+            m_position,
+            6,
+            new Color8Bit(Color.kYellow)));
     public IntakeS() {
         timesRan = 0;
 
@@ -163,6 +178,7 @@ public class IntakeS extends SubsystemBase {
         SmartDashboard.putNumber("P Gain", kP);
         SmartDashboard.putNumber("I Gain", kI);
         SmartDashboard.putNumber("D Gain", kD);
+        SmartDashboard.putData("Mech2d",m_mech2d);
         autoIntakeController = new PIDController(kP, kI, kD);
         autoIntakeController.enableContinuousInput(-180, 180);
         //Color sensor thread
@@ -170,6 +186,7 @@ public class IntakeS extends SubsystemBase {
         
         m_loop.reset(VecBuilder.fill(getDistance(), getVelocity()));
         m_lastProfiledReference = new TrapezoidProfile.State(getDistance(), getVelocity());
+        
     }
      /**
    * Returns a command that will execute a quasistatic test in the given direction.
@@ -224,8 +241,9 @@ public class IntakeS extends SubsystemBase {
         }else{
             simArm.setInput(nextVoltage);
             simArm.update(.02);
+            m_arm.setAngle(m_position);
         }
-
+        Logger.recordOutput("MyMechanism", m_mech2d);
         SmartDashboard.putNumber("Angle Error", getError());
     }
 
@@ -329,7 +347,7 @@ public class IntakeS extends SubsystemBase {
      * @return error in degrees?
     */
     public double getError(){
-        return m_position - m_lastProfiledReference.position; //in radians
+        return m_position - goal.position; //in radians
     }
     public void deployIntake(TrapezoidProfile.State state){
         goal = state;

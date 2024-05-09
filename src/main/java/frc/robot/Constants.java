@@ -57,8 +57,8 @@ public final class Constants {
       public static double
         kP = 00,
         kSVolts = 0, //must find
-        kVVoltSecondsPerRotation= .1, //must find
-        kAVoltSecondsSquaredPerRotation = .1; //must find
+        kVVoltSecondsPerRotation= .0001, //must find
+        kAVoltSecondsSquaredPerRotation = .0001; //must find
     }
     public static I2C.Port colorSensorPort = I2C.Port.kOnboard;
     public static Color noteColor = new Color(0.55, 0.36, .08);
