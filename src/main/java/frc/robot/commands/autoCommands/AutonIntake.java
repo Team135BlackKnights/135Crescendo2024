@@ -105,8 +105,8 @@ public class AutonIntake extends Command {
                 // We don't see the target, seek for the target by spinning in place at a safe speed.
             speeds = new ChassisSpeeds(0,0,0.1*Constants.DriveConstants.kMaxTurningSpeedRadPerSec);
         } else if (loaded==false && close == false) {
-            double moveSpeed = Constants.IntakeConstants.macroMoveSpeed * Constants.DriveConstants.kMaxSpeedMetersPerSecond;
-            speeds = new ChassisSpeeds(moveSpeed,0,IntakeS.autoIntakeController.calculate(error,0)*Constants.DriveConstants.kMaxTurningSpeedRadPerSec);
+            double moveSpeed = Constants.IntakeConstants.macroMoveSpeed * Constants.DriveConstants.kMaxSpeedMetersPerSecond* 0;
+            speeds = new ChassisSpeeds(moveSpeed,0,IntakeS.autoIntakeController.calculate(error,-5)*Constants.DriveConstants.kTeleTurningMaxAcceleration);
         }else{
             speeds = new ChassisSpeeds(0,0,0);
         }
