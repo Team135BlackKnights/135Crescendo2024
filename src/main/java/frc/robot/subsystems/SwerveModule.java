@@ -225,10 +225,10 @@ public class SwerveModule extends SubsystemBase{
     public void setDesiredState(SwerveModuleState state) {
         //var encoderRotation = new Rotation2d(getTurningPosition());
         // Stops the motors if the desired state is too small
-         if (Math.abs(state.speedMetersPerSecond) < 0.001 && !SwerveS.autoLock) {
+        /* if (Math.abs(state.speedMetersPerSecond) < 0.001 && !SwerveS.autoLock) {
             stop();
             return;
-        }
+        }*/
         // Optimizing finds the shortest path to the desired angle
         state = SwerveModuleState.optimize(state, getState().angle);
 

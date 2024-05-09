@@ -20,6 +20,8 @@ import edu.wpi.first.units.Measure;
 import edu.wpi.first.units.Time;
 import edu.wpi.first.units.Velocity;
 import edu.wpi.first.units.Voltage;
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N2;
@@ -136,14 +138,14 @@ public class IntakeS extends SubsystemBase {
     
     // Create a Mechanism2d display of an Arm with a fixed ArmTower and moving Arm.
     private final Mechanism2d m_mech2d = new Mechanism2d(Units.inchesToMeters(29.5), Units.inchesToMeters(29.5));
-    private final MechanismRoot2d m_armPivot = m_mech2d.getRoot("ArmPivot", Units.inchesToMeters(29.5/2), Units.inchesToMeters(29.5/2));
+    private final MechanismRoot2d m_armPivot = m_mech2d.getRoot("ArmPivot", Units.inchesToMeters(23), Units.inchesToMeters(29.5/2));
     private final MechanismLigament2d m_arm =
     m_armPivot.append(
         new MechanismLigament2d(
             "Arm",
             Units.inchesToMeters(5),
             m_position,
-            6,
+            1,
             new Color8Bit(Color.kYellow)));
     public IntakeS() {
         timesRan = 0;
@@ -244,6 +246,14 @@ public class IntakeS extends SubsystemBase {
             m_arm.setAngle(m_position);
         }
         Logger.recordOutput("MyMechanism", m_mech2d);
+        //calcualate arm pose
+        var armPose =
+        new Pose3d(
+            0.292,
+            0,
+            0.1225,
+            new Rotation3d(0, -Units.degreesToRadians(m_position-Constants.IntakeConstants.intakeOffset+8), 0.0));
+        Logger.recordOutput("Mechanism3d/", armPose);
         SmartDashboard.putNumber("Angle Error", getError());
     }
 
