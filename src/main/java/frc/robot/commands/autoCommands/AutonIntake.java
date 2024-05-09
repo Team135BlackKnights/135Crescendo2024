@@ -74,7 +74,6 @@ public class AutonIntake extends Command {
             double angleToTarget = Math.atan2(ty, tx); // Calculate angle in radians
             // Convert angle to degrees if necessary
             angleToTarget = Math.toDegrees(angleToTarget);
-            SmartDashboard.putNumber("ANGLE", angleToTarget);
 
             // Adjust the robot's orientation towards the target
             // Example: Set the desired heading for your motion control system
@@ -90,29 +89,27 @@ public class AutonIntake extends Command {
             tv = LimelightHelpers.getTV(Constants.LimelightConstants.limelightName);
             ty = LimelightHelpers.getTY(Constants.LimelightConstants.limelightName);
             error = CameraS.calculateAngleFromTX(tx,ty);
-            SmartDashboard.putNumber("ANGLE ERROR", error);
-            
             }
-           // SmartDashboard.putBoolean("Note Loaded?", IntakeS.noteIsLoaded());
-           if (Robot.isReal()){
+        SmartDashboard.putNumber("ANGLE ERROR", error);
+        // SmartDashboard.putBoolean("Note Loaded?", IntakeS.noteIsLoaded());
+        if (Robot.isReal()){
             if (ty >18.5){
                 close =true;
             }
-           } else{
+        } else{
             if (Math.abs(ty) < Units.inchesToMeters(4) && Math.abs(tx) < Units.inchesToMeters(4)){
                 close = true;
             }
            }
-           
-            if (tv == false && loaded==false && close == false) {
+        if (tv == false && loaded==false && close == false) {
                 // We don't see the target, seek for the target by spinning in place at a safe speed.
-                speeds = new ChassisSpeeds(0,0,0.1*Constants.DriveConstants.kMaxTurningSpeedRadPerSec);
-            } else if (loaded==false && close == false) {
-                double moveSpeed = Constants.IntakeConstants.macroMoveSpeed * Constants.DriveConstants.kMaxSpeedMetersPerSecond;
-                speeds = new ChassisSpeeds(moveSpeed,0,IntakeS.autoIntakeController.calculate(error,0)*Constants.DriveConstants.kMaxTurningSpeedRadPerSec);
-            }else{
-                speeds = new ChassisSpeeds(0,0,0);
-            }
+            speeds = new ChassisSpeeds(0,0,0.1*Constants.DriveConstants.kMaxTurningSpeedRadPerSec);
+        } else if (loaded==false && close == false) {
+            double moveSpeed = Constants.IntakeConstants.macroMoveSpeed * Constants.DriveConstants.kMaxSpeedMetersPerSecond;
+            speeds = new ChassisSpeeds(moveSpeed,0,IntakeS.autoIntakeController.calculate(error,0)*Constants.DriveConstants.kMaxTurningSpeedRadPerSec);
+        }else{
+            speeds = new ChassisSpeeds(0,0,0);
+        }
             swerveS.setChassisSpeeds(speeds);
             intakeS.setPrimaryIntake(-0.5);
             //runs intake if note is not loaded
@@ -127,7 +124,6 @@ public class AutonIntake extends Command {
                     isFinished = true;
                 }
             }
-
         }
         
     
@@ -136,6 +132,7 @@ public class AutonIntake extends Command {
     public void end(boolean interrupted) {
         takeOver = false;
         intakeS.setPrimaryIntake(0);
+        intakeS.deployIntake(intakeS.insideBotState());
         timer.stop();
         timer.reset();
         delayTimer.stop();
