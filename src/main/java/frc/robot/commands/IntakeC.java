@@ -57,7 +57,12 @@ public class IntakeC extends Command {
         }
 
         intakeS.setPrimaryIntake(intakeSpeed * 1);
-        //ask Owyn how we should handle this.
+        //implement a way to take a percentage output (0 - 1 ) to a velocity for the deploy intake. 
+        // Predict .02seconds later to the current position with the given velocity
+        // Feed that into the state position
+        // use the velocity given for state velocity 
+        // Remember, the state uses DEGREES.
+
         //intakeS.deployIntake(deployIntakeSpeed * 1);
         
     }

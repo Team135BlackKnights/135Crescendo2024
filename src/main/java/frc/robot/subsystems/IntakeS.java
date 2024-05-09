@@ -329,7 +329,7 @@ public class IntakeS extends SubsystemBase {
      * 
      */
     public TrapezoidProfile.State createState(double angle){
-        return new TrapezoidProfile.State(Units.degreesToRadians(angle),0);
+        return new TrapezoidProfile.State(angle,0);
     }
     /**
      * Checks if close to state, with less than 2 degrees being "good"
