@@ -19,7 +19,6 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.system.plant.DCMotor;
 //import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.RobotController;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Robot;
@@ -266,7 +265,7 @@ public class SwerveModule extends SubsystemBase{
         double distancePer20Ms = m_simDriveEncoderVelocity *.02;    
         m_simDriveEncoderPosition += distancePer20Ms;
       }
-
+      @SuppressWarnings("unused")
       private void simTurnPosition(double angle) {
         if (angle != m_currentAngle && m_simTurnAngleIncrement == 0) {
           m_simAngleDifference = angle - m_currentAngle;

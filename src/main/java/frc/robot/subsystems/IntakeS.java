@@ -1,8 +1,6 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.GenericHID.RumbleType;
-
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.ColorMatch;
 import com.revrobotics.ColorMatchResult;
@@ -47,9 +45,7 @@ import org.littletonrobotics.junction.Logger;
 
 import frc.robot.Constants;
 import frc.robot.Robot;
-import frc.robot.RobotContainer;
 import frc.robot.Constants.IntakeConstants;
-import frc.robot.LimelightHelpers;
 import frc.robot.commands.autoCommands.AutonIntake;
 
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;

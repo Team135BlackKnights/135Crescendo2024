@@ -13,7 +13,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ScheduleCommand;
 import java.util.Set;
-import frc.robot.subsystems.OutakeS;
 import frc.robot.Constants;
 import frc.robot.subsystems.IntakeS;
 import java.util.function.Supplier;

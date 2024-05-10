@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.CameraS;
 import frc.robot.subsystems.OutakeS;
+import frc.robot.utils.SimShootNote;
 
 
 public class FireShooter extends Command {
@@ -38,6 +39,7 @@ public class FireShooter extends Command {
                 desRPM = 3300;
             }
             outakeS.setIndividualFlywheelSpeeds(desRPM, desRPM);
+            SimShootNote.shoot();
             //if the timer hasnt reached the time, essentially uses a pid loop with a feedforward constant (desired velocity/max velocity) to set the motor speed as a percentage
             if (timer.get() >= time) {
                 isFinished = true;

@@ -6,7 +6,7 @@ import frc.robot.RobotContainer;
 import frc.robot.subsystems.CameraS;
 import frc.robot.subsystems.IntakeS;
 import frc.robot.subsystems.OutakeS;
-import frc.robot.Constants.IntakeConstants;
+
 
 public class VariableSpeed extends Command {
     private final IntakeS intakeS;

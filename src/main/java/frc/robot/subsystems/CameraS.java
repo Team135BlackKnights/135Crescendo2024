@@ -48,7 +48,9 @@ public class CameraS extends SubsystemBase {
         backLastEstTimestamp = 0f;
     public static double backCamXError = 0f;
     static double distance = 0;
+    @SuppressWarnings("unused")
     static private PhotonCamera
+
         frontCam,
         rightCam,
         leftCam;
@@ -72,8 +74,10 @@ public class CameraS extends SubsystemBase {
         Rotation3d rightRot = new Rotation3d(0, Math.toRadians(Constants.VisionConstants.rightCamPitch), Math.toRadians(-90));
         Rotation3d leftRot = new Rotation3d(0, Math.toRadians(Constants.VisionConstants.leftCamPitch), Math.toRadians(90));
         Rotation3d backRot = new Rotation3d(0, Math.toRadians(Constants.VisionConstants.backCamPitch), Math.toRadians(180));
+        @SuppressWarnings("unused")
         Transform3d robotToFront = new Transform3d(frontPos, frontRot); //transform
         Transform3d robotToRight = new Transform3d(rightPos, rightRot);
+        @SuppressWarnings("unused")
         Transform3d robotToLeft = new Transform3d(leftPos, leftRot);
         Transform3d robotToBack = new Transform3d(backPos, backRot);
         Transform3d[] camTranslations = new Transform3d[]{robotToRight,robotToBack};

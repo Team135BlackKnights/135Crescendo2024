@@ -58,7 +58,7 @@ public class AutonIntake extends Command {
         ty = 0;
         this.targetNoteLocation = intakeS.getClosestNote();
         intakeS.deployIntake(intakeS.outsideBotState());
-        intakeS.autoIntakeController.reset();
+        IntakeS.autoIntakeController.reset();
     }
 
     @Override
