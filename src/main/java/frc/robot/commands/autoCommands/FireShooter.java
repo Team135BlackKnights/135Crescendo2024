@@ -4,6 +4,7 @@ package frc.robot.commands.autoCommands;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Robot;
 import frc.robot.subsystems.CameraS;
 import frc.robot.subsystems.OutakeS;
 import frc.robot.utils.SimShootNote;
@@ -51,6 +52,9 @@ public class FireShooter extends Command {
 
     @Override
     public void end(boolean interrupted) {
+        if (Robot.isSimulation()){
+            SimShootNote.shoot();
+            }
         timer.stop();
     }
 
