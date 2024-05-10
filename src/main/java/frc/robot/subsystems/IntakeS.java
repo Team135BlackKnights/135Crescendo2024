@@ -133,7 +133,7 @@ public class IntakeS extends SubsystemBase {
     private final LinearSystemLoop<N2, N1, N1> m_loop =
     new LinearSystemLoop<>(m_armPlant, m_controller, m_observer, 12.0, 0.020);
     private double m_velocity = 0;
-    private double m_position = 0;
+    private static double m_position = 0;
     private double m_oldPosition = 0;
     private TrapezoidProfile.State goal = new TrapezoidProfile.State(Constants.IntakeConstants.deployIntakeInnerBound,0);
     //sim values
@@ -262,7 +262,7 @@ public class IntakeS extends SubsystemBase {
     public double getIntakeAngle() {
         return getDistance()-IntakeConstants.intakeOffset;
     }
-    public double getDistance(){
+    public static double getDistance(){
         return m_position;
     }
     public double getVelocity(){
