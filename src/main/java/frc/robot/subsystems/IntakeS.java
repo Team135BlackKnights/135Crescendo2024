@@ -168,10 +168,12 @@ public class IntakeS extends SubsystemBase {
 		kP = Constants.IntakeConstants.PIDConstants.P;
 		kI = Constants.IntakeConstants.PIDConstants.I;
 		kD = Constants.IntakeConstants.PIDConstants.D;
-		SmartDashboard.putNumber("P Gain", kP);
-		SmartDashboard.putNumber("I Gain", kI);
-		SmartDashboard.putNumber("D Gain", kD);
-		SmartDashboard.putData("Mech2d", m_mech2d);
+		SmartDashboard.putNumber("P Gain Auto Intake", kP);
+		SmartDashboard.putNumber("I Gain Auto Intake", kI);
+		SmartDashboard.putNumber("D Gain Auto Intake", kD);
+		if (Robot.isSimulation()){
+			SmartDashboard.putData("Mech2d", m_mech2d);
+		}
 		autoIntakeController = new PIDController(kP, kI, kD);
 		//autoIntakeController.enableContinuousInput(-180, 180);
 		//autoIntakeController.setIntegratorRange(-Constants.DriveConstants.kMaxTurningSpeedRadPerSec/2, Constants.DriveConstants.kMaxTurningSpeedRadPerSec/2);
@@ -206,16 +208,13 @@ public class IntakeS extends SubsystemBase {
 	public void periodic() {
 		updateEncoders();
 		//sets values to SmartDashboard periodically
-		//  SmartDashboard.putNumber("Deploy Intake", deployIntakeEncoder.getPosition());
 		SmartDashboard.putNumber("Deploy Intake Abs", getDistance());
 		SmartDashboard.putNumber("Intake Angle", getIntakeAngle());
-		//  SmartDashboard.putBoolean("Intake Within Bounds", intakeWithinBounds());
-		SmartDashboard.putNumber("Intake Offset", IntakeConstants.intakeOffset);
-		double p = SmartDashboard.getNumber("P Gain",
+		double p = SmartDashboard.getNumber("P Gain Auto Intake",
 				Constants.IntakeConstants.PIDConstants.P);
-		double i = SmartDashboard.getNumber("I Gain",
+		double i = SmartDashboard.getNumber("I Gain Auto Intake",
 				Constants.IntakeConstants.PIDConstants.I);
-		double d = SmartDashboard.getNumber("D Gain",
+		double d = SmartDashboard.getNumber("D Gain Auto Intake",
 				Constants.IntakeConstants.PIDConstants.D);
 		if ((p != kP)) {
 			autoIntakeController.setP(p);

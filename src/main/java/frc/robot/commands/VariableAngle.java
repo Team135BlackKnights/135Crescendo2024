@@ -1,7 +1,6 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Robot;
 import frc.robot.RobotContainer;
@@ -78,8 +77,6 @@ public class VariableAngle extends Command {
 			delay.start();
 		}
 		if (Robot.isSimulation()) {
-			SmartDashboard.putNumber("BOTTOM ERROR",
-					OutakeS.getBottomSpeedError(desiredRPM));
 			if (OutakeS.getFlywheelSpeedDifference() < 100
 					&& OutakeS.getBottomSpeedError(desiredRPM) < 100) {
 				SimShootNote.shoot();
@@ -98,7 +95,6 @@ public class VariableAngle extends Command {
 				delay.start();
 			}
 			//  SmartDashboard.putNumber("Angle Output", output);
-			SmartDashboard.putNumber("Flywheel Error", OutakeS.getTopSpeedError());
 			if (delay.get() < 0.2) {
 				//stores values of the intake and distance. Updates every time command is called
 				SwerveC.angleOutputDegrees = intakeS.getIntakeAngle();

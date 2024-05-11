@@ -179,8 +179,6 @@ public class OutakeS extends SubsystemBase {
 		}
 		SmartDashboard.putNumber("Top Flywheel Speed", topVelocity);
 		SmartDashboard.putNumber("Bottom Flywheel Speed", bottomVelocity);
-		SmartDashboard.putNumber("Average Flywheel Speed",
-				getAverageFlywheelSpeed());
 	}
 
 	/**

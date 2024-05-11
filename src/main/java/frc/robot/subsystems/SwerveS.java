@@ -217,9 +217,9 @@ public class SwerveS extends SubsystemBase {
 		kP = Constants.DriveConstants.kP;
 		kI = Constants.DriveConstants.kI;
 		kD = Constants.DriveConstants.kD;
-		SmartDashboard.putNumber("P GainD", kP);
-		SmartDashboard.putNumber("I GainD", kI);
-		SmartDashboard.putNumber("D GainD", kD);
+		SmartDashboard.putNumber("P Gain AutoLock", kP);
+		SmartDashboard.putNumber("I Gain AutoLock", kI);
+		SmartDashboard.putNumber("D Gain AutoLock", kD);
 		autoLockController = new PIDController(kP, kI, kD);
 		SimShootNote.setRobotPoseSupplier(pose2dSupplier);
 	}
@@ -251,8 +251,6 @@ public class SwerveS extends SubsystemBase {
 			//LimelightSim.updateTarget(getPose());
 			ChassisSpeeds chassisSpeed = Constants.DriveConstants.kDriveKinematics
 					.toChassisSpeeds(getModuleStates());
-			SmartDashboard.putNumber("RADIANS",
-					chassisSpeed.omegaRadiansPerSecond);
 			m_simYaw += chassisSpeed.omegaRadiansPerSecond * 0.02;
 			int dev = SimDeviceDataJNI.getSimDeviceHandle("navX-Sensor[0]");
 			SimDouble angle = new SimDouble(
@@ -278,19 +276,15 @@ public class SwerveS extends SubsystemBase {
 		redIsAlliance = getAlliance();
 		//zAccel = gyro.getRawAccelZ();
 		//puts values to smartDashboard
-		SmartDashboard.putNumber("Robot Heading", getRotation2d().getDegrees());
 		SmartDashboard.putNumber("xError", CameraS.backCamXError);
 		SmartDashboard.putBoolean("Auto Lock", autoLock);
-		SmartDashboard.putBoolean("Red is Alliance", getAlliance());
-		SmartDashboard.putNumber("Position X (getPose)", getPose().getX());
-		SmartDashboard.putNumber("Position Y (getPose)", getPose().getY());
 		SmartDashboard.putNumber("Robot Heading (getPose)",
 				getPose().getRotation().getDegrees());
-		double p = SmartDashboard.getNumber("P GainD",
+		double p = SmartDashboard.getNumber("P Gain AutoLock",
 				Constants.DriveConstants.kP);
-		double i = SmartDashboard.getNumber("I GainD",
+		double i = SmartDashboard.getNumber("I Gain AutoLock",
 				Constants.DriveConstants.kI);
-		double d = SmartDashboard.getNumber("D GainD",
+		double d = SmartDashboard.getNumber("D Gain AutoLock",
 				Constants.DriveConstants.kD);
 		if ((p != kP)) {
 			autoLockController.setP(p);
