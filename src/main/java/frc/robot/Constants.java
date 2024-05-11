@@ -49,9 +49,9 @@ public final class Constants {
   public static class IntakeConstants {
     public static class PIDConstants{
       public static double 
-        P = 0.000001,
-        I = 0.010000,
-        D = .000;
+        P = 0.005, //0.000001 
+        I = 0.0, //.01
+        D = 0.0001; //.000
     }
     public static class StateSpace{
       public static double

@@ -118,7 +118,7 @@ public class CameraS extends SubsystemBase {
         }
         
 }
-public static double calculateAngleFromTX(double tX, double tY) {        
+public static double calculateDistanceFromtY(double tY) {        
         // Calculate the angle using trigonometry
 // how many degrees back is your limelight rotated from perfectly vertical?
        double limelightMountAngleDegrees = Constants.LimelightConstants.limeLightAngleOffsetDegrees; 
@@ -127,15 +127,13 @@ public static double calculateAngleFromTX(double tX, double tY) {
         double limelightLensHeightInches = Constants.LimelightConstants.limelightLensHeightoffFloorInches;
 
     // distance from the target to the floor
-        double goalHeightInches = 1; 
+        double goalHeightInches = 0; //try zero? try two?
 
         double angleToGoalDegrees = limelightMountAngleDegrees + tY;
 
     //calculate distance
         double distance = (goalHeightInches - limelightLensHeightInches) / Math.tan(Units.degreesToRadians(angleToGoalDegrees));
-        double angle = Math.atan(tX/distance);
-        
-        return Math.toDegrees(angle);
+        return Math.abs(distance); //incase somehow the angle became pos when the object is below the target, and vice versa.
     }
 public static boolean aprilTagVisible() {
     var results = backCam.getLatestResult().getTargets();

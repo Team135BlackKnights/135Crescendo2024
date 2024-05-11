@@ -71,7 +71,7 @@ public class IntakeS extends SubsystemBase {
     public static ColorMatchResult colorMatchResult;
     public static Thread sensorThread;
     public static int timesRan;
-    private static double kP,kI,kD;
+    public static double kP,kI,kD;
     public static PIDController autoIntakeController; //sadly cannot be system Id'd
 
     Measure<Velocity<Voltage>> rampRate = Volts.of(1).per(Seconds.of(1)); //for going FROM ZERO PER SECOND
@@ -185,8 +185,8 @@ public class IntakeS extends SubsystemBase {
         SmartDashboard.putNumber("D Gain", kD);
         SmartDashboard.putData("Mech2d",m_mech2d);
         autoIntakeController = new PIDController(kP, kI, kD);
-        autoIntakeController.enableContinuousInput(-180, 180);
-        autoIntakeController.setIntegratorRange(-Constants.DriveConstants.kMaxTurningSpeedRadPerSec/2, Constants.DriveConstants.kMaxTurningSpeedRadPerSec/2);
+        //autoIntakeController.enableContinuousInput(-180, 180);
+        //autoIntakeController.setIntegratorRange(-Constants.DriveConstants.kMaxTurningSpeedRadPerSec/2, Constants.DriveConstants.kMaxTurningSpeedRadPerSec/2);
         //Color sensor thread
         m_loop.reset(VecBuilder.fill(getDistance(), getVelocity()));
         m_lastProfiledReference = new TrapezoidProfile.State(getDistance(), getVelocity());
