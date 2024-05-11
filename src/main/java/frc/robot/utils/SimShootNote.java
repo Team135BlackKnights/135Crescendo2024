@@ -79,7 +79,6 @@ public class SimShootNote {
                   final Timer timer = new Timer();
                   timer.start();
                   firstCycle = true;
-                  System.out.println("HERE");
                   return Commands.run(
                           () -> {
                             if (SimShootNote.firstCycle){

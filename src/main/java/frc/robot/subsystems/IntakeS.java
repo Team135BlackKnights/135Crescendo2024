@@ -307,11 +307,16 @@ public class IntakeS extends SubsystemBase {
         Translation2d closestTrans = new Translation2d();
         double closestPoseDistance = 9999; //hopefully something is closer than 9999 meters
         for (int i = 0; i < SimShootNote.getState().length; i++){
-            if (SimShootNote.getState()[i].getTranslation().toTranslation2d().getDistance(SwerveS.getPose().getTranslation())< closestPoseDistance){
+
+            if (SimShootNote.getState()[i].getTranslation().toTranslation2d().getDistance(SwerveS.getPose().getTranslation())< closestPoseDistance && SimShootNote.getState()[i].getZ() < Units.inchesToMeters(2)){
                 closestTrans = SimShootNote.getState()[i].getTranslation().toTranslation2d();
                 cloestNoteIndex = i;
                 closestPoseDistance = SimShootNote.getState()[i].getTranslation().toTranslation2d().getDistance(SwerveS.getPose().getTranslation());
             }
+        }
+        if (closestPoseDistance == 9999){
+            SimShootNote.resetNotes();
+            return getClosestNote();
         }
         return closestTrans;
 

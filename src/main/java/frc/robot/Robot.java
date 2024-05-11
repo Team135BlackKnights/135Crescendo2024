@@ -152,7 +152,7 @@ public class Robot extends LoggedRobot  {
   /** This function is called periodically whilst in simulation. */
   @Override
   public void simulationPeriodic() {
-    if (DriverStation.isEnabled() && !hasBeenEnabled){
+    if (DriverStation.isAutonomousEnabled() && !hasBeenEnabled){
       SimShootNote.resetNotes();
       hasBeenEnabled = true;
     }else if (DriverStation.isDisabled()){
