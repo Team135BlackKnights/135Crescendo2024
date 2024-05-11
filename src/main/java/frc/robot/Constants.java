@@ -187,7 +187,7 @@ public final class Constants {
 				kFrontLeftAbsEncoderOffsetRad = 0.562867,
 				kFrontRightAbsEncoderOffsetRad = 0.548137,
 				kBackLeftAbsEncoderOffsetRad = 2 * Math.PI - 2.891372,
-				kBackRightAbsEncoderOffsetRad = 2 * Math.PI - 0.116861, kP = 0.01,
+				kBackRightAbsEncoderOffsetRad = 2 * Math.PI - 0.116861, kP = 0.1,
 				kI = 0, kD = 0;
 		// Declare the position of each module
 		public static final SwerveDriveKinematics kDriveKinematics = new SwerveDriveKinematics(
