@@ -11,7 +11,10 @@ import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -324,18 +327,18 @@ public final class Constants {
   }
   public static class DriveSimConstants{
     //id 1 is topmost leftmost. goes in order down, right.
-    public static Translation2d[] fieldNotePoses = new Translation2d[]{
-      new Translation2d(Units.inchesToMeters(325.625),Units.inchesToMeters(162)), //center
-      new Translation2d(Units.inchesToMeters(325.625),Units.inchesToMeters(228)), //center up 1
-      new Translation2d(Units.inchesToMeters(325.625),Units.inchesToMeters(294)), //center up 2
-      new Translation2d(Units.inchesToMeters(325.625),Units.inchesToMeters(96)), //center down 1
-      new Translation2d(Units.inchesToMeters(325.625),Units.inchesToMeters(30)), //center down 2
-      new Translation2d(Units.inchesToMeters(114),Units.inchesToMeters(162)), //BLUE CENTER
-      new Translation2d(Units.inchesToMeters(114),Units.inchesToMeters(219)), //BLUE CENTER + 1
-      new Translation2d(Units.inchesToMeters(114),Units.inchesToMeters(276)), //BUE TOP 
-      new Translation2d(Units.inchesToMeters(534.5),Units.inchesToMeters(162)), //RED CENTER
-      new Translation2d(Units.inchesToMeters(534.5),Units.inchesToMeters(219)), //RED CENTER + 1
-      new Translation2d(Units.inchesToMeters(534.5),Units.inchesToMeters(276)), //RED TOP 
+    public static Pose3d[] fieldNoteTranslations = new Pose3d[]{
+      new Pose3d(Units.inchesToMeters(325.625),Units.inchesToMeters(162), Units.inchesToMeters(1),new Rotation3d(0,0,0)), //center
+      new Pose3d(Units.inchesToMeters(325.625),Units.inchesToMeters(228), Units.inchesToMeters(1),new Rotation3d(0,0,0)),//center up 1
+      new Pose3d(Units.inchesToMeters(325.625),Units.inchesToMeters(294), Units.inchesToMeters(1),new Rotation3d(0,0,0)), //center up 2
+      new Pose3d(Units.inchesToMeters(325.625),Units.inchesToMeters(96), Units.inchesToMeters(1),new Rotation3d(0,0,0)), //center down 1
+      new Pose3d(Units.inchesToMeters(325.625),Units.inchesToMeters(30), Units.inchesToMeters(1),new Rotation3d(0,0,0)), //center down 2
+      new Pose3d(Units.inchesToMeters(114),Units.inchesToMeters(162), Units.inchesToMeters(1),new Rotation3d(0,0,0)), //BLUE CENTER
+      new Pose3d(Units.inchesToMeters(114),Units.inchesToMeters(219), Units.inchesToMeters(1),new Rotation3d(0,0,0)), //BLUE CENTER + 1
+      new Pose3d(Units.inchesToMeters(114),Units.inchesToMeters(276), Units.inchesToMeters(1),new Rotation3d(0,0,0)), //BUE TOP 
+      new Pose3d(Units.inchesToMeters(534.5),Units.inchesToMeters(162), Units.inchesToMeters(1),new Rotation3d(0,0,0)), //RED CENTER
+      new Pose3d(Units.inchesToMeters(534.5),Units.inchesToMeters(219), Units.inchesToMeters(1),new Rotation3d(0,0,0)), //RED CENTER + 1
+      new Pose3d(Units.inchesToMeters(534.5),Units.inchesToMeters(276), Units.inchesToMeters(1),new Rotation3d(0,0,0)), //RED TOP 
     };
   }
 

@@ -21,15 +21,19 @@ import frc.robot.subsystems.HangS;
 import frc.robot.subsystems.IntakeS;
 import frc.robot.subsystems.OutakeS;
 import frc.robot.subsystems.SwerveS;
+import frc.robot.utils.SimShootNote;
+
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import frc.robot.commands.HangMacroC;
 import edu.wpi.first.wpilibj.XboxController;
+import java.util.function.BooleanSupplier;
 
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -74,7 +78,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("DeployIntake", new MoveIntake(intakeS));
     NamedCommands.registerCommand("Lock Onto April Tags", new AutoLock(swerveS));
     NamedCommands.registerCommand("IntakeNote", new AutonIntake(intakeS,swerveS));
-    NamedCommands.registerCommand("Shoot From Anywhere", new VariableAngle(intakeS, outakeS, true));
+    NamedCommands.registerCommand("Shoot From Anywhere", new SequentialCommandGroup(new VariableAngle(intakeS, outakeS, true),SimShootNote.shoot()));
     NamedCommands.registerCommand("Hold Outake Ready", new FireShooter(outakeS));
 
     autoChooser = AutoBuilder.buildAutoChooser();
@@ -84,19 +88,14 @@ public class RobotContainer {
   }
 
   private void configureBindings() {
-    aButton.onTrue(swerveS.toggleAutoLockCommand());
+
+    aButton.onTrue(SimShootNote.shoot());
     /*if (aButton.getAsBoolean() && isDriving()){
       swerveS.toggleAutoLockCommand();
     }*/
-    if (yButton.getAsBoolean() && isDriving()){
-      new InstantCommand(() -> swerveS.zeroHeading());
-    }
-    if (yButton.getAsBoolean() && isDriving()){
-      new VariableSpeed(intakeS, outakeS, false);
-    }
-    if (bButton.getAsBoolean() && isDriving()){
-      new SetAngle(intakeS, outakeS, 13);
-    }
+    xButton.and(isDriving()).onTrue(new InstantCommand(() -> swerveS.zeroHeading()));
+    yButton.and(isDriving()).onTrue(new VariableSpeed(intakeS, outakeS, false));
+    bButton.and(isDriving()).onTrue(new SetAngle(intakeS, outakeS, 13));
     bButtonDrive.whileTrue(new AutonIntake(intakeS,swerveS));
     //System.out.println(SysIdRoutine.Direction.kReverse);
     //System.out.println(SysIdRoutine.Direction.kForward);
@@ -120,11 +119,9 @@ public class RobotContainer {
     selectButton.and(povLeftManip).whileTrue(swerveS.sysIdDynamicTurn(SysIdRoutine.Direction.kReverse));
    //manipController.y().and(manipController.start().negate()).onTrue(new VariableSpeed(intakeS, outakeS, false));
     //manipController.b().and(manipController.start().negate()).onTrue(new SetAngle(intakeS, outakeS, 13));
-    if (povUp.getAsBoolean() && isDriving()){
-      new HangMacroC(hangS, HangConstants.upperHookHeight);
-      new SetAngle(intakeS, outakeS, 27);
-    }
-    //manipController.povUp().whileTrue(new SetAngle(intakeS, outakeS, 27));
+    povUp.and(isDriving()).whileTrue(
+      new HangMacroC(hangS, HangConstants.upperHookHeight))
+      .whileTrue(new SetAngle(intakeS, outakeS, 27));
   }
 
   /**
@@ -136,10 +133,13 @@ public class RobotContainer {
     // An example command will be run in autonomous
     return autoChooser.getSelected();
   }
-  public static boolean isDriving(){
+  public static BooleanSupplier isDriving(){
+    BooleanSupplier returnVal;
     if (startButton.getAsBoolean() || selectButton.getAsBoolean()){
-      return false; //currently doing a test
+      returnVal = () -> false;
+      return returnVal; //currently doing a test
     }
-    return true;
+    returnVal = () -> true;
+    return returnVal;
   }
 }

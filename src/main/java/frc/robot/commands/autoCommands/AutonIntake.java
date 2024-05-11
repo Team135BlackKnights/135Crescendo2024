@@ -14,6 +14,7 @@ import frc.robot.Robot;
 import frc.robot.subsystems.CameraS;
 import frc.robot.subsystems.IntakeS;
 import frc.robot.subsystems.SwerveS;
+import frc.robot.utils.SimShootNote;
 
 public class AutonIntake extends Command {
     private final IntakeS intakeS;
@@ -56,7 +57,9 @@ public class AutonIntake extends Command {
         close = false;
         takeOver = true;
         ty = 0;
-        this.targetNoteLocation = intakeS.getClosestNote();
+        if (Robot.isSimulation()){
+            this.targetNoteLocation = intakeS.getClosestNote();
+        }
         intakeS.deployIntake(intakeS.outsideBotState());
         IntakeS.autoIntakeController.reset();
     }
@@ -183,7 +186,9 @@ public class AutonIntake extends Command {
         speeds = new ChassisSpeeds(0,0,0);
         swerveS.setChassisSpeeds(speeds);
         intakeS.pullBackNote(); 
-        System.out.println("GOT NOTE");
+        if (Robot.isSimulation() && close){
+            SimShootNote.intake(IntakeS.cloestNoteIndex);
+        }
         close = false;
     }
 

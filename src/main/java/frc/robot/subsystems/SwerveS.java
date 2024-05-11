@@ -280,6 +280,7 @@ public class SwerveS extends SubsystemBase {
             // NavX expects clockwise positive, but sim outputs clockwise negative
             angle.set(Math.IEEEremainder(-Units.radiansToDegrees(m_simYaw), 360));
             //m_pigeon.getSimCollection().setRawHeading(-Units.radiansToDegrees(m_simYaw));
+            SimShootNote.updateStates();
         }
         periodicUpdateCycle +=1;
 

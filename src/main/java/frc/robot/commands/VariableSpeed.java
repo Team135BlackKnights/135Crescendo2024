@@ -6,6 +6,7 @@ import frc.robot.RobotContainer;
 import frc.robot.subsystems.CameraS;
 import frc.robot.subsystems.IntakeS;
 import frc.robot.subsystems.OutakeS;
+import frc.robot.utils.SimShootNote;
 
 
 public class VariableSpeed extends Command {
@@ -48,10 +49,12 @@ public class VariableSpeed extends Command {
         }
         if (RobotContainer.manipController.getLeftBumper()) {
             intakeS.setPrimaryIntake(-0.5);
+            SimShootNote.shoot();
             delay.start();
         }
         if (CameraS.robotInRange() && OutakeS.getFlywheelSpeedDifference() < 100 && timer.get() >= 0.3 && OutakeS.getBottomSpeedError(4000) < 150 && OutakeS.getTopSpeedError() < 150 && Math.abs(CameraS.getXError()) < 3 && !RobotContainer.manipController.getAButton() && intakeS.isAtState()) {
             intakeS.setPrimaryIntake(-0.5);
+            SimShootNote.shoot();
             delay.start();
         }
 

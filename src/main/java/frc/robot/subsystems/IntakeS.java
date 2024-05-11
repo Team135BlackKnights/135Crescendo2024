@@ -47,7 +47,7 @@ import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.commands.autoCommands.AutonIntake;
-
+import frc.robot.utils.SimShootNote;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
@@ -301,14 +301,16 @@ public class IntakeS extends SubsystemBase {
         }
 
     }
+    public static int cloestNoteIndex;
     public Translation2d getClosestNote(){
         //Obnoxiously high distance to be overrode
         Translation2d closestTrans = new Translation2d();
         double closestPoseDistance = 9999; //hopefully something is closer than 9999 meters
-        for (var pose : DriveSimConstants.fieldNotePoses){
-            if (pose.getDistance(SwerveS.getPose().getTranslation())< closestPoseDistance){
-                closestTrans = pose;
-                closestPoseDistance = pose.getDistance(SwerveS.getPose().getTranslation());
+        for (int i = 0; i < SimShootNote.getState().length; i++){
+            if (SimShootNote.getState()[i].getTranslation().toTranslation2d().getDistance(SwerveS.getPose().getTranslation())< closestPoseDistance){
+                closestTrans = SimShootNote.getState()[i].getTranslation().toTranslation2d();
+                cloestNoteIndex = i;
+                closestPoseDistance = SimShootNote.getState()[i].getTranslation().toTranslation2d().getDistance(SwerveS.getPose().getTranslation());
             }
         }
         return closestTrans;

@@ -8,6 +8,7 @@ import frc.robot.RobotContainer;
 import frc.robot.subsystems.CameraS;
 import frc.robot.subsystems.IntakeS;
 import frc.robot.subsystems.OutakeS;
+import frc.robot.utils.SimShootNote;
 
 
 public class VariableAngle extends Command {
@@ -77,6 +78,7 @@ public class VariableAngle extends Command {
         if (Robot.isSimulation()){
             SmartDashboard.putNumber("BOTTOM ERROR", OutakeS.getBottomSpeedError(desiredRPM));
             if (OutakeS.getFlywheelSpeedDifference() < 100 && OutakeS.getBottomSpeedError(desiredRPM) < 100){
+                SimShootNote.shoot();
                 isFinished = true;
             }else{
                 System.out.println("NOT YET RPM");
