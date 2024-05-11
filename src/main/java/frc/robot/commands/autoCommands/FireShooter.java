@@ -52,7 +52,7 @@ public class FireShooter extends Command {
     public void end(boolean interrupted) {
         if (Robot.isSimulation()){
             SimShootNote.shoot();
-            }
+        }
         timer.stop();
     }
 

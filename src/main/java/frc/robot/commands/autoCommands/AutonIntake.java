@@ -23,8 +23,7 @@ public class AutonIntake extends Command {
     private boolean loaded = false;
     public static boolean allClear = false;
     public static boolean takeOver = false;
-    private static boolean close = false;
-    
+    private static boolean close = false, saver = false;
     private Translation2d targetNoteLocation = null;
     private Pose2d currentPose;
     private ChassisSpeeds speeds;
@@ -49,6 +48,15 @@ public class AutonIntake extends Command {
 
     @Override
     public void initialize() {
+        if (Robot.isSimulation()){
+            this.targetNoteLocation = intakeS.getClosestNote();
+            if (SimShootNote.currentNotes.get(0).getZ() > Units.inchesToMeters(1)){
+                saver= true;
+            }else{
+                saver = false;
+            }
+        }
+
         isFinished = false;
         LimelightHelpers.setPipelineIndex(Constants.LimelightConstants.limelightName, 1);
         delayTimer.reset();
@@ -57,9 +65,6 @@ public class AutonIntake extends Command {
         close = false;
         takeOver = true;
         ty = 0;
-        if (Robot.isSimulation()){
-            this.targetNoteLocation = intakeS.getClosestNote();
-        }
         intakeS.deployIntake(intakeS.outsideBotState());
         IntakeS.autoIntakeController.reset();
         DataHandler.logData(new double[]{targetNoteLocation.getDistance(SwerveS.getPose().getTranslation()), IntakeS.kP});
@@ -188,7 +193,11 @@ public class AutonIntake extends Command {
         swerveS.setChassisSpeeds(speeds);
         intakeS.pullBackNote(); 
         if (Robot.isSimulation() && close){
-            SimShootNote.intake(IntakeS.cloestNoteIndex);
+            if (saver){
+                SimShootNote.intake(IntakeS.cloestNoteIndex-1);
+            }else{
+                SimShootNote.intake(IntakeS.cloestNoteIndex);
+            }
         }
         close = false;
     }

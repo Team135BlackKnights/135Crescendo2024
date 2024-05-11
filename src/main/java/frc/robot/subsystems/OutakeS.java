@@ -6,7 +6,6 @@ import com.revrobotics.RelativeEncoder;
 
 
 import com.revrobotics.CANSparkBase.IdleMode;
-import frc.robot.utils.SimShootNote;
 import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.LinearQuadraticRegulator;
@@ -131,7 +130,6 @@ public class OutakeS extends SubsystemBase {
         // Reset our loop to make sure it's in a known state.
         m_topLoop.reset(VecBuilder.fill(topFlywheelEncoder.getVelocity()));
         m_bottomLoop.reset(VecBuilder.fill(bottomFlywheelEncoder.getVelocity()));
-        SimShootNote.shoot();
    
     }
     public static double topVelocity = 0,bottomVelocity = 0;
