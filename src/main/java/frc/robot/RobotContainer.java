@@ -55,18 +55,21 @@ public class RobotContainer {
 
 	public static XboxController driveController = new XboxController(0);
 	public static XboxController manipController = new XboxController(1);
-	JoystickButton aButton = new JoystickButton(driveController, 1);
-	JoystickButton bButton = new JoystickButton(manipController, 2);
-	JoystickButton bButtonDrive = new JoystickButton(driveController, 2);
-	JoystickButton xButton = new JoystickButton(driveController, 3);
-	JoystickButton yButton = new JoystickButton(driveController, 4);
-	static JoystickButton selectButton = new JoystickButton(driveController, 7);
-	static JoystickButton startButton = new JoystickButton(driveController, 8);
+	static JoystickButton 
+	aButtonDrive = new JoystickButton(driveController, 1),
+	bButtonDrive = new JoystickButton(driveController, 2),
+	xButtonDrive = new JoystickButton(driveController, 3),
+	yButtonDrive = new JoystickButton(driveController, 4),
+	selectButtonDrive = new JoystickButton(driveController, 7),
+	startButtonDrive = new JoystickButton(driveController, 8),
+	bButtonManip = new JoystickButton(manipController, 2);
+
 	//POVButton povUpManip = new POVButton(driveController, 0);
-	POVButton povRightManip = new POVButton(driveController, 90);
-	POVButton povDownManip = new POVButton(driveController, 180);
-	POVButton povLeftManip = new POVButton(driveController, 270);
-	POVButton povUp = new POVButton(driveController, 0);
+	POVButton 
+	povRightDrive = new POVButton(driveController, 90),
+	 povDownDrive = new POVButton(driveController, 180),
+	 povLeftDrive = new POVButton(driveController, 270),
+	 povUpDrive = new POVButton(driveController, 0);
 
 	// POVButton manipPOVZero = new POVButton(manipController, 0);
 	// POVButton manipPOV180 = new POVButton(manipController, 180);
@@ -106,49 +109,49 @@ public class RobotContainer {
 	}
 
 	private void configureBindings() {
-		aButton.and(isDriving()).onTrue(swerveS.toggleAutoLockCommand());
+		aButtonDrive.and(isDriving()).onTrue(swerveS.toggleAutoLockCommand());
 		if (Robot.isSimulation()){
-			xButton.and(isDriving()).onTrue(SimShootNote.shoot());
+			xButtonDrive.and(isDriving()).onTrue(SimShootNote.shoot());
 		}else{
-			xButton.and(isDriving()).onTrue(
+			xButtonDrive.and(isDriving()).onTrue(
 				new InstantCommand(() -> swerveS.zeroHeading()));
 		}
-		yButton.and(isDriving()).onTrue(
+		yButtonDrive.and(isDriving()).onTrue(
 				new VariableSpeed(intakeS, outakeS, false));
-		bButton.and(isDriving()).onTrue(
+		bButtonManip.and(isDriving()).onTrue(
 				new SetAngle(intakeS, outakeS, 13));
 		bButtonDrive.whileTrue(
 				new AutonIntake(intakeS, swerveS));
 		//System.out.println(SysIdRoutine.Direction.kReverse);
 		//System.out.println(SysIdRoutine.Direction.kForward);
 		//outake Tests
-		startButton.and(aButton).whileTrue(
+		startButtonDrive.and(aButtonDrive).whileTrue(
 				intakeS.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-		startButton.and(bButton).whileTrue(
+		startButtonDrive.and(bButtonManip).whileTrue(
 				intakeS.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-		//startButton.and(xButton).whileTrue(intakeS.sysIdDynamic(SysIdRoutine.Direction.kForward));
-		//startButton.and(yButton).whileTrue(intakeS.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+		//startButtonDrive.and(xButtonDrive).whileTrue(intakeS.sysIdDynamic(SysIdRoutine.Direction.kForward));
+		//startButtonDrive.and(yButtonDrive).whileTrue(intakeS.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 		//swerve DRIVE tests
-		startButton.and(povUp).whileTrue(
+		startButtonDrive.and(povUpDrive).whileTrue(
 				swerveS.sysIdQuasistaticDrive(SysIdRoutine.Direction.kForward));
-		startButton.and(povRightManip).whileTrue(
+		startButtonDrive.and(povRightDrive).whileTrue(
 				swerveS.sysIdQuasistaticDrive(SysIdRoutine.Direction.kReverse));
-		startButton.and(povDownManip).whileTrue(
+		startButtonDrive.and(povDownDrive).whileTrue(
 				swerveS.sysIdDynamicDrive(SysIdRoutine.Direction.kForward));
-		startButton.and(povLeftManip).whileTrue(
+		startButtonDrive.and(povLeftDrive).whileTrue(
 				swerveS.sysIdDynamicDrive(SysIdRoutine.Direction.kReverse));
 		//swerve TURNING tests
-		selectButton.and(povUp).whileTrue(
+		selectButtonDrive.and(povUpDrive).whileTrue(
 				swerveS.sysIdQuasistaticTurn(SysIdRoutine.Direction.kForward));
-		selectButton.and(povRightManip).whileTrue(
+		selectButtonDrive.and(povRightDrive).whileTrue(
 				swerveS.sysIdQuasistaticTurn(SysIdRoutine.Direction.kReverse));
-		selectButton.and(povDownManip).whileTrue(
+		selectButtonDrive.and(povDownDrive).whileTrue(
 				swerveS.sysIdDynamicTurn(SysIdRoutine.Direction.kForward));
-		selectButton.and(povLeftManip).whileTrue(
+		selectButtonDrive.and(povLeftDrive).whileTrue(
 				swerveS.sysIdDynamicTurn(SysIdRoutine.Direction.kReverse));
 		//manipController.y().and(manipController.start().negate()).onTrue(new VariableSpeed(intakeS, outakeS, false));
 		//manipController.b().and(manipController.start().negate()).onTrue(new SetAngle(intakeS, outakeS, 13));
-		povUp.and(isDriving())
+		povUpDrive.and(isDriving())
 				.whileTrue(new HangMacroC(hangS, HangConstants.upperHookHeight))
 				.whileTrue(new SetAngle(intakeS, outakeS, 27));
 	}
@@ -165,7 +168,7 @@ public class RobotContainer {
 
 	public static BooleanSupplier isDriving() {
 		BooleanSupplier returnVal;
-		if (startButton.getAsBoolean() || selectButton.getAsBoolean()) {
+		if (startButtonDrive.getAsBoolean() || selectButtonDrive.getAsBoolean()) {
 			returnVal = () -> false;
 			return returnVal; //currently doing a test
 		}

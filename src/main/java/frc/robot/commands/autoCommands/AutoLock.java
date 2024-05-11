@@ -26,7 +26,6 @@ public class AutoLock extends Command {
 		isFinished = false;
 		timer.stop();
 		timer.reset();
-		System.out.println("RUNNING LOCK");
 	}
 
 	@Override
@@ -54,7 +53,6 @@ public class AutoLock extends Command {
 		timer.stop();
 		speeds = new ChassisSpeeds(0, 0, 0);
 		swerveS.setChassisSpeeds(speeds);
-		System.out.println("DONE LOCKIN");
 	}
 
 	@Override

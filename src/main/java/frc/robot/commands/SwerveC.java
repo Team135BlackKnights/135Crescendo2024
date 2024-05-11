@@ -5,7 +5,6 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
-import frc.robot.DataHandler;
 import frc.robot.RobotContainer;
 import frc.robot.commands.autoCommands.AutonIntake;
 import frc.robot.subsystems.CameraS;
@@ -28,7 +27,7 @@ public class SwerveC extends Command {
 	public static double[][] variableAngleLog = new double[2][20];
 	public static double variableAngleDistance = 0;
 	public static double angleOutputDegrees = 0;
-	private int arrayIndex = 0;
+	//private int arrayIndex = 0;
 
 	public SwerveC(SwerveS swerveS) {
 		this.swerveS = swerveS;
@@ -125,7 +124,7 @@ public class SwerveC extends Command {
 
 	/*Use this link to compute the regression model:https://planetcalc.com/5992/#google_vignette 
 	 Each of the files has an x and y output so put those in the respective lists, or use a ti-84 stats bar*/
-	public void printData() {
+	/*public void printData() {
 		//outputs collected distance vs angle graph to console and also sends it to the data logging file. 
 		System.out.println("Distance (X)                              Angle (Y)");
 		for (var i = 0; i < arrayIndex; i++) {
@@ -149,7 +148,7 @@ public class SwerveC extends Command {
 		}
 		variableAngleLog = new double[2][20];
 		arrayIndex = 0;
-	}
+	} */
 
 	@Override
 	public void end(boolean interrupted) { swerveS.stopModules(); }

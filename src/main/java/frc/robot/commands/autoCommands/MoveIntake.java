@@ -40,7 +40,6 @@ public class MoveIntake extends Command {
 
 	@Override
 	public void end(boolean interrupted) {
-		System.out.println("DONE MOVING");
 		timer.stop();
 	}
 

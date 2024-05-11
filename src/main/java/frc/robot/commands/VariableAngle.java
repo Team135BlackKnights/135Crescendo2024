@@ -82,7 +82,6 @@ public class VariableAngle extends Command {
 				SimShootNote.shoot();
 				isFinished = true;
 			} else {
-				System.out.println("NOT YET RPM");
 			}
 		} else {
 			if (OutakeS.getFlywheelSpeedDifference() < 100 && timer.get() >= 0.3
@@ -110,7 +109,6 @@ public class VariableAngle extends Command {
 	public void end(boolean interrupted) {
 		intakeS.setPrimaryIntake(0);
 		outakeS.setIndividualFlywheelSpeeds(0, 0);
-		System.out.println("DONE SHOTTIN");
 		timer.stop();
 		timer.reset();
 		delay.stop();
