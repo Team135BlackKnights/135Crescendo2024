@@ -36,8 +36,8 @@ public class SwerveModule extends SubsystemBase{
 
     private final PIDController turningPIDController;
     private final PIDController drivePIDController; //not using profiled cuz no angles
-    @SuppressWarnings("unused")
-    private SimpleMotorFeedforward turningFeedForward = null;
+    
+    //private SimpleMotorFeedforward turningFeedForward = null;
     
     private SimpleMotorFeedforward driveFeedForward = null;
     
@@ -68,8 +68,8 @@ public class SwerveModule extends SubsystemBase{
      * @param absoluteEncoderReversed True if Encoder is Reversed
      */
     public SwerveModule(int driveMotorId, int turningMotorId, boolean driveMotorReversed, boolean turningMotorReversed, int absoluteEncoderId, double absoluteEncoderOffset, boolean absoluteEncoderReversed, double[] driveKpKsKvKa, double[] turningKpKsKvKa) {
-       turningFeedForward = new SimpleMotorFeedforward(
-        turningKpKsKvKa[1], turningKpKsKvKa[2], turningKpKsKvKa[3]);
+       /*turningFeedForward = new SimpleMotorFeedforward(
+        turningKpKsKvKa[1], turningKpKsKvKa[2], turningKpKsKvKa[3]);*/
         driveFeedForward = new SimpleMotorFeedforward(
         driveKpKsKvKa[1], driveKpKsKvKa[2], driveKpKsKvKa[3]);
        
@@ -111,7 +111,7 @@ public class SwerveModule extends SubsystemBase{
         //creates pidController, used exclusively for turning because that has to be precise
         //must test updated
         turningPIDController = new PIDController(.5, 0, 0);
-    //turningPIDController = new ProfiledPIDController(.5, 0, 0,new TrapezoidProfile.Constraints(Constants.DriveConstants.kMaxTurningSpeedRadPerSec,Constants.DriveConstants.kTeleTurningMaxAcceleration));
+        //turningPIDController = new ProfiledPIDController(.5, 0, 0,new TrapezoidProfile.Constraints(Constants.DriveConstants.kMaxTurningSpeedRadPerSec,Constants.DriveConstants.kTeleTurningMaxAcceleration));
         //makes the value loop around
         turningPIDController.enableContinuousInput(-Math.PI, Math.PI);
 
