@@ -15,7 +15,7 @@ import frc.robot.subsystems.CameraS;
 import frc.robot.subsystems.IntakeS;
 import frc.robot.subsystems.SwerveS;
 import frc.robot.utils.SimShootNote;
-
+import frc.robot.DataHandler;
 public class AutonIntake extends Command {
     private final IntakeS intakeS;
     private final SwerveS swerveS;
@@ -62,6 +62,7 @@ public class AutonIntake extends Command {
         }
         intakeS.deployIntake(intakeS.outsideBotState());
         IntakeS.autoIntakeController.reset();
+        DataHandler.logData(new double[]{targetNoteLocation.getDistance(SwerveS.getPose().getTranslation()), IntakeS.kP});
     }
     public static double closerAngleToZero(double angle) {
         // Normalize the angle to be within the range of -180 to 180 degrees
