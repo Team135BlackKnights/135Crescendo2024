@@ -109,32 +109,29 @@ public class SwerveS extends SubsystemBase {
 	static SwerveDrivePoseEstimator poseEstimator = new SwerveDrivePoseEstimator(
 			Constants.DriveConstants.kDriveKinematics, getRotation2d(),
 			getModulePositions(), robotPosition, stateStdDevs, visionStdDevs);
-			
 	SwerveModulePosition[] m_modulePositions = getModulePositions();
 	private double m_simYaw;
-
 	Measure<Velocity<Voltage>> rampRate = Volts.of(1).per(Seconds.of(1)); //for going FROM ZERO PER SECOND
 	Measure<Voltage> holdVoltage = Volts.of(8);
 	Measure<Time> timeout = Seconds.of(10);
 	SysIdRoutine sysIdRoutineTurn = new SysIdRoutine(
 			new SysIdRoutine.Config(rampRate, holdVoltage, timeout,
-					(state) -> Logger.recordOutput("SysIdTestState", state.toString())),
-			new SysIdRoutine.Mechanism((Measure<Voltage> volts) -> 
-			{
+					(state) -> Logger.recordOutput("SysIdTestState",
+							state.toString())),
+			new SysIdRoutine.Mechanism((Measure<Voltage> volts) -> {
 				for (SwerveModule module : m_swerveModules.values())
 					module.setTurningTest(volts.in(Volts));
 			}, null // No log consumer, since data is recorded by URCL
-			, this));
-
+					, this));
 	SysIdRoutine sysIdRoutineDrive = new SysIdRoutine(
 			new SysIdRoutine.Config(rampRate, holdVoltage, timeout,
-					(state) -> Logger.recordOutput("SysIdTestState", state.toString())),
-			new SysIdRoutine.Mechanism((Measure<Voltage> volts) -> 
-			{
+					(state) -> Logger.recordOutput("SysIdTestState",
+							state.toString())),
+			new SysIdRoutine.Mechanism((Measure<Voltage> volts) -> {
 				for (SwerveModule module : m_swerveModules.values())
 					module.setDriveTest(volts.in(Volts));
 			}, null // No log consumer, since data is recorded by URCL
-			, this));
+					, this));
 
 	/**
 	 * Returns a command that will execute a quasistatic test in the given
@@ -221,7 +218,7 @@ public class SwerveS extends SubsystemBase {
 		SmartDashboard.putNumber("I Gain AutoLock", kI);
 		SmartDashboard.putNumber("D Gain AutoLock", kD);
 		autoLockController = new PIDController(kP, kI, kD);
-		if (Robot.isSimulation()){
+		if (Robot.isSimulation()) {
 			SimShootNote.setRobotPoseSupplier(pose2dSupplier);
 		}
 	}
@@ -289,17 +286,17 @@ public class SwerveS extends SubsystemBase {
 		double d = SmartDashboard.getNumber("D Gain AutoLock",
 				Constants.DriveConstants.kD);
 		if ((p != kP)) {
-			autoLockController.setP(p);
 			kP = p;
 		}
 		if ((i != kI)) {
-			autoLockController.setI(i);
 			kI = i;
+			autoLockController.setI(i);
 		}
 		if ((d != kD)) {
-			autoLockController.setD(d);
 			kD = d;
+			autoLockController.setD(d);
 		}
+		autoLockController.setP(kP / (1 + (0.2 * getPoseMeters().getX()))); //larger the distance, lower the P so not crazy
 		//xError = tx.getDouble(0.0);
 		m_modulePositions = getModulePositions();
 		// LIST MODULES IN THE SAME EXACT ORDER USED WHEN DECLARING SwerveDriveKinematics
@@ -452,7 +449,8 @@ public class SwerveS extends SubsystemBase {
 	}
 
 	public void setChassisSpeeds(ChassisSpeeds speed) {
-		SwerveModuleState[] moduleStates = Constants.DriveConstants.kDriveKinematics.toSwerveModuleStates(speed);
+		SwerveModuleState[] moduleStates = Constants.DriveConstants.kDriveKinematics
+				.toSwerveModuleStates(speed);
 		for (SwerveModule module : m_swerveModules.values()) {
 			module.setDesiredState(moduleStates[module.getModuleNumber()]);
 		}
@@ -460,7 +458,8 @@ public class SwerveS extends SubsystemBase {
 
 	public void setModuleStates(SwerveModuleState[] desiredStates) {
 		// Proportionally lowers wheel speeds until they are under the max speed
-		SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, Constants.DriveConstants.kMaxSpeedMetersPerSecond);
+		SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates,
+				Constants.DriveConstants.kMaxSpeedMetersPerSecond);
 		// LIST MODULES IN THE SAME EXACT ORDER USED WHEN DECLARING SwerveDriveKinematics
 		for (SwerveModule module : m_swerveModules.values()) {
 			module.setDesiredState(desiredStates[module.getModuleNumber()]);
@@ -484,11 +483,13 @@ public class SwerveS extends SubsystemBase {
 		}
 	}
 
-	public static void addVisionMeasurement(Pose2d visionMeasurement, double timestampSeconds) {
+	public static void addVisionMeasurement(Pose2d visionMeasurement,
+			double timestampSeconds) {
 		poseEstimator.addVisionMeasurement(visionMeasurement, timestampSeconds);
 	}
 
-	public static void addVisionMeasurement(Pose2d visionMeasurement, double timestampSeconds, Matrix<N3, N1> stdDevs) {
+	public static void addVisionMeasurement(Pose2d visionMeasurement,
+			double timestampSeconds, Matrix<N3, N1> stdDevs) {
 		poseEstimator.addVisionMeasurement(visionMeasurement, timestampSeconds,
 				stdDevs);
 	}
