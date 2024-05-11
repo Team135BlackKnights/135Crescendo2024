@@ -50,7 +50,7 @@ public class AutonIntake extends Command {
     @Override
     public void initialize() {
         isFinished = false;
-        LimelightHelpers.setPipelineIndex(Constants.LimelightConstants.limelightName, 1); //TODO: Make this base Pipe, cuz error swapping back and forth
+        LimelightHelpers.setPipelineIndex(Constants.LimelightConstants.limelightName, 1);
         delayTimer.reset();
         //delayTimer.start(); //for now
         allClear = false;

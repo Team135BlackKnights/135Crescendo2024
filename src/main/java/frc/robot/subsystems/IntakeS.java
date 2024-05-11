@@ -8,7 +8,6 @@ import com.revrobotics.ColorSensorV3;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
-import frc.robot.Constants.DriveSimConstants;
 import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.LinearQuadraticRegulator;
