@@ -30,9 +30,11 @@
   },
   "NTProvider": {
     "types": {
+      "/AdvantageKit/RealOutputs/MyMechanism": "Mechanism2d",
       "/FMSInfo": "FMSInfo",
       "/SmartDashboard/Auto Chooser": "String Chooser",
       "/SmartDashboard/Field": "Field2d",
+      "/SmartDashboard/Mech2d": "Mechanism2d",
       "/SmartDashboard/VisionSystemSim-Vision Sim/Sim Field": "Field2d"
     },
     "windows": {

@@ -16,7 +16,6 @@ public class FireShooter extends Command {
     private final double time = 0.25;
     private boolean isFinished = false;
     private final Timer timer = new Timer();
-
     public FireShooter(OutakeS outakeS) {
         this.outakeS = outakeS;
         addRequirements(outakeS);
