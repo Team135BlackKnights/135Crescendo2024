@@ -1,8 +1,10 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Robot;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.OutakeS;
+import frc.robot.utils.SimShootNote;
 
 
 public class OutakeC extends Command {
@@ -36,6 +38,10 @@ public class OutakeC extends Command {
                 //double topWheelSpeed = OutakeConstants.idealPercentTop + outakeS.shooterPID.calculate(OutakeS.topFlywheelEncoder.getVelocity(), OutakeConstants.flywheelMaxRPM*OutakeConstants.idealPercentTop);
                 //double bottomWheelSpeed = OutakeConstants.idealPercentBottom + outakeS.shooterPID.calculate(OutakeS.bottomFlywheelEncoder.getVelocity(),OutakeConstants.flywheelMaxRPM*OutakeConstants.idealPercentBottom);
                 outakeS.setIndividualFlywheelSpeeds(topWheelSpeed, bottomWheelSpeed);
+                if (Robot.isSimulation()){
+                    SimShootNote.shoot();
+                }
+                
             }
             //for speaker
             else{

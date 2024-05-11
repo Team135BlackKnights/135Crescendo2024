@@ -40,16 +40,19 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Robot;
+import frc.robot.utils.SimShootNote;
 import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 import java.util.HashMap;
 import java.util.Map;
 import frc.robot.Constants.SwerveConstants.ModulePosition;
-
+import java.util.function.Supplier;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 public class SwerveS extends SubsystemBase {
+    private Supplier<Pose2d> pose2dSupplier = () -> {return getPose();};
+
     private final static HashMap<ModulePosition, SwerveModule> m_swerveModules =
           new HashMap<>(
                   Map.of(
@@ -238,6 +241,8 @@ public class SwerveS extends SubsystemBase {
         SmartDashboard.putNumber("I GainD", kI);
         SmartDashboard.putNumber("D GainD", kD);
         autoLockController = new PIDController(kP, kI, kD);
+
+        SimShootNote.setRobotPoseSupplier(pose2dSupplier);
     }
     
     public void zeroHeading() {

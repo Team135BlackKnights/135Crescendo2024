@@ -2,7 +2,6 @@ package frc.robot.commands.autoCommands;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Robot;
-import frc.robot.Constants.IntakeConstants;
 import frc.robot.subsystems.IntakeS;
 
 public class MoveIntake extends Command {
