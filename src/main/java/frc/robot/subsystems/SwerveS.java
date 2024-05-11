@@ -221,7 +221,9 @@ public class SwerveS extends SubsystemBase {
 		SmartDashboard.putNumber("I Gain AutoLock", kI);
 		SmartDashboard.putNumber("D Gain AutoLock", kD);
 		autoLockController = new PIDController(kP, kI, kD);
-		SimShootNote.setRobotPoseSupplier(pose2dSupplier);
+		if (Robot.isSimulation()){
+			SimShootNote.setRobotPoseSupplier(pose2dSupplier);
+		}
 	}
 
 	public void zeroHeading() {

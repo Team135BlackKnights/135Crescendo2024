@@ -2,6 +2,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Robot;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.CameraS;
 import frc.robot.subsystems.IntakeS;
@@ -52,7 +53,9 @@ public class VariableSpeed extends Command {
 		}
 		if (RobotContainer.manipController.getLeftBumper()) {
 			intakeS.setPrimaryIntake(-0.5);
-			SimShootNote.shoot();
+			if (Robot.isSimulation()){
+				SimShootNote.shoot();
+			}
 			delay.start();
 		}
 		if (CameraS.robotInRange() && OutakeS.getFlywheelSpeedDifference() < 100
@@ -62,7 +65,9 @@ public class VariableSpeed extends Command {
 				&& !RobotContainer.manipController.getAButton()
 				&& intakeS.isAtState()) {
 			intakeS.setPrimaryIntake(-0.5);
-			SimShootNote.shoot();
+			if (Robot.isSimulation()){
+				SimShootNote.shoot();
+			}
 			delay.start();
 		}
 	}

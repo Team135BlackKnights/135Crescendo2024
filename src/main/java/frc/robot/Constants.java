@@ -51,7 +51,7 @@ public final class Constants {
 
 	public static class IntakeConstants {
 		public static class PIDConstants {
-			public static double P = 0.005, //0.000001 
+			public static double P = 8.0, //0.000001 
 					I = 0.0, //.01
 					D = 0.0001; //.000
 		}

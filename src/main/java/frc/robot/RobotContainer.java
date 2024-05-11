@@ -85,11 +85,17 @@ public class RobotContainer {
 				new AutoLock(swerveS));
 		NamedCommands.registerCommand("IntakeNote",
 				new AutonIntake(intakeS, swerveS));
-		NamedCommands.registerCommand("Shoot From Anywhere",
+		if (Robot.isSimulation()){
+			NamedCommands.registerCommand("Shoot From Anywhere",
 				new SequentialCommandGroup(
 						new VariableAngle(intakeS, outakeS, true),
 						SimShootNote.shoot()
 				));
+		}else{
+			NamedCommands.registerCommand("Shoot From Anywhere",
+				new VariableAngle(intakeS, outakeS, true)
+			);
+		}
 		NamedCommands.registerCommand("Hold Outake Ready",
 				new FireShooter(outakeS));
 
@@ -100,12 +106,13 @@ public class RobotContainer {
 	}
 
 	private void configureBindings() {
-		aButton.onTrue(SimShootNote.shoot());
-		/*if (aButton.getAsBoolean() && isDriving()){
-		swerveS.toggleAutoLockCommand();
-		}*/
-		xButton.and(isDriving()).onTrue(
+		aButton.and(isDriving()).onTrue(swerveS.toggleAutoLockCommand());
+		if (Robot.isSimulation()){
+			xButton.and(isDriving()).onTrue(SimShootNote.shoot());
+		}else{
+			xButton.and(isDriving()).onTrue(
 				new InstantCommand(() -> swerveS.zeroHeading()));
+		}
 		yButton.and(isDriving()).onTrue(
 				new VariableSpeed(intakeS, outakeS, false));
 		bButton.and(isDriving()).onTrue(
