@@ -1,6 +1,5 @@
 package frc.robot.subsystems;
 
-import frc.robot.DataHandler;
 import com.kauailabs.navx.frc.AHRS;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
@@ -23,9 +22,6 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableEntry;
-import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.units.Measure;
 import edu.wpi.first.units.Time;
 import edu.wpi.first.units.Velocity;
@@ -106,18 +102,18 @@ public class SwerveS extends SubsystemBase {
 
     private static AHRS gyro = new AHRS(Port.kUSB1);
 
-    NetworkTableEntry pipeline;
+    //NetworkTableEntry pipeline;
     public static boolean fieldOriented = true;
     int periodicUpdateCycle;
 
-    public static NetworkTable limelight = NetworkTableInstance.getDefault().getTable(Constants.LimelightConstants.limelightName);
+    /*public static NetworkTable limelight = NetworkTableInstance.getDefault().getTable(Constants.LimelightConstants.limelightName);
     static NetworkTableEntry tx = limelight.getEntry("tx");
-    static double xError = tx.getDouble(0.0);
+    static double xError = tx.getDouble(0.0);*/
 
     static Pose2d robotPosition = new Pose2d(0,0, getRotation2d());
 
     Field2d robotField = new Field2d();
-    static double zAccel = 0;
+    //static double zAccel = 0;
     // LIST MODULES IN THE SAME EXACT ORDER USED WHEN DECLARING SwerveDriveKinematics
     ChassisSpeeds m_ChassisSpeeds = Constants.DriveConstants.kDriveKinematics.toChassisSpeeds(getModuleStates());
     static Vector<N3> stateStdDevs = VecBuilder.fill(0.1, 0.1, 0.1);
@@ -213,7 +209,7 @@ public class SwerveS extends SubsystemBase {
                 zeroHeading();
                 for (SwerveModule module : m_swerveModules.values())
                 module.resetEncoders();
-                limelight.getEntry("pipeline").setNumber(1);
+                //limelight.getEntry("pipeline").setNumber(1);
             } catch (Exception e) {
             }
         }).start();
@@ -284,7 +280,7 @@ public class SwerveS extends SubsystemBase {
         }
         periodicUpdateCycle +=1;
 
-        if (limelight.getEntry("pipeline").getDouble(0) != 1) {
+        /*if (limelight.getEntry("pipeline").getDouble(0) != 1) {
             limelight.getEntry("pipeline").setNumber(1);
         }
 
@@ -292,14 +288,14 @@ public class SwerveS extends SubsystemBase {
             limelight.getEntry("priorityid").setNumber(4);
         } else if (!getAlliance() && limelight.getEntry("priorityid").getDouble(0.0) != 7.0) {
             limelight.getEntry("priorityid").setNumber(7);
-        }
+        }*/
         
 
         /*if(periodicUpdateCycle%5 == 0){
             updatePoseEstimatorWithVisionBotPose();
         }*/
         redIsAlliance = getAlliance();
-                zAccel = gyro.getRawAccelZ();
+        //zAccel = gyro.getRawAccelZ();
         //puts values to smartDashboard
         SmartDashboard.putNumber("Robot Heading", getRotation2d().getDegrees());
         SmartDashboard.putNumber("xError", CameraS.backCamXError);
@@ -363,31 +359,29 @@ public class SwerveS extends SubsystemBase {
             robotField.getObject("path").setPoses(poses);
         });
         navXDisconnectProtocol();
-        if (periodicUpdateCycle %10 == 0){
-            DataHandler.logData(periodicUpdateCycle);
-        }
         Logger.recordOutput("Swerve/Display/Actual Swerve Module States", getModuleStates());
         Logger.recordOutput("Swerve/Display/Rotation", getRotation2d().getDegrees());
     }
 
 
-    public static double getZAccel(){
+    /*public static double getZAccel(){
         return zAccel;
-    }
-    public static double getZDistance(){
+    }*/
+    //this is pitch owyn was tweaking
+    /*public static double getZDistance(){
         return limelight.getEntry("ty").getDouble(0.0);
-    }
-    public static double getXError() {
+    }*/
+    /*public static double getXError() {
         // bounds xError between -5 and 5 (normal range of xError is -30 to 30)
         double bounded = xError/6 + Math.copySign(0.9999, xError); //adds 0.9999 to reduce dead area range once we square
         return bounded*Math.abs(bounded);
 
 
-    }
+    }*/
 
-    public static boolean aprilTagVisible() {
+    /*public static boolean aprilTagVisible() {
         return xError != 0.0;
-    }
+    }*/
     @AutoLogOutput(key = "Odometry/Robot")
     public static Pose2d getPose() {
         return robotPosition;

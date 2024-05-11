@@ -31,13 +31,14 @@ public class Robot extends LoggedRobot  {
   private Command m_autonomousCommand;
   private boolean hasBeenEnabled;
   private RobotContainer m_robotContainer;
-
+  public static boolean isReal;
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
    */
   @Override
   public void robotInit() {
+    isReal = Robot.isReal();
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard
     Logger.recordMetadata("ProjectName", "The Chef"); // Set a metadata value

@@ -10,7 +10,7 @@ import frc.robot.Constants.HangConstants;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class HangS extends SubsystemBase {
-    static double hangState = 0;
+    //static double hangState = 0;
 
     //hang motors
     public static CANSparkMax leftHang = new CANSparkMax(HangConstants.leftHangID, MotorType.kBrushless);
@@ -41,7 +41,7 @@ public class HangS extends SubsystemBase {
         //SmartDashboard.putNumber("Left Hang", leftHangEncoder.getPosition());
         //SmartDashboard.putNumber("Right Hang", rightHangEncoder.getPosition());
         //trying to hang
-        if((leftHangEncoder.getVelocity() > 15) && (rightHangEncoder.getVelocity() > 15) && (SwerveS.getZAccel() > 0)){
+        /*if((leftHangEncoder.getVelocity() > 15) && (rightHangEncoder.getVelocity() > 15) && (SwerveS.getZAccel() > 0)){
             hangState = 1;
         }
         //hang done 
@@ -50,7 +50,7 @@ public class HangS extends SubsystemBase {
         }
         else{
             hangState = 0;
-        }
+        }*/
     }
     public void setHangMotors(double leftOutput, double rightOutput){
         if (leftOutput < 0 && HangS.leftHangEncoder.getPosition() < Constants.HangConstants.hangLowerSoftStop) {
@@ -66,6 +66,6 @@ public class HangS extends SubsystemBase {
         }
 
         leftHang.set(leftOutput); //sets the motors to get the controller values
-        rightHang.set(rightOutput); }
+        rightHang.set(rightOutput);}
 
 }
