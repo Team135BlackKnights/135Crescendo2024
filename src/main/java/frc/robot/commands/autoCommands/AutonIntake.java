@@ -175,9 +175,9 @@ public class AutonIntake extends Command {
 			double speedMappperVal = speedMapper(distance);
 			double moveSpeed = Constants.DriveConstants.kMaxSpeedMetersPerSecond
 					* speedMappperVal;
-			double trueError = error-3;
+			double trueError = error;
 			double turnSpeed = Units.degreesToRadians(trueError)
-					* IntakeS.kP * Constants.DriveConstants.kMaxTurningSpeedRadPerSec* (1.5*speedMappperVal);
+					* IntakeS.kP * Constants.DriveConstants.kMaxTurningSpeedRadPerSec* (2*speedMappperVal);
 			speeds = new ChassisSpeeds(moveSpeed, 0,
 					turnSpeed);
 		} else {
