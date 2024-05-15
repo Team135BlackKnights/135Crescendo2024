@@ -366,7 +366,7 @@ public final class Constants {
 						Units.inchesToMeters(25));
 		//Pitches of camera, in DEGREES, positive means UPWARD angle
 		public static int frontCamPitch = -21, rightCamPitch = -21, //MUST GET
-				leftCamPitch = -15, backCamPitch = -26, camResWidth = 600,
+				leftCamPitch = -15, backCamPitch = -10, camResWidth = 600,
 				camResHeight = 800, camFPS = 60;
 		public static int[] camPitches = new int[] { frontCamPitch, rightCamPitch,
 				leftCamPitch, backCamPitch
