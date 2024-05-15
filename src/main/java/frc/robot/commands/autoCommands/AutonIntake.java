@@ -150,8 +150,10 @@ public class AutonIntake extends Command {
 			ty = LimelightHelpers.getTY(
 					Constants.LimelightConstants.limelightName);
 			error = -tx; //tx is neg apparently -docs
+			distance = CameraS.calculateDistanceFromtY(ty);
 		}
 		SmartDashboard.putNumber("ANGLE ERROR", error);
+		SmartDashboard.putNumber("DISTANCE", distance);
 		// SmartDashboard.putBoolean("Note Loaded?", IntakeS.noteIsLoaded());
 		if (Robot.isReal()) {
 			if (CameraS.calculateDistanceFromtY(ty) <= 4.5) { //less than twelve inches away, tune down!
@@ -170,10 +172,12 @@ public class AutonIntake extends Command {
 			speeds = new ChassisSpeeds(0, 0, 0.1
 					* Constants.DriveConstants.kMaxTurningSpeedRadPerSec);
 		} else if (loaded == false && close == false) {
+			double speedMappperVal = speedMapper(distance);
 			double moveSpeed = Constants.DriveConstants.kMaxSpeedMetersPerSecond
-					* speedMapper(distance);
-			double turnSpeed = Units.degreesToRadians(error)
-					* IntakeS.kP;
+					* speedMappperVal;
+			double trueError = error-3;
+			double turnSpeed = Units.degreesToRadians(trueError)
+					* IntakeS.kP * Constants.DriveConstants.kMaxTurningSpeedRadPerSec* (1.5*speedMappperVal);
 			speeds = new ChassisSpeeds(moveSpeed, 0,
 					turnSpeed);
 		} else {
