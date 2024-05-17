@@ -5,6 +5,8 @@ package frc.robot;
 
 import org.littletonrobotics.urcl.URCL;
 
+import javax.xml.crypto.Data;
+
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
@@ -66,11 +68,8 @@ public class Robot extends LoggedRobot {
 		Logger.registerURCL(URCL.startExternal(Constants.DataLog.manCanIdsToNames()));
 		Logger.start();
 		m_robotContainer = new RobotContainer();
-		if (Robot.isReal()) {
-			DataHandler.createLogFileOnRIOUSB();
-		} else if (Robot.isSimulation()) {
-			DataHandler.createLogFileinSimulation("C:");
-		}
+		DataHandler.startHandler(false, "C:");
+		
 	}
 
 	/**
