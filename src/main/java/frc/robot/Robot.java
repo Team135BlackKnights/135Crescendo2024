@@ -5,7 +5,6 @@ package frc.robot;
 
 import org.littletonrobotics.urcl.URCL;
 
-import javax.xml.crypto.Data;
 
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
@@ -68,7 +67,7 @@ public class Robot extends LoggedRobot {
 		Logger.registerURCL(URCL.startExternal(Constants.DataLog.manCanIdsToNames()));
 		Logger.start();
 		m_robotContainer = new RobotContainer();
-		DataHandler.startHandler(false, "C:");
+		DataHandler.startHandler(true, "C:");
 		
 	}
 

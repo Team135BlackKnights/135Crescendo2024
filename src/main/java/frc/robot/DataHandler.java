@@ -8,7 +8,7 @@ import java.io.OutputStreamWriter;
 import java.io.IOError;
 import java.util.ArrayList;
 import java.util.List;
-
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 /**
  * Class used for logging data. Coded as an alternative to DataLogManager (so
  * you don't get every update in NetworkTables logged, just the values you
@@ -78,20 +78,22 @@ public class DataHandler {
 	 */
 	public static void startHandler(boolean useNetworkTables, String simDiskDirectory){
 		DataHandler.useNetworkTables = useNetworkTables;
-		if (Robot.isReal()){
-			if (useNetworkTables){
-
+		if (useNetworkTables){
+			SmartDashboard.putString("DataHandler","initialized!");
+		}
+		else {
+			if (Robot.isReal()){
+				createLogFileOnRIOUSB();
 			}else{
+				setSimDisk(simDiskDirectory);
 				createLogFileOnRIOUSB();
 			}
-
 		}
-		else if (Robot.isSimulation()){
-			setSimDisk(simDiskDirectory);
-			createLogFileOnRIOUSB();
+			
 		}
 
-	}
+
+	
 
 
 
@@ -171,7 +173,7 @@ public class DataHandler {
 	 */
 	public static void logData(String data) {
 		if (useNetworkTables){
-
+			SmartDashboard.putString("DataHandler", data);
 		}
 		else{
 			//Tries writing to the file, adds an error if it doesn't work
@@ -312,7 +314,8 @@ public class DataHandler {
 	 * createNewWriter in.
 	 */
 	public static void updateHandlerState() {
-		pingUSB();
+		if (!useNetworkTables){
+			pingUSB();
 		flushBuffer();
 		//If the USB is disconnected and it hasn't closed the writer yet, close it
 		if (isUSBConnected == false && debounce == 0) {
@@ -328,7 +331,7 @@ public class DataHandler {
 		//If neither condition is met, do nothing.
 		else {
 			return;
+			}
 		}
-	
 	}
 }
