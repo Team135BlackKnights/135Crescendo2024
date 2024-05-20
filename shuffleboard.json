@@ -350,6 +350,45 @@
               "_glyph": 148,
               "_showGlyph": false
             }
+          },
+          "3,5": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/limelight-swerve_Interface",
+              "_title": "limelight-swerve_Interface",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "4,5": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/limelight-swerve_Stream",
+              "_title": "limelight-swerve_Stream",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "5,5": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/limelight-swerve_PipelineName",
+              "_title": "limelight-swerve_PipelineName",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
           }
         }
       }
@@ -484,8 +523,8 @@
   ],
   "windowGeometry": {
     "x": -1928.0,
-    "y": 89.0,
-    "width": 1936.0,
-    "height": 1048.0
+    "y": 88.80000305175781,
+    "width": 1553.5999755859375,
+    "height": 881.5999755859375
   }
 }

@@ -37,6 +37,8 @@ public class DataHandler {
 	private static int debounce = 0;
 	private static int dumpID = 1;
 	@SuppressWarnings("unused")
+	//The value to be sent to the DS Laptop via networktables
+	private static String valueToBeSent = "Default";
 	private static boolean useNetworkTables;
 	/**
 	 * Creates a new Streamwriter, designed to be contingent in case of USB
@@ -79,7 +81,7 @@ public class DataHandler {
 	public static void startHandler(boolean useNetworkTables, String simDiskDirectory){
 		DataHandler.useNetworkTables = useNetworkTables;
 		if (useNetworkTables){
-			SmartDashboard.putString("DataHandler","initialized!");
+			SmartDashboard.putString("DataHandler",valueToBeSent);
 		}
 		else {
 			if (Robot.isReal()){
@@ -173,7 +175,7 @@ public class DataHandler {
 	 */
 	public static void logData(String data) {
 		if (useNetworkTables){
-			SmartDashboard.putString("DataHandler", data);
+			valueToBeSent = data;
 		}
 		else{
 			//Tries writing to the file, adds an error if it doesn't work
@@ -314,6 +316,7 @@ public class DataHandler {
 	 * createNewWriter in.
 	 */
 	public static void updateHandlerState() {
+		SmartDashboard.putString("DataHandler", valueToBeSent);
 		if (!useNetworkTables){
 			pingUSB();
 		flushBuffer();

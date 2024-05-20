@@ -23,6 +23,7 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -105,6 +106,7 @@ public class CameraS extends SubsystemBase {
 		//cams = new PhotonCamera[]{frontCam,rightCam,leftCam,backCam};
 		cams = new PhotonCamera[] { rightCam, backCam
 		};//,backCam};
+		PortForwarder.add(5800, "photonvision", 5800);
 		if (Robot.isSimulation()) {
 			PhotonCameraSim[] cameraSims = new PhotonCameraSim[] {
 					new PhotonCameraSim(rightCam), new PhotonCameraSim(backCam)
